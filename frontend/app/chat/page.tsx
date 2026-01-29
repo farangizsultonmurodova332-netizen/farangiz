@@ -123,11 +123,11 @@ export default function ChatListPage() {
 
   // Handle both array and paginated response formats
   const rawData = roomsQuery.data;
-  const rooms = Array.isArray(rawData)
+  const rooms: ChatRoom[] = Array.isArray(rawData)
     ? rawData
     : (rawData as any)?.results || [];
-  const baseRooms = rooms.filter((room) => room.is_group || room.last_message);
-  const visibleRooms = baseRooms.filter((room) => {
+  const baseRooms = rooms.filter((room: ChatRoom) => room.is_group || room.last_message);
+  const visibleRooms = baseRooms.filter((room: ChatRoom) => {
     if (activeTab === "groups") return room.is_group;
     if (activeTab === "direct") return !room.is_group;
     return true;
@@ -231,18 +231,18 @@ export default function ChatListPage() {
                                   {(group.name || t("chat.group")).slice(0, 1).toUpperCase()}
                                 </div>
                               )}
-                                <div>
-                                  <p className="font-semibold text-ink">
-                                    {typeof group.member_count === "number"
-                                      ? `${group.member_count} • ${group.name}`
-                                      : group.name}
-                                  </p>
-                                  <p className="text-xs text-ink/50">{t("chat.joinGroup")}</p>
-                                </div>
+                              <div>
+                                <p className="font-semibold text-ink">
+                                  {typeof group.member_count === "number"
+                                    ? `${group.member_count} • ${group.name}`
+                                    : group.name}
+                                </p>
+                                <p className="text-xs text-ink/50">{t("chat.joinGroup")}</p>
                               </div>
-                              <span className="text-xs text-ink/40">{t("chat.group")}</span>
-                            </button>
-                          ))}
+                            </div>
+                            <span className="text-xs text-ink/40">{t("chat.group")}</span>
+                          </button>
+                        ))}
                         {results.length > 0 && (
                           <div className="px-4 text-xs font-semibold uppercase tracking-wide text-ink/40">
                             {t("chat.users")}
@@ -289,131 +289,131 @@ export default function ChatListPage() {
         {visibleRooms.map((room) => {
           const isMenuOpen = openMenuId === room.id;
           return (
-          <button
-            key={room.id}
-            onClick={() => router.push(`/chat/${room.id}`)}
-            className={`card relative p-3 w-full text-left hover:bg-haze/50 transition-colors overflow-visible ${
-              isMenuOpen ? "z-20" : "z-0"
-            }`}
-          >
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex items-start gap-3 flex-1">
-                <div className="relative">
-                  {room.is_group ? (
-                    room.avatar_url ? (
+            <button
+              key={room.id}
+              onClick={() => router.push(`/chat/${room.id}`)}
+              className={`card relative p-3 w-full text-left hover:bg-haze/50 transition-colors overflow-visible ${isMenuOpen ? "z-20" : "z-0"
+                }`}
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex items-start gap-3 flex-1">
+                  <div className="relative">
+                    {room.is_group ? (
+                      room.avatar_url ? (
+                        <img
+                          src={room.avatar_url}
+                          alt={room.name || t("chat.group")}
+                          className="h-10 w-10 rounded-full object-cover"
+                        />
+                      ) : (
+                        <div className="h-10 w-10 rounded-full bg-haze text-ink/70 flex items-center justify-center text-sm font-semibold">
+                          {(room.name || t("chat.group")).slice(0, 1).toUpperCase()}
+                        </div>
+                      )
+                    ) : room.other_user?.avatar_url ? (
                       <img
-                        src={room.avatar_url}
-                        alt={room.name || t("chat.group")}
+                        src={room.other_user.avatar_url}
+                        alt={room.other_user.username}
                         className="h-10 w-10 rounded-full object-cover"
                       />
                     ) : (
                       <div className="h-10 w-10 rounded-full bg-haze text-ink/70 flex items-center justify-center text-sm font-semibold">
-                        {(room.name || t("chat.group")).slice(0, 1).toUpperCase()}
+                        {(room.other_user?.username || t("chat.unknownUser")).slice(0, 1).toUpperCase()}
                       </div>
-                    )
-                  ) : room.other_user?.avatar_url ? (
-                    <img
-                      src={room.other_user.avatar_url}
-                      alt={room.other_user.username}
-                      className="h-10 w-10 rounded-full object-cover"
-                    />
-                  ) : (
-                    <div className="h-10 w-10 rounded-full bg-haze text-ink/70 flex items-center justify-center text-sm font-semibold">
-                      {(room.other_user?.username || t("chat.unknownUser")).slice(0, 1).toUpperCase()}
-                    </div>
-                  )}
-                  {!room.is_group && room.other_user?.is_online && (
-                    <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white bg-emerald-500" />
-                  )}
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
+                    )}
+                    {!room.is_group && room.other_user?.is_online && (
+                      <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white bg-emerald-500" />
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
                       <p className="font-semibold text-ink">
                         {room.is_group
                           ? `${room.member_count ?? 0} • ${room.name || t("chat.group")}`
                           : room.other_user?.username || t("chat.unknownUser")}
                       </p>
-                    {!room.is_group && room.other_user?.last_seen && (
-                      <span className="text-xs text-ink/50">
-                        {t("chat.lastSeen", { time: timeAgo(room.other_user.last_seen) })}
-                      </span>
+                      {!room.is_group && room.other_user?.last_seen && (
+                        <span className="text-xs text-ink/50">
+                          {t("chat.lastSeen", { time: timeAgo(room.other_user.last_seen) })}
+                        </span>
+                      )}
+                      {room.unread_count > 0 && (
+                        <span className="pill bg-teal text-white text-xs">
+                          {room.unread_count}
+                        </span>
+                      )}
+                    </div>
+                    {room.last_message && (
+                      <p className="text-sm text-ink/60 mt-1 truncate">
+                        <span className="font-medium">{room.last_message.sender}:</span>{" "}
+                        {room.last_message.body}
+                      </p>
                     )}
-                    {room.unread_count > 0 && (
-                      <span className="pill bg-teal text-white text-xs">
-                        {room.unread_count}
-                      </span>
+                    {!room.last_message && room.is_group && (
+                      <p className="text-sm text-ink/50 mt-1">{t("chat.groupNoMessages")}</p>
+                    )}
+                    {room.last_message && (
+                      <div className="mt-1 flex w-full justify-end">
+                        <span className="text-xs text-ink/40 whitespace-nowrap">
+                          {timeAgo(room.last_message.created_at)}
+                        </span>
+                      </div>
                     )}
                   </div>
-                  {room.last_message && (
-                    <p className="text-sm text-ink/60 mt-1 truncate">
-                      <span className="font-medium">{room.last_message.sender}:</span>{" "}
-                      {room.last_message.body}
-                    </p>
-                  )}
-                  {!room.last_message && room.is_group && (
-                    <p className="text-sm text-ink/50 mt-1">{t("chat.groupNoMessages")}</p>
-                  )}
-                  {room.last_message && (
-                    <div className="mt-1 flex w-full justify-end">
-                      <span className="text-xs text-ink/40 whitespace-nowrap">
-                        {timeAgo(room.last_message.created_at)}
-                      </span>
-                    </div>
-                  )}
                 </div>
               </div>
-            </div>
-            <div className="absolute top-1/2 right-3 -translate-y-1/2">
-              <button
-                type="button"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  setOpenMenuId((prev) => (prev === room.id ? null : room.id));
-                }}
-                className="flex h-8 w-8 items-center justify-center rounded-full text-ink/50 hover:bg-haze/60 hover:text-ink"
-                aria-label={t("chat.menu")}
-              >
-                <span className="text-lg leading-none">•••</span>
-              </button>
-              {isMenuOpen && (
-                <div
-                  className="absolute right-0 mt-2 w-44 rounded-xl border border-white/60 bg-white shadow-lg z-30"
-                  onClick={(event) => event.stopPropagation()}
+              <div className="absolute top-1/2 right-3 -translate-y-1/2">
+                <button
+                  type="button"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setOpenMenuId((prev) => (prev === room.id ? null : room.id));
+                  }}
+                  className="flex h-8 w-8 items-center justify-center rounded-full text-ink/50 hover:bg-haze/60 hover:text-ink"
+                  aria-label={t("chat.menu")}
                 >
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (room.is_group && room.created_by !== user?.id) {
-                        if (!confirm(t("chat.leaveGroupConfirm"))) return;
-                        leaveGroupMutation.mutate(room.id);
-                        return;
-                      }
-                      if (!confirm(t("chat.deleteChatConfirm"))) return;
-                      deleteChatMutation.mutate(room.id);
-                    }}
-                    className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-haze/60"
+                  <span className="text-lg leading-none">•••</span>
+                </button>
+                {isMenuOpen && (
+                  <div
+                    className="absolute right-0 mt-2 w-44 rounded-xl border border-white/60 bg-white shadow-lg z-30"
+                    onClick={(event) => event.stopPropagation()}
                   >
-                    {room.is_group && room.created_by !== user?.id ? t("chat.leaveGroup") : t("chat.deleteChat")}
-                  </button>
-                  {!room.is_group && (
                     <button
                       type="button"
                       onClick={() => {
-                        setOpenMenuId(null);
-                        if (room.other_user?.id) {
-                          router.push(`/users/${room.other_user.id}`);
+                        if (room.is_group && room.created_by !== user?.id) {
+                          if (!confirm(t("chat.leaveGroupConfirm"))) return;
+                          leaveGroupMutation.mutate(room.id);
+                          return;
                         }
+                        if (!confirm(t("chat.deleteChatConfirm"))) return;
+                        deleteChatMutation.mutate(room.id);
                       }}
-                      className="w-full px-3 py-2 text-left text-sm text-ink/70 hover:bg-haze/60"
+                      className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-haze/60"
                     >
-                      {t("chat.viewProfile")}
+                      {room.is_group && room.created_by !== user?.id ? t("chat.leaveGroup") : t("chat.deleteChat")}
                     </button>
-                  )}
-                </div>
-              )}
-            </div>
-          </button>
-        )})}
+                    {!room.is_group && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setOpenMenuId(null);
+                          if (room.other_user?.id) {
+                            router.push(`/users/${room.other_user.id}`);
+                          }
+                        }}
+                        className="w-full px-3 py-2 text-left text-sm text-ink/70 hover:bg-haze/60"
+                      >
+                        {t("chat.viewProfile")}
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+            </button>
+          )
+        })}
       </div>
     </div>
   );
