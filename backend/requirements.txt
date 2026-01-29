@@ -19,3 +19,4 @@ daphne==4.1.0
 django-jazzmin==3.0.0
 mutagen==1.47.0
 agora-token-builder==1.0.0
+Pillow==10.4.0
