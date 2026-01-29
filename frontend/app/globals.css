@@ -1,0 +1,223 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+/* Light mode body */
+body {
+  @apply text-ink bg-paper;
+  background: radial-gradient(circle at top left, rgba(249, 115, 22, 0.12), transparent 40%),
+    radial-gradient(circle at 30% 20%, rgba(20, 184, 166, 0.12), transparent 35%),
+    linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+  min-height: 100vh;
+}
+
+/* Dark mode - Ultra soft, muted colors */
+.dark body,
+html.dark body {
+  color: #a8a8a8;
+  background: #1a1a1a;
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out both;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Cards */
+.card {
+  @apply bg-white/80 backdrop-blur rounded-2xl shadow-soft border border-white/50;
+}
+
+.dark .card {
+  background: #242424;
+  border: 1px solid #333333;
+  color: #a8a8a8;
+}
+
+/* Titles */
+.section-title {
+  @apply text-3xl md:text-4xl font-semibold tracking-tight;
+}
+
+.dark .section-title {
+  color: #d4d4d4;
+}
+
+.section-subtitle {
+  @apply text-base text-ink/60;
+}
+
+.dark .section-subtitle {
+  color: #888888;
+}
+
+/* Inputs */
+.input {
+  @apply w-full rounded-xl border border-haze bg-white/80 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-ink/20;
+}
+
+.dark .input {
+  background: #2a2a2a;
+  border: 1px solid #3d3d3d;
+  color: #a8a8a8;
+}
+
+.dark .input::placeholder {
+  color: #666666;
+}
+
+.dark .input:focus {
+  border-color: #4a9d8e;
+}
+
+/* Buttons */
+.btn {
+  @apply inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/30;
+}
+
+.btn-primary {
+  @apply btn bg-ink text-white hover:bg-ink/90;
+}
+
+.dark .btn-primary {
+  background: #3d7a6e;
+  color: #e0e0e0;
+}
+
+.dark .btn-primary:hover {
+  background: #4a9d8e;
+}
+
+.btn-secondary {
+  @apply btn border border-ink/10 bg-white/70 text-ink hover:bg-white;
+}
+
+.dark .btn-secondary {
+  background: #2a2a2a;
+  border: 1px solid #3d3d3d;
+  color: #a8a8a8;
+}
+
+.dark .btn-secondary:hover {
+  background: #333333;
+}
+
+.btn-ghost {
+  @apply btn text-ink/70 hover:text-ink;
+}
+
+.dark .btn-ghost {
+  color: #888888;
+}
+
+.dark .btn-ghost:hover {
+  color: #c0c0c0;
+}
+
+/* Chips */
+.chip {
+  @apply rounded-full bg-white/70 px-3 py-1 text-xs text-ink/70 border border-haze;
+}
+
+.dark .chip {
+  background: #2a2a2a;
+  border: 1px solid #3d3d3d;
+  color: #888888;
+}
+
+.pill {
+  @apply rounded-full px-3 py-1 text-xs font-medium;
+}
+
+.card-hover {
+  @apply transition hover:-translate-y-0.5 hover:shadow-lg;
+}
+
+.skeleton {
+  @apply animate-pulse rounded-xl bg-slate-200/80;
+}
+
+.dark .skeleton {
+  background: #2a2a2a;
+}
+
+/* Global dark mode text colors - all muted */
+.dark h1,
+.dark h2,
+.dark h3,
+.dark h4,
+.dark h5,
+.dark h6 {
+  color: #d4d4d4 !important;
+}
+
+.dark p,
+.dark span,
+.dark div,
+.dark label {
+  color: #a8a8a8;
+}
+
+.dark a {
+  color: #6eb5a8;
+}
+
+.dark a:hover {
+  color: #8ccfc2;
+}
+
+/* Force text visibility in dark mode */
+html.dark .text-ink,
+.dark .text-ink {
+  color: #d4d4d4 !important;
+}
+
+html.dark .text-ink\/60,
+.dark .text-ink\/60 {
+  color: #888888 !important;
+}
+
+html.dark .text-ink\/70,
+.dark .text-ink\/70 {
+  color: #999999 !important;
+}
+
+html.dark .text-ink\/80,
+.dark .text-ink\/80 {
+  color: #a8a8a8 !important;
+}
+
+html.dark .text-ink\/50,
+.dark .text-ink\/50 {
+  color: #777777 !important;
+}
+
+html.dark .text-ink\/40,
+.dark .text-ink\/40 {
+  color: #666666 !important;
+}
+
+/* Dark mode backgrounds */
+html.dark .bg-ink\/20,
+.dark .bg-ink\/20 {
+  background-color: rgba(168, 168, 168, 0.15) !important;
+}

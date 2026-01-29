@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tree:*)",
+      "Bash(python manage.py migrate:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm start)",
+      "Bash(timeout:*)",
+      "Bash(ping:*)",
+      "Bash(taskkill:*)",
+      "Bash(npm run dev)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(curl:*)",
+      "Bash(pip install:*)",
+      "Bash(python -m daphne:*)",
+      "Bash(choco:*)",
+      "Bash(docker:*)",
+      "Bash(powershell -Command \"Get-Service -Name ''com.docker.service'' | Select-Object Status, StartType\")",
+      "Bash(powershell -Command:*)",
+      "Bash(.venvScriptspython.exe -m daphne:*)",
+      "Bash(.venv/Scripts/python.exe:*)",
+      "Bash(.venv/Scripts/pip install:*)",
+      "Bash(docker-compose restart:*)",
+      "Bash(docker-compose exec backend grep:*)",
+      "Bash(docker-compose up:*)",
+      "Bash(npx create-expo-app@latest mobile --template blank-typescript)",
+      "Bash(npx expo install:*)",
+      "Bash(npm install:*)",
+      "Bash(del \"C:\\\\Users\\\\hhabi\\\\Desktop\\\\farangiz\\\\mobile\\\\App.tsx\")",
+      "Bash(npm uninstall:*)",
+      "Bash(source .venv/Scripts/activate)"
+    ]
+  }
+}
