@@ -686,9 +686,9 @@ class CallViewSet(viewsets.ViewSet):
                     ),
                     'callee_id': callee.id,
                     'call_type': call_type,
+                    'call_type': call_type,
                     'agora_channel': channel_name,
-                    'agora_token': agora_token,
-                }
+                    # 'agora_token': agora_token, # DO NOT SEND TOKEN to callee in offer. Callee gets their own token on answer.
             }
         )
 
