@@ -2,222 +2,157 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  color-scheme: light;
-}
+@layer base {
+  :root {
+    /* Brand Colors */
+    --primary: 20 184 166;
+    /* Teal-500 #14b8a6 */
+    --primary-fg: 255 255 255;
+    /* White */
 
-.dark {
-  color-scheme: dark;
-}
+    /* Backgrounds */
+    --paper: 248 250 252;
+    /* Slate-50 #f8fafc */
+    --card: 255 255 255;
+    /* White */
+    --input: 255 255 255;
+    /* White */
 
-/* Light mode body */
-body {
-  @apply text-ink bg-paper;
-  background: radial-gradient(circle at top left, rgba(249, 115, 22, 0.12), transparent 40%),
-    radial-gradient(circle at 30% 20%, rgba(20, 184, 166, 0.12), transparent 35%),
-    linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
-  min-height: 100vh;
-}
+    /* Foreground/Text */
+    --ink: 15 23 42;
+    /* Slate-900 #0f172a */
+    --ink-muted: 100 116 139;
+    /* Slate-500 #64748b */
 
-/* Dark mode - Ultra soft, muted colors */
-.dark body,
-html.dark body {
-  color: #a8a8a8;
-  background: #1a1a1a;
-}
+    /* Borders */
+    --haze: 226 232 240;
+    /* Slate-200 #e2e8f0 */
 
-.fade-in {
-  animation: fadeIn 0.5s ease-out both;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
+    /* Status */
+    --glow: 249 115 22;
+    /* Orange-500 */
   }
 
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  .dark {
+    /* Brand Colors - Slightly softer/brighter for dark mode */
+    --primary: 45 212 191;
+    /* Teal-400 #2dd4bf */
+    --primary-fg: 15 23 42;
+    /* Slate-900 */
+
+    /* Backgrounds */
+    --paper: 10 10 12;
+    /* Custom Deep Dark */
+    --card: 23 23 26;
+    /* Slightly lighter dark */
+    --input: 30 30 34;
+    /* Input bg */
+
+    /* Foreground/Text */
+    --ink: 241 245 249;
+    /* Slate-100 #f1f5f9 */
+    --ink-muted: 148 163 184;
+    /* Slate-400 #94a3b8 */
+
+    /* Borders */
+    --haze: 39 39 42;
+    /* Zinc-800 */
+
+    /* Status */
+    --glow: 251 146 60;
+    /* Orange-400 */
   }
 }
 
-/* Cards */
-.card {
-  @apply bg-white/80 backdrop-blur rounded-2xl shadow-soft border border-white/50;
+@layer base {
+  body {
+    @apply bg-paper text-ink selection:bg-primary/20 transition-colors duration-300;
+    min-height: 100vh;
+  }
+
+  /* Custom background pattern only for light mode if desired, or subtle for both */
+  body {
+    background-image:
+      radial-gradient(circle at top left, rgb(var(--glow) / 0.05), transparent 40%),
+      radial-gradient(circle at 30% 20%, rgb(var(--primary) / 0.05), transparent 35%);
+  }
 }
 
-.dark .card {
-  background: #242424;
-  border: 1px solid #333333;
-  color: #a8a8a8;
-}
+@layer components {
 
-/* Titles */
-.section-title {
-  @apply text-2xl md:text-3xl lg:text-4xl font-semibold tracking-tight;
-}
+  /* Cards */
+  .card {
+    @apply bg-card rounded-2xl border border-haze shadow-sm transition-all duration-300;
+  }
 
-.dark .section-title {
-  color: #d4d4d4;
-}
+  .card-hover {
+    @apply hover:border-primary/30 hover:shadow-lg hover:-translate-y-1;
+  }
 
-.section-subtitle {
-  @apply text-base text-ink/60;
-}
+  /* Titles */
+  .section-title {
+    @apply text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight text-ink;
+  }
 
-.dark .section-subtitle {
-  color: #888888;
-}
+  .section-subtitle {
+    @apply text-base md:text-lg text-ink-muted;
+  }
 
-/* Inputs */
-.input {
-  @apply w-full rounded-xl border border-haze bg-white/80 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-ink/20;
-}
+  /* Inputs */
+  .input {
+    @apply w-full rounded-xl border border-haze bg-input px-4 py-3 text-sm text-ink placeholder:text-ink-muted/60 transition-all duration-200 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20;
+  }
 
-.dark .input {
-  background: #2a2a2a;
-  border: 1px solid #3d3d3d;
-  color: #a8a8a8;
-}
+  /* Buttons */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 disabled:opacity-50 disabled:pointer-events-none;
+  }
 
-.dark .input::placeholder {
-  color: #666666;
-}
+  .btn-primary {
+    @apply btn bg-primary text-primary-fg shadow-lg shadow-primary/20 hover:bg-primary/90 hover:shadow-primary/30 active:scale-[0.98];
+  }
 
-.dark .input:focus {
-  border-color: #4a9d8e;
-}
+  .btn-secondary {
+    @apply btn border border-haze bg-card text-ink hover:bg-paper hover:border-primary/30 active:scale-[0.98];
+  }
 
-/* Buttons */
-.btn {
-  @apply inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/30;
-}
+  .btn-ghost {
+    @apply btn bg-transparent text-ink-muted hover:text-ink hover:bg-ink/5;
+  }
 
-.btn-primary {
-  @apply btn bg-ink text-white hover:bg-ink/90;
-}
+  /* Chips & Pills */
+  .pill {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium border border-transparent;
+  }
 
-.dark .btn-primary {
-  background: #3d7a6e;
-  color: #e0e0e0;
-}
+  .chip {
+    @apply pill border-haze bg-paper text-ink-muted;
+  }
 
-.dark .btn-primary:hover {
-  background: #4a9d8e;
-}
+  /* Animations */
+  .fade-in {
+    animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
 
-.btn-secondary {
-  @apply btn border border-ink/10 bg-white/70 text-ink hover:bg-white;
-}
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
 
-.dark .btn-secondary {
-  background: #2a2a2a;
-  border: 1px solid #3d3d3d;
-  color: #a8a8a8;
-}
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 
-.dark .btn-secondary:hover {
-  background: #333333;
-}
+  /* Scrollbar */
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 
-.btn-ghost {
-  @apply btn text-ink/70 hover:text-ink;
-}
-
-.dark .btn-ghost {
-  color: #888888;
-}
-
-.dark .btn-ghost:hover {
-  color: #c0c0c0;
-}
-
-/* Chips */
-.chip {
-  @apply rounded-full bg-white/70 px-3 py-1 text-xs text-ink/70 border border-haze;
-}
-
-.dark .chip {
-  background: #2a2a2a;
-  border: 1px solid #3d3d3d;
-  color: #888888;
-}
-
-.pill {
-  @apply rounded-full px-3 py-1 text-xs font-medium;
-}
-
-.card-hover {
-  @apply transition hover:-translate-y-0.5 hover:shadow-lg;
-}
-
-.skeleton {
-  @apply animate-pulse rounded-xl bg-slate-200/80;
-}
-
-.dark .skeleton {
-  background: #2a2a2a;
-}
-
-/* Global dark mode text colors - all muted */
-.dark h1,
-.dark h2,
-.dark h3,
-.dark h4,
-.dark h5,
-.dark h6 {
-  color: #d4d4d4 !important;
-}
-
-.dark p,
-.dark span,
-.dark div,
-.dark label {
-  color: #a8a8a8;
-}
-
-.dark a {
-  color: #6eb5a8;
-}
-
-.dark a:hover {
-  color: #8ccfc2;
-}
-
-/* Force text visibility in dark mode */
-html.dark .text-ink,
-.dark .text-ink {
-  color: #d4d4d4 !important;
-}
-
-html.dark .text-ink\/60,
-.dark .text-ink\/60 {
-  color: #888888 !important;
-}
-
-html.dark .text-ink\/70,
-.dark .text-ink\/70 {
-  color: #999999 !important;
-}
-
-html.dark .text-ink\/80,
-.dark .text-ink\/80 {
-  color: #a8a8a8 !important;
-}
-
-html.dark .text-ink\/50,
-.dark .text-ink\/50 {
-  color: #777777 !important;
-}
-
-html.dark .text-ink\/40,
-.dark .text-ink\/40 {
-  color: #666666 !important;
-}
-
-/* Dark mode backgrounds */
-html.dark .bg-ink\/20,
-.dark .bg-ink\/20 {
-  background-color: rgba(168, 168, 168, 0.15) !important;
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
