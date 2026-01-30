@@ -30,6 +30,9 @@ class TagsField(serializers.ListField):
     def to_internal_value(self, data):
         if data in (None, ''):
             return []
+        if isinstance(data, str):
+            data = [param.strip() for param in data.split(',') if param.strip()]
+
         if not isinstance(data, list):
             raise serializers.ValidationError('Tags must be a list of strings.')
 
