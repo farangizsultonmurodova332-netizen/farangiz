@@ -37,8 +37,10 @@ export default function EditProfilePage() {
     staleTime: 0,
   });
 
+  const [isInitialized, setIsInitialized] = useState(false);
+
   useEffect(() => {
-    if (!user || !profileQuery.data) return;
+    if (!user || !profileQuery.data || isInitialized) return;
     setFormError(null);
     setFormState({
       username: profileQuery.data.username ?? user.username,
@@ -51,7 +53,8 @@ export default function EditProfilePage() {
       location: profileQuery.data.location ?? "",
     });
     setPortfolioFile(null);
-  }, [profileQuery.data, user]);
+    setIsInitialized(true);
+  }, [profileQuery.data, user, isInitialized]);
 
   const handleAvatarUpload = async (file: File | null) => {
     if (!file) return;
