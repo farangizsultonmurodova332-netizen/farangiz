@@ -67,6 +67,7 @@ export function CallProvider({ children }: { children: React.ReactNode }) {
     const localAudioTrackRef = useRef<IMicrophoneAudioTrack | null>(null);
     const localVideoTrackRef = useRef<ICameraVideoTrack | null>(null);
     const timerRef = useRef<NodeJS.Timeout | null>(null);
+    const agoraSdkRef = useRef<any>(null); // Store SDK module to avoid async import during gesture
 
     // Track when client is ready
     const [clientReady, setClientReady] = useState(false);
@@ -76,6 +77,7 @@ export function CallProvider({ children }: { children: React.ReactNode }) {
         if (typeof window !== "undefined") {
             (async () => {
                 const AgoraRTC = (await import("agora-rtc-sdk-ng")).default;
+                agoraSdkRef.current = AgoraRTC;
                 // Use h264 codec for better mobile compatibility
                 clientRef.current = AgoraRTC.createClient({ mode: "rtc", codec: "h264" });
                 console.log("[Agora] Client created with h264 codec");
@@ -185,7 +187,7 @@ export function CallProvider({ children }: { children: React.ReactNode }) {
                     // If connected or ringing, we might need to rejoin Agora
                     if (["connected", "ringing"].includes(activeCall.status) || activeCall.status === "calling") {
                         // We need the token. The endpoint should return it.
-                        if (activeCall.agora_channel && activeCall.agora_token) {
+                        if (activeCall.agora_channel) {
                             if (!clientRef.current) return; // Wait for client
 
                             // We need to wait for clientReady before joining
@@ -210,6 +212,9 @@ export function CallProvider({ children }: { children: React.ReactNode }) {
             // Check if already in a channel or connecting to avoid race conditions
             if (clientRef.current.connectionState !== "DISCONNECTED") {
                 console.log("[CallContext] Client already in state:", clientRef.current.connectionState);
+                // If we are "CONNECTED" but track refs are null (e.g. after hard refresh logic failure), we might need to unpublish?
+                // Actually if clientRef persisted (unlikely on refresh), we differ. 
+                // On refresh clientRef is new. 
                 return;
             }
 
@@ -220,7 +225,7 @@ export function CallProvider({ children }: { children: React.ReactNode }) {
                 const { call } = state;
 
                 try {
-                    const AgoraRTC = (await import("agora-rtc-sdk-ng")).default;
+                    const AgoraRTC = agoraSdkRef.current || (await import("agora-rtc-sdk-ng")).default;
 
                     // Create tracks again if missing
                     if (!localAudioTrackRef.current) {
@@ -274,17 +279,28 @@ export function CallProvider({ children }: { children: React.ReactNode }) {
         if (!state.call || !clientReady || !clientRef.current) return;
 
         try {
-            const AgoraRTC = (await import("agora-rtc-sdk-ng")).default;
+            // USE PRELOADED SDK if available to ensure we stay in trusted event context
+            // Call createMicrophoneAudioTrack IMMEDIATELY
+            const AgoraRTC = agoraSdkRef.current;
+            if (!AgoraRTC) {
+                console.error("[CallContext] SDK not loaded yet");
+                return;
+            }
 
             // 1. Create tracks immediately (using user gesture)
+            // This MUST be the first await in the chain if possible
             if (!localAudioTrackRef.current) {
+                console.log("[CallContext] Manual join: Creating microphone track...");
                 localAudioTrackRef.current = await AgoraRTC.createMicrophoneAudioTrack();
+                console.log("[CallContext] Manual join: Microphone track created");
             }
 
             let videoTrack = localVideoTrackRef.current;
             if (state.call.call_type === "video" && !videoTrack) {
+                console.log("[CallContext] Manual join: Creating camera video track...");
                 videoTrack = await AgoraRTC.createCameraVideoTrack();
                 localVideoTrackRef.current = videoTrack;
+                console.log("[CallContext] Manual join: Camera video track created");
             }
 
             // 2. Join Channel
@@ -293,11 +309,17 @@ export function CallProvider({ children }: { children: React.ReactNode }) {
                 const token = call.agora_token || null;
                 // Add safety check for connection state
                 if (clientRef.current.connectionState === "DISCONNECTED") {
+                    console.log("[CallContext] Manual join: Joining Agora channel...");
                     await clientRef.current.join(AGORA_APP_ID, call.agora_channel, token, user!.id);
+                    console.log("[CallContext] Manual join: Joined Agora channel");
 
                     const tracksToPublish: (IMicrophoneAudioTrack | ICameraVideoTrack)[] = [localAudioTrackRef.current!];
                     if (videoTrack) tracksToPublish.push(videoTrack);
+                    console.log("[CallContext] Manual join: Publishing tracks...");
                     await clientRef.current.publish(tracksToPublish);
+                    console.log("[CallContext] Manual join: Tracks published");
+                } else {
+                    console.log("[CallContext] Manual join: Client already connected or connecting, skipping join.");
                 }
             }
 
@@ -314,6 +336,9 @@ export function CallProvider({ children }: { children: React.ReactNode }) {
             console.error("Manual join failed:", e);
             // Ensure flag remains true if failed
             setState(prev => ({ ...prev, isPermissionNeeded: true }));
+            if (e.name === "NotAllowedError" || e.code === "PERMISSION_DENIED") {
+                alert("Permission denied. Please reset permissions in your browser address bar.");
+            }
         }
     }, [state.call, clientReady, user]);
 
