@@ -67,7 +67,12 @@ export function useWebSocket({
 
     // Get WebSocket URL from environment or default
     const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsHost = process.env.NEXT_PUBLIC_WS_URL || 'localhost:8000';
+    let wsHost = process.env.NEXT_PUBLIC_WS_URL;
+    if (!wsHost && typeof window !== 'undefined') {
+      wsHost = window.location.host;
+    }
+    wsHost = wsHost || 'localhost:8000';
+
     const wsUrl = `${wsProtocol}//${wsHost}/ws/chat/${roomId}/?token=${accessToken}`;
 
     try {
