@@ -28,6 +28,7 @@ class TagsField(serializers.ListField):
         return [tag.name if hasattr(tag, 'name') else str(tag) for tag in value]
 
     def to_internal_value(self, data):
+        print(f"DEBUG TAGS DATA: {type(data)} - {data}")
         if data in (None, ''):
             return []
         if isinstance(data, str):
