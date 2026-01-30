@@ -10,7 +10,7 @@ export default function IdeaCard({ idea }: { idea: Idea }) {
   const { t } = useLanguage();
 
   return (
-    <div className="card card-hover p-6">
+    <div className="card card-hover p-4 md:p-6">
       <div className="flex flex-wrap items-center gap-2 text-xs text-ink/60">
         <span className="pill bg-haze text-ink/70">{idea.category}</span>
         {idea.tags.slice(0, 3).map((tag) => (

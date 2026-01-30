@@ -41,8 +41,8 @@ export default function HomePage() {
     feed === "following"
       ? `/ideas/following?${queryString}`
       : feed === "trending"
-      ? `/ideas/trending?days=7&page=${page}`
-      : `/ideas?${queryString}`;
+        ? `/ideas/trending?days=7&page=${page}`
+        : `/ideas?${queryString}`;
 
   const { data, isLoading, error } = useQuery({
     queryKey,
@@ -51,22 +51,22 @@ export default function HomePage() {
   });
 
   return (
-    <div className="space-y-10">
-      <section className="card p-8 md:p-10">
+    <div className="space-y-6 md:space-y-10">
+      <section className="card p-6 md:p-10">
         <div className="grid gap-6 md:grid-cols-[2fr,1fr] md:items-center">
           <div>
             <h1 className="section-title">{t("home.heroTitle")}</h1>
-            <p className="mt-3 section-subtitle">{t("home.heroSubtitle")}</p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <a href="/ideas/new" className="btn-primary">
+            <p className="mt-2 md:mt-3 section-subtitle">{t("home.heroSubtitle")}</p>
+            <div className="mt-4 md:mt-6 flex flex-wrap gap-3">
+              <a href="/ideas/new" className="btn-primary flex-1 md:flex-none justify-center">
                 {t("home.shareIdea")}
               </a>
-              <a href="#ideas" className="btn-secondary">
+              <a href="#ideas" className="btn-secondary flex-1 md:flex-none justify-center">
                 {t("home.giveFeedback")}
               </a>
             </div>
           </div>
-          <div className="rounded-2xl border border-white/60 bg-white/60 p-6 text-sm text-ink/70">
+          <div className="rounded-2xl border border-white/60 bg-white/60 p-4 md:p-6 text-sm text-ink/70">
             <p className="font-semibold text-ink">{t("home.noFakeTitle")}</p>
             <p className="mt-2">
               {t("home.noFakeBody")}
@@ -76,8 +76,9 @@ export default function HomePage() {
       </section>
 
       <section id="ideas" className="grid gap-6 md:grid-cols-[1.5fr,3fr]">
+        {/* On mobile, we might want search/filter to be less dominant, but for now just compacting paddings */}
         <aside className="space-y-4">
-          <div className="card p-6">
+          <div className="card p-4 md:p-6">
             <p className="text-sm font-semibold text-ink">{t("home.searchTitle")}</p>
             <input
               value={search}
@@ -86,7 +87,7 @@ export default function HomePage() {
               className="input mt-3"
             />
           </div>
-          <div className="card p-6 space-y-3">
+          <div className="card p-4 md:p-6 space-y-3">
             <p className="text-sm font-semibold text-ink">{t("home.filtersTitle")}</p>
             <input
               value={category}
@@ -101,7 +102,7 @@ export default function HomePage() {
               className="input"
             />
           </div>
-          <div className="card p-6">
+          <div className="card p-4 md:p-6 hidden md:block">
             <p className="text-sm font-semibold text-ink">{t("home.writeSharperTitle")}</p>
             <ul className="mt-3 space-y-2 text-sm text-ink/60">
               <li>{t("home.writeSharperTip1")}</li>
@@ -112,11 +113,11 @@ export default function HomePage() {
         </aside>
 
         <div className="space-y-4">
-          <div className="flex flex-wrap items-center gap-2 text-sm text-ink/60">
+          <div className="flex flex-wrap items-center gap-2 text-sm text-ink/60 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
             {["following", "new", "trending"].map((value) => (
               <button
                 key={value}
-                className={`btn ${feed === value ? "bg-ink text-white" : "bg-white/70 text-ink"}`}
+                className={`btn whitespace-nowrap ${feed === value ? "bg-ink text-white" : "bg-white/70 text-ink"}`}
                 onClick={() => {
                   setFeed(value);
                   setPage(1);
@@ -125,8 +126,8 @@ export default function HomePage() {
                 {value === "new"
                   ? t("feed.new")
                   : value === "following"
-                  ? t("feed.following")
-                  : t("feed.trending")}
+                    ? t("feed.following")
+                    : t("feed.trending")}
               </button>
             ))}
           </div>
