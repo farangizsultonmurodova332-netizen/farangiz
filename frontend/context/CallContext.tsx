@@ -266,421 +266,432 @@ export function CallProvider({ children }: { children: React.ReactNode }) {
                 }
             }
         };
-        joinRestoredCall();
-    }, [clientReady, state.status, state.call?.id, state.isPermissionNeeded]); // React gracefully to permission state
+        // Manual join method for when permissions are needed
+        const joinCall = useCallback(async () => {
+            if (!state.call || !clientReady || !clientRef.current) return;
 
-    // Manual join method for when permissions are needed
-    const joinCall = useCallback(async () => {
-        if (!state.call || !clientReady) return;
-        setState(prev => ({ ...prev, isPermissionNeeded: false })); // Reset flag to trigger effect
-        // The effect above will run again because isPermissionNeeded changed to false
-        // But we might need a trusted execution context for getUserMedia
-        // So let's duplicate a bit of logic or refactor. 
-        // Actually, calling createMicrophoneAudioTrack HERE is better as it is direct user action.
+            try {
+                const AgoraRTC = (await import("agora-rtc-sdk-ng")).default;
 
-        try {
-            const AgoraRTC = (await import("agora-rtc-sdk-ng")).default;
-            if (!localAudioTrackRef.current) {
-                const audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
-                localAudioTrackRef.current = audioTrack;
-            }
-            // The effect will pick up the rest (joining) or we can do it here. 
-            // Let's just set the state and let the effect try again, 
-            // BUT valid user gesture is transient. We MUST create tracks here.
+                // 1. Create tracks immediately (using user gesture)
+                if (!localAudioTrackRef.current) {
+                    localAudioTrackRef.current = await AgoraRTC.createMicrophoneAudioTrack();
+                }
 
-            let videoTrack: ICameraVideoTrack | null = null;
-            if (state.call.call_type === "video" && !localVideoTrackRef.current) {
-                videoTrack = await AgoraRTC.createCameraVideoTrack();
-                localVideoTrackRef.current = videoTrack;
-                setState(prev => ({ ...prev, localVideoTrack: videoTrack }));
-            }
+                let videoTrack = localVideoTrackRef.current;
+                if (state.call.call_type === "video" && !videoTrack) {
+                    videoTrack = await AgoraRTC.createCameraVideoTrack();
+                    localVideoTrackRef.current = videoTrack;
+                }
 
-            // Now that tracks are created (hopefully), the effect will see them and join.
-            // Actually, the effect checks !localAudioTrackRef.current. 
-            // If we create them here, the effect might NOT trigger fully or correctly if we don't coordinate.
-            // Let's rely on the state change to trigger re-evaluation, but pre-create tracks here.
+                // 2. Join Channel
+                const { call } = state;
+                if (call.agora_channel) {
+                    const token = call.agora_token || null;
+                    // Add safety check for connection state
+                    if (clientRef.current.connectionState === "DISCONNECTED") {
+                        await clientRef.current.join(AGORA_APP_ID, call.agora_channel, token, user!.id);
 
-        } catch (e) {
-            console.error("Manual join failed:", e);
-            // Keep permission flag true if it failed again
-            setState(prev => ({ ...prev, isPermissionNeeded: true }));
-        }
-    }, [state.call, clientReady]);
+                        const tracksToPublish: (IMicrophoneAudioTrack | ICameraVideoTrack)[] = [localAudioTrackRef.current!];
+                        if (videoTrack) tracksToPublish.push(videoTrack);
+                        await clientRef.current.publish(tracksToPublish);
+                    }
+                }
 
-
-    // Setup Agora Event Listeners - depends on clientReady
-    useEffect(() => {
-        if (!clientReady) {
-            console.log("[Agora] Client not ready yet, skipping event setup");
-            return;
-        }
-
-        const client = clientRef.current;
-        if (!client) {
-            console.log("[Agora] Client ref is null even though clientReady is true");
-            return;
-        }
-
-        console.log("[Agora] Setting up event listeners");
-
-        const handleUserPublished = async (user: IAgoraRTCRemoteUser, mediaType: "audio" | "video") => {
-            console.log("[Agora] User published:", user.uid, mediaType);
-            await client.subscribe(user, mediaType);
-            if (mediaType === "video") {
-                console.log("[Agora] Adding remote user video to state:", user.uid);
-                setState((prev) => ({
+                // 3. Update state (clean up UI)
+                setState(prev => ({
                     ...prev,
-                    remoteUsers: [...prev.remoteUsers.filter((u) => u.uid !== user.uid), user],
+                    isPermissionNeeded: false,
+                    localVideoTrack: videoTrack || prev.localVideoTrack
                 }));
-            }
-            if (mediaType === "audio") {
-                console.log("[Agora] Playing remote user audio:", user.uid);
-                user.audioTrack?.play();
-            }
-        };
 
-        const handleUserUnpublished = (user: IAgoraRTCRemoteUser, mediaType: "audio" | "video") => {
-            console.log("[Agora] User unpublished:", user.uid, mediaType);
-            if (mediaType === "video") {
+                console.log("[CallContext] Manually joined successfully");
+
+            } catch (e: any) {
+                console.error("Manual join failed:", e);
+                // Ensure flag remains true if failed
+                setState(prev => ({ ...prev, isPermissionNeeded: true }));
+            }
+        }, [state.call, clientReady, user]);
+
+
+        // Setup Agora Event Listeners - depends on clientReady
+        useEffect(() => {
+            if (!clientReady) {
+                console.log("[Agora] Client not ready yet, skipping event setup");
+                return;
+            }
+
+            const client = clientRef.current;
+            if (!client) {
+                console.log("[Agora] Client ref is null even though clientReady is true");
+                return;
+            }
+
+            console.log("[Agora] Setting up event listeners");
+
+            const handleUserPublished = async (user: IAgoraRTCRemoteUser, mediaType: "audio" | "video") => {
+                console.log("[Agora] User published:", user.uid, mediaType);
+                await client.subscribe(user, mediaType);
+                if (mediaType === "video") {
+                    console.log("[Agora] Adding remote user video to state:", user.uid);
+                    setState((prev) => ({
+                        ...prev,
+                        remoteUsers: [...prev.remoteUsers.filter((u) => u.uid !== user.uid), user],
+                    }));
+                }
+                if (mediaType === "audio") {
+                    console.log("[Agora] Playing remote user audio:", user.uid);
+                    user.audioTrack?.play();
+                }
+            };
+
+            const handleUserUnpublished = (user: IAgoraRTCRemoteUser, mediaType: "audio" | "video") => {
+                console.log("[Agora] User unpublished:", user.uid, mediaType);
+                if (mediaType === "video") {
+                    setState((prev) => ({
+                        ...prev,
+                        remoteUsers: prev.remoteUsers.filter((u) => u.uid !== user.uid),
+                    }));
+                }
+            };
+
+            const handleUserLeft = (user: IAgoraRTCRemoteUser) => {
+                console.log("[Agora] User left:", user.uid);
                 setState((prev) => ({
                     ...prev,
                     remoteUsers: prev.remoteUsers.filter((u) => u.uid !== user.uid),
                 }));
+            };
+
+            const handleUserJoined = (user: IAgoraRTCRemoteUser) => {
+                console.log("[Agora] User joined:", user.uid);
+            };
+
+            client.on("user-published", handleUserPublished);
+            client.on("user-unpublished", handleUserUnpublished);
+            client.on("user-left", handleUserLeft);
+            client.on("user-joined", handleUserJoined);
+
+            return () => {
+                client.off("user-published", handleUserPublished);
+                client.off("user-unpublished", handleUserUnpublished);
+                client.off("user-left", handleUserLeft);
+                client.off("user-joined", handleUserJoined);
+            };
+        }, [clientReady]);
+
+        // Duration Timer
+        useEffect(() => {
+            if (state.status === "connected") {
+                timerRef.current = setInterval(() => {
+                    setState((prev) => ({ ...prev, duration: prev.duration + 1 }));
+                }, 1000);
+            } else {
+                if (timerRef.current) {
+                    clearInterval(timerRef.current);
+                    timerRef.current = null;
+                }
+                if (state.status === "idle") {
+                    setState((prev) => ({ ...prev, duration: 0 }));
+                }
             }
-        };
+            return () => {
+                if (timerRef.current) clearInterval(timerRef.current);
+            };
+        }, [state.status]);
 
-        const handleUserLeft = (user: IAgoraRTCRemoteUser) => {
-            console.log("[Agora] User left:", user.uid);
-            setState((prev) => ({
-                ...prev,
-                remoteUsers: prev.remoteUsers.filter((u) => u.uid !== user.uid),
-            }));
-        };
+        // Clean up tracks on unmount
+        useEffect(() => {
+            return () => {
+                localAudioTrackRef.current?.close();
+                localVideoTrackRef.current?.close();
+                clientRef.current?.leave();
+            };
+        }, []);
 
-        const handleUserJoined = (user: IAgoraRTCRemoteUser) => {
-            console.log("[Agora] User joined:", user.uid);
-        };
+        const startCall = useCallback(async (roomId: number, callee: CallParticipant, callType: CallType) => {
+            if (!user || !clientRef.current) return;
 
-        client.on("user-published", handleUserPublished);
-        client.on("user-unpublished", handleUserUnpublished);
-        client.on("user-left", handleUserLeft);
-        client.on("user-joined", handleUserJoined);
+            try {
+                setState((prev) => ({ ...prev, status: "calling", isVideoEnabled: callType === "video" }));
 
-        return () => {
-            client.off("user-published", handleUserPublished);
-            client.off("user-unpublished", handleUserUnpublished);
-            client.off("user-left", handleUserLeft);
-            client.off("user-joined", handleUserJoined);
-        };
-    }, [clientReady]);
+                // API Call to start
+                const response = await apiFetch<{
+                    call_id: string;
+                    agora_channel: string;
+                    agora_token: string;
+                }>("/calls/start/", {
+                    method: "POST",
+                    body: JSON.stringify({
+                        room_id: roomId,
+                        callee_id: callee.id,
+                        call_type: callType,
+                    }),
+                });
 
-    // Duration Timer
-    useEffect(() => {
-        if (state.status === "connected") {
-            timerRef.current = setInterval(() => {
-                setState((prev) => ({ ...prev, duration: prev.duration + 1 }));
-            }, 1000);
-        } else {
+                const newCall: Call = {
+                    id: response.call_id,
+                    room_id: roomId,
+                    caller: { id: user.id, username: user.username, avatar_url: user.avatar_url },
+                    callee,
+                    call_type: callType,
+                    status: "calling",
+                    agora_channel: response.agora_channel,
+                    agora_token: response.agora_token,
+                };
+
+                setState((prev) => ({ ...prev, call: newCall }));
+
+                // Initialize Local Tracks
+                const AgoraRTC = (await import("agora-rtc-sdk-ng")).default;
+                const audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
+                localAudioTrackRef.current = audioTrack;
+
+                let videoTrack: ICameraVideoTrack | null = null;
+                if (callType === "video") {
+                    videoTrack = await AgoraRTC.createCameraVideoTrack();
+                    localVideoTrackRef.current = videoTrack;
+                    setState((prev) => ({ ...prev, localVideoTrack: videoTrack }));
+                }
+
+                // Join Channel
+                if (response.agora_channel && response.agora_token) {
+                    await clientRef.current.join(AGORA_APP_ID, response.agora_channel, response.agora_token, user.id);
+
+                    if (videoTrack) {
+                        await clientRef.current.publish([audioTrack, videoTrack]);
+                    } else {
+                        await clientRef.current.publish([audioTrack]);
+                    }
+                }
+
+            } catch (error) {
+                console.error("Failed to start call:", error);
+                // Clean up tracks on error
+                localAudioTrackRef.current?.close();
+                localAudioTrackRef.current = null;
+                localVideoTrackRef.current?.close();
+                localVideoTrackRef.current = null;
+                setState(initialState);
+                // Ideally show toast
+            }
+        }, [user, apiFetch]);
+
+        const answerCall = useCallback(async () => {
+            if (!state.call || !user || !clientRef.current) return;
+
+            try {
+                const call = state.call;
+                setState((prev) => ({ ...prev, status: "connecting" }));
+
+                const response = await apiFetch<Call & { agora_token: string }>(`/calls/${call.id}/answer/`, { method: "POST" });
+
+                // Initialize Tracks
+                const AgoraRTC = (await import("agora-rtc-sdk-ng")).default;
+                const audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
+                localAudioTrackRef.current = audioTrack;
+
+                let videoTrack: ICameraVideoTrack | null = null;
+                if (call.call_type === "video") {
+                    videoTrack = await AgoraRTC.createCameraVideoTrack();
+                    localVideoTrackRef.current = videoTrack;
+                    setState((prev) => ({ ...prev, localVideoTrack: videoTrack }));
+                }
+
+                // Join Channel with FRESH token for the callee
+                if (response.agora_channel && response.agora_token) {
+                    await clientRef.current.join(AGORA_APP_ID, response.agora_channel, response.agora_token, user.id);
+
+                    if (videoTrack) {
+                        await clientRef.current.publish([audioTrack, videoTrack]);
+                    } else {
+                        await clientRef.current.publish([audioTrack]);
+                    }
+                }
+
+                setState((prev) => ({ ...prev, status: "connected" }));
+
+            } catch (error) {
+                console.error("Failed to answer call", error);
+                // Clean up tracks on error
+                localAudioTrackRef.current?.close();
+                localAudioTrackRef.current = null;
+                localVideoTrackRef.current?.close();
+                localVideoTrackRef.current = null;
+                endCall();
+            }
+        }, [state.call, user, apiFetch]);
+
+        const rejectCall = useCallback(async () => {
+            if (!state.call) return;
+            try {
+                await apiFetch(`/calls/${state.call.id}/reject/`, { method: "POST" });
+            } catch (error) {
+                console.error("Failed to reject call", error);
+            } finally {
+                setState(initialState);
+            }
+        }, [state.call, apiFetch]);
+
+        const endCall = useCallback(async () => {
+            const callId = state.call?.id;
+
+            // Stop Timer
             if (timerRef.current) {
                 clearInterval(timerRef.current);
                 timerRef.current = null;
             }
-            if (state.status === "idle") {
-                setState((prev) => ({ ...prev, duration: 0 }));
-            }
-        }
-        return () => {
-            if (timerRef.current) clearInterval(timerRef.current);
-        };
-    }, [state.status]);
 
-    // Clean up tracks on unmount
-    useEffect(() => {
-        return () => {
-            localAudioTrackRef.current?.close();
-            localVideoTrackRef.current?.close();
-            clientRef.current?.leave();
-        };
-    }, []);
-
-    const startCall = useCallback(async (roomId: number, callee: CallParticipant, callType: CallType) => {
-        if (!user || !clientRef.current) return;
-
-        try {
-            setState((prev) => ({ ...prev, status: "calling", isVideoEnabled: callType === "video" }));
-
-            // API Call to start
-            const response = await apiFetch<{
-                call_id: string;
-                agora_channel: string;
-                agora_token: string;
-            }>("/calls/start/", {
-                method: "POST",
-                body: JSON.stringify({
-                    room_id: roomId,
-                    callee_id: callee.id,
-                    call_type: callType,
-                }),
-            });
-
-            const newCall: Call = {
-                id: response.call_id,
-                room_id: roomId,
-                caller: { id: user.id, username: user.username, avatar_url: user.avatar_url },
-                callee,
-                call_type: callType,
-                status: "calling",
-                agora_channel: response.agora_channel,
-                agora_token: response.agora_token,
-            };
-
-            setState((prev) => ({ ...prev, call: newCall }));
-
-            // Initialize Local Tracks
-            const AgoraRTC = (await import("agora-rtc-sdk-ng")).default;
-            const audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
-            localAudioTrackRef.current = audioTrack;
-
-            let videoTrack: ICameraVideoTrack | null = null;
-            if (callType === "video") {
-                videoTrack = await AgoraRTC.createCameraVideoTrack();
-                localVideoTrackRef.current = videoTrack;
-                setState((prev) => ({ ...prev, localVideoTrack: videoTrack }));
-            }
-
-            // Join Channel
-            if (response.agora_channel && response.agora_token) {
-                await clientRef.current.join(AGORA_APP_ID, response.agora_channel, response.agora_token, user.id);
-
-                if (videoTrack) {
-                    await clientRef.current.publish([audioTrack, videoTrack]);
-                } else {
-                    await clientRef.current.publish([audioTrack]);
-                }
-            }
-
-        } catch (error) {
-            console.error("Failed to start call:", error);
-            // Clean up tracks on error
-            localAudioTrackRef.current?.close();
-            localAudioTrackRef.current = null;
-            localVideoTrackRef.current?.close();
-            localVideoTrackRef.current = null;
-            setState(initialState);
-            // Ideally show toast
-        }
-    }, [user, apiFetch]);
-
-    const answerCall = useCallback(async () => {
-        if (!state.call || !user || !clientRef.current) return;
-
-        try {
-            const call = state.call;
-            setState((prev) => ({ ...prev, status: "connecting" }));
-
-            const response = await apiFetch<Call & { agora_token: string }>(`/calls/${call.id}/answer/`, { method: "POST" });
-
-            // Initialize Tracks
-            const AgoraRTC = (await import("agora-rtc-sdk-ng")).default;
-            const audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
-            localAudioTrackRef.current = audioTrack;
-
-            let videoTrack: ICameraVideoTrack | null = null;
-            if (call.call_type === "video") {
-                videoTrack = await AgoraRTC.createCameraVideoTrack();
-                localVideoTrackRef.current = videoTrack;
-                setState((prev) => ({ ...prev, localVideoTrack: videoTrack }));
-            }
-
-            // Join Channel with FRESH token for the callee
-            if (response.agora_channel && response.agora_token) {
-                await clientRef.current.join(AGORA_APP_ID, response.agora_channel, response.agora_token, user.id);
-
-                if (videoTrack) {
-                    await clientRef.current.publish([audioTrack, videoTrack]);
-                } else {
-                    await clientRef.current.publish([audioTrack]);
-                }
-            }
-
-            setState((prev) => ({ ...prev, status: "connected" }));
-
-        } catch (error) {
-            console.error("Failed to answer call", error);
-            // Clean up tracks on error
-            localAudioTrackRef.current?.close();
-            localAudioTrackRef.current = null;
-            localVideoTrackRef.current?.close();
-            localVideoTrackRef.current = null;
-            endCall();
-        }
-    }, [state.call, user, apiFetch]);
-
-    const rejectCall = useCallback(async () => {
-        if (!state.call) return;
-        try {
-            await apiFetch(`/calls/${state.call.id}/reject/`, { method: "POST" });
-        } catch (error) {
-            console.error("Failed to reject call", error);
-        } finally {
-            setState(initialState);
-        }
-    }, [state.call, apiFetch]);
-
-    const endCall = useCallback(async () => {
-        const callId = state.call?.id;
-
-        // Stop Timer
-        if (timerRef.current) {
-            clearInterval(timerRef.current);
-            timerRef.current = null;
-        }
-
-        // Leave Agora and clean up tracks properly
-        try {
-            // Close audio track
-            if (localAudioTrackRef.current) {
-                localAudioTrackRef.current.close();
-                localAudioTrackRef.current = null;
-            }
-
-            // Close video track (use ref to avoid stale state)
-            if (localVideoTrackRef.current) {
-                localVideoTrackRef.current.close();
-                localVideoTrackRef.current = null;
-            }
-
-            // Leave channel
-            if (clientRef.current) {
-                await clientRef.current.leave();
-            }
-        } catch (cleanupError) {
-            console.error("Error during Agora cleanup:", cleanupError);
-        }
-
-        // Notify Backend
-        if (callId) {
+            // Leave Agora and clean up tracks properly
             try {
-                await apiFetch(`/calls/${callId}/end/`, {
-                    method: "POST",
-                    body: JSON.stringify({ reason: "ended" })
-                });
-            } catch (e) {
-                console.error("Failed to notify backend end call", e);
+                // Close audio track
+                if (localAudioTrackRef.current) {
+                    localAudioTrackRef.current.close();
+                    localAudioTrackRef.current = null;
+                }
+
+                // Close video track (use ref to avoid stale state)
+                if (localVideoTrackRef.current) {
+                    localVideoTrackRef.current.close();
+                    localVideoTrackRef.current = null;
+                }
+
+                // Leave channel
+                if (clientRef.current) {
+                    await clientRef.current.leave();
+                }
+            } catch (cleanupError) {
+                console.error("Error during Agora cleanup:", cleanupError);
             }
-        }
 
-        setState(initialState);
-
-    }, [state.call, apiFetch]);
-
-    const toggleMute = useCallback(async () => {
-        if (localAudioTrackRef.current) {
-            const newMuted = !state.isMuted;
-            await localAudioTrackRef.current.setEnabled(!newMuted);
-            setState((prev) => ({ ...prev, isMuted: newMuted }));
-        }
-    }, [state.isMuted]);
-
-    const toggleVideo = useCallback(async () => {
-        if (state.localVideoTrack) {
-            const newEnabled = !state.isVideoEnabled;
-            await state.localVideoTrack.setEnabled(newEnabled);
-            setState((prev) => ({ ...prev, isVideoEnabled: newEnabled }));
-        }
-    }, [state.localVideoTrack, state.isVideoEnabled]);
-
-    const handleIncomingCallSignal = useCallback((signal: CallSignal) => {
-        console.log("[CallContext] Received signal:", signal.type, signal);
-
-        if (signal.type === "call_offer" && user && signal.callee_id === user.id) {
-            const incomingCall: Call = {
-                id: signal.call_id,
-                room_id: signal.room_id,
-                caller: {
-                    id: signal.caller_id,
-                    username: signal.caller_username || "Caller",
-                    avatar_url: signal.caller_avatar
-                },
-                callee: {
-                    id: user.id,
-                    username: user.username,
-                    avatar_url: user.avatar_url,
-                },
-                call_type: signal.call_type,
-                status: "ringing",
-                agora_channel: signal.agora_channel,
-                agora_token: signal.agora_token,
-            };
-            setState((prev) => ({
-                ...prev,
-                call: incomingCall,
-                status: "ringing",
-                isVideoEnabled: signal.call_type === "video"
-            }));
-        } else if (signal.type === "call_end" || signal.type === "call_reject") {
-            // Handle remote end - use setState callback to get current state
-            setState((prev) => {
-                if (prev.call?.id === signal.call_id) {
-                    // Trigger cleanup asynchronously to avoid dependency on endCall
-                    setTimeout(() => {
-                        // Stop Timer
-                        if (timerRef.current) {
-                            clearInterval(timerRef.current);
-                            timerRef.current = null;
-                        }
-                        // Clean up tracks
-                        if (localAudioTrackRef.current) {
-                            localAudioTrackRef.current.close();
-                            localAudioTrackRef.current = null;
-                        }
-                        if (localVideoTrackRef.current) {
-                            localVideoTrackRef.current.close();
-                            localVideoTrackRef.current = null;
-                        }
-                        // Leave channel
-                        clientRef.current?.leave().catch(console.error);
-                    }, 0);
-                    return initialState;
+            // Notify Backend
+            if (callId) {
+                try {
+                    await apiFetch(`/calls/${callId}/end/`, {
+                        method: "POST",
+                        body: JSON.stringify({ reason: "ended" })
+                    });
+                } catch (e) {
+                    console.error("Failed to notify backend end call", e);
                 }
-                return prev;
-            });
-        } else if (signal.type === "call_answer") {
-            console.log("[CallContext] Processing call_answer signal, updating status to connected");
-            setState((prev) => {
-                if (prev.call?.id === signal.call_id) {
-                    console.log("[CallContext] Status updated to connected for call:", signal.call_id);
-                    return { ...prev, status: "connected" };
-                }
-                console.log("[CallContext] Call ID mismatch. Current:", prev.call?.id, "Signal:", signal.call_id);
-                return prev;
-            });
-        }
-    }, [user]);
+            }
 
-    // Helper: Format Duration
-    const formattedDuration = React.useMemo(() => {
-        const mins = Math.floor(state.duration / 60);
-        const secs = state.duration % 60;
-        return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
-    }, [state.duration]);
+            setState(initialState);
 
-    return (
-        <CallContext.Provider
-            value={{
-                ...state,
-                formattedDuration,
-                startCall,
-                answerCall,
-                rejectCall,
-                endCall,
-                toggleMute,
-                toggleVideo,
-                handleIncomingCallSignal,
-                joinCall,
-            }}
-        >
-            {children}
-        </CallContext.Provider>
-    );
-}
+        }, [state.call, apiFetch]);
+
+        const toggleMute = useCallback(async () => {
+            if (localAudioTrackRef.current) {
+                const newMuted = !state.isMuted;
+                await localAudioTrackRef.current.setEnabled(!newMuted);
+                setState((prev) => ({ ...prev, isMuted: newMuted }));
+            }
+        }, [state.isMuted]);
+
+        const toggleVideo = useCallback(async () => {
+            if (state.localVideoTrack) {
+                const newEnabled = !state.isVideoEnabled;
+                await state.localVideoTrack.setEnabled(newEnabled);
+                setState((prev) => ({ ...prev, isVideoEnabled: newEnabled }));
+            }
+        }, [state.localVideoTrack, state.isVideoEnabled]);
+
+        const handleIncomingCallSignal = useCallback((signal: CallSignal) => {
+            console.log("[CallContext] Received signal:", signal.type, signal);
+
+            if (signal.type === "call_offer" && user && signal.callee_id === user.id) {
+                const incomingCall: Call = {
+                    id: signal.call_id,
+                    room_id: signal.room_id,
+                    caller: {
+                        id: signal.caller_id,
+                        username: signal.caller_username || "Caller",
+                        avatar_url: signal.caller_avatar
+                    },
+                    callee: {
+                        id: user.id,
+                        username: user.username,
+                        avatar_url: user.avatar_url,
+                    },
+                    call_type: signal.call_type,
+                    status: "ringing",
+                    agora_channel: signal.agora_channel,
+                    agora_token: signal.agora_token,
+                };
+                setState((prev) => ({
+                    ...prev,
+                    call: incomingCall,
+                    status: "ringing",
+                    isVideoEnabled: signal.call_type === "video"
+                }));
+            } else if (signal.type === "call_end" || signal.type === "call_reject") {
+                // Handle remote end - use setState callback to get current state
+                setState((prev) => {
+                    if (prev.call?.id === signal.call_id) {
+                        // Trigger cleanup asynchronously to avoid dependency on endCall
+                        setTimeout(() => {
+                            // Stop Timer
+                            if (timerRef.current) {
+                                clearInterval(timerRef.current);
+                                timerRef.current = null;
+                            }
+                            // Clean up tracks
+                            if (localAudioTrackRef.current) {
+                                localAudioTrackRef.current.close();
+                                localAudioTrackRef.current = null;
+                            }
+                            if (localVideoTrackRef.current) {
+                                localVideoTrackRef.current.close();
+                                localVideoTrackRef.current = null;
+                            }
+                            // Leave channel
+                            clientRef.current?.leave().catch(console.error);
+                        }, 0);
+                        return initialState;
+                    }
+                    return prev;
+                });
+            } else if (signal.type === "call_answer") {
+                console.log("[CallContext] Processing call_answer signal, updating status to connected");
+                setState((prev) => {
+                    if (prev.call?.id === signal.call_id) {
+                        console.log("[CallContext] Status updated to connected for call:", signal.call_id);
+                        return { ...prev, status: "connected" };
+                    }
+                    console.log("[CallContext] Call ID mismatch. Current:", prev.call?.id, "Signal:", signal.call_id);
+                    return prev;
+                });
+            }
+        }, [user]);
+
+        // Helper: Format Duration
+        const formattedDuration = React.useMemo(() => {
+            const mins = Math.floor(state.duration / 60);
+            const secs = state.duration % 60;
+            return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+        }, [state.duration]);
+
+        return (
+            <CallContext.Provider
+                value={{
+                    ...state,
+                    formattedDuration,
+                    startCall,
+                    answerCall,
+                    rejectCall,
+                    endCall,
+                    toggleMute,
+                    toggleVideo,
+                    handleIncomingCallSignal,
+                    joinCall,
+                }}
+            >
+                {children}
+                {/* Helper audio element for remote users */}
+                {state.remoteUsers.map((user) => (
+                    <div key={user.uid} id={`remote-player-${user.uid}`} className="hidden" />
+                ))}
+            </CallContext.Provider>
+        );
+    };
