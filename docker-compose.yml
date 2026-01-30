@@ -82,6 +82,8 @@ services:
       - ./nginx/ssl:/etc/nginx/ssl:ro
       - backend_static:/var/www/static:ro
       - backend_media:/var/www/media:ro
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
     depends_on:
       - backend
       - frontend
