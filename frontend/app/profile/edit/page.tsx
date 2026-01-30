@@ -87,7 +87,8 @@ export default function EditProfilePage() {
         data.append("phone", formState.phone.trim());
         data.append("location", formState.location.trim());
         data.append("portfolio_file", portfolioFile);
-        await apiFetch<User>("/users/me", {
+        const timestamp = Date.now();
+        await apiFetch<User>(`/users/me?t=${timestamp}`, {
           method: "PATCH",
           body: data,
         });
@@ -101,7 +102,8 @@ export default function EditProfilePage() {
           phone: formState.phone.trim(),
           location: formState.location.trim(),
         };
-        await apiFetch<User>("/users/me", {
+        const timestamp = Date.now();
+        await apiFetch<User>(`/users/me?t=${timestamp}`, {
           method: "PATCH",
           body: JSON.stringify(payload),
         });
