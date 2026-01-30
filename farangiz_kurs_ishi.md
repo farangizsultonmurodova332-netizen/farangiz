@@ -31,6 +31,7 @@ KIRISH
   1.4. Funktsional talablar
   1.5. Nofunktsional talablar
   1.6. Analoglar va farqlovchi jihatlar
+  1.7. Foydalanish ssenariylari (use-case)
 2-BOB. ARXITEKTURA VA TEXNOLOGIYALAR
   2.1. Umumiy tizim arxitekturasi
   2.2. Backend: Django, DRF, Channels
@@ -38,12 +39,14 @@ KIRISH
   2.4. Mobile: Expo va React Native
   2.5. Ma'lumotlar almashinuvi va API uslubi
   2.6. DevOps va konteynerlash
+  2.7. Komponentlararo integratsiya
 3-BOB. MA'LUMOTLAR MODELI VA MA'LUMOTLAR BAZASI
   3.1. Foydalanuvchi va autentifikatsiya modeli
   3.2. G'oyalar, teglar, izohlar va reaksiyalar
   3.3. Kuzatish (follow) va bildirishnomalar
   3.4. Chat xonalari, xabarlar va qo'ng'iroqlar
   3.5. Fayl saqlash va media oqimlari
+  3.6. ER diagramma tavsifi
 4-BOB. FUNKTSIONAL MODULLAR TAHLILI
   4.1. Ro'yxatdan o'tish va kirish
   4.2. G'oyalar yaratish va boshqarish
@@ -52,26 +55,32 @@ KIRISH
   4.5. Bildirishnomalar
   4.6. Real vaqt chat
   4.7. Ovozli/video qo'ng'iroqlar
-  4.8. Xalqaro til qo'llab-quvvatlashi (i18n)
-  4.9. Admin panel va moderatsiya
+  4.8. Qidiruv, trend va filtrlar
+  4.9. Bookmark va saqlash
+  4.10. Xalqaro til qo'llab-quvvatlashi (i18n)
+  4.11. Admin panel va moderatsiya
 5-BOB. FOYDALANUVCHI INTERFEYSI VA UX
   5.1. Web ilova interfeysi
   5.2. Mobil ilova interfeysi
   5.3. Dizayn tizimi va theme boshqaruvi
+  5.4. UX tamoyillari va foydalanish qulayligi
 6-BOB. TESTLASH VA SIFAT NAZORATI
   6.1. Backend testlari
   6.2. API tekshirish
   6.3. Manual test ssenariylari
+  6.4. Ishonchlilik va regressiya
 7-BOB. XAVFSIZLIK VA ISHONCHLILIK
   7.1. JWT va sessiya xavfsizligi
   7.2. Ma'lumotlarni validatsiya qilish
   7.3. Tarmoqli himoya va rate-limit
   7.4. Fayl yuklash xavfsizligi
+  7.5. Zaxira va tiklash strategiyasi
 8-BOB. ISHGA TUSHIRISH VA DEPLOY
   8.1. Muhit sozlamalari
   8.2. Docker Compose bilan ishga tushirish
   8.3. Nginx va ishlab chiqarish muhiti
   8.4. Monitoring va loglar
+  8.5. Kengaytirish va skalalash
 9-BOB. NATIJALAR VA KELAJAK REJALAR
 XULOSA
 FOYDALANILGAN ADABIYOTLAR
@@ -82,14 +91,16 @@ KIRISH
 
 Bugungi raqamli jamiyatda yangi g'oyalarni tez, tushunarli va xavfsiz tarzda baham ko'rish muhim ahamiyatga ega. Ijtimoiy tarmoqlarda ko'p hollarda yuzaki fikrlar, shov-shuv yoki noaniq baholashlar ustun bo'ladi. "Farangiz" loyihasi esa foydalanuvchilarning real muammolar va innovatsion yechimlar bo'yicha aniq, mazmunli fikr almashinuvini tashkil etishga qaratilgan. Loyiha g'oyalarni tuzilmalashtirilgan shaklda taqdim etish, ularni izohlash, baholash, kuzatish va muhokama qilish, shuningdek real vaqt chat orqali muloqot qilish imkonini beradi.
 
-Ushbu kurs ishining maqsadi - "Farangiz" loyihasini loyihalash va ishlab chiqish jarayonini ilmiy-texnik nuqtai nazardan tahlil qilish, arxitektura va texnologik qarorlarni asoslab berish hamda loyiha funksiyalarini to'liq yoritishdir.
+Ushbu kurs ishining maqsadi - "Farangiz" loyihasini loyihalash va ishlab chiqish jarayonini ilmiy-texnik nuqtai nazardan tahlil qilish, arxitektura va texnologik qarorlarni asoslab berish hamda loyiha funksiyalarini to'liq yoritishdir. Asosiy e'tibor ishlab chiqilgan modullar o'rtasidagi integratsiya, ma'lumotlar modeli va foydalanuvchi tajribasiga qaratiladi.
 
 ============================================================
 1-BOB. LOYIHA G'OYASI VA TALABLAR TAHLILI
 
 1.1. Mavzu dolzarbligi va muammo qo'yilishi
 
-Startaplar, talabalar, muhandislar va ijodkorlar uchun g'oyalarni baham ko'rish va jamoaviy muhokama qilish platformasi juda muhim. An'anaviy ijtimoiy tarmoqlarda g'oyalar ko'pincha noto'g'ri talqin qilinadi yoki e'tibordan chetda qoladi. Shuning uchun, ixtisoslashgan g'oyalar banki platformasi kerak bo'ladi. "Farangiz" platformasi aynan shu ehtiyojni qondirishni maqsad qiladi.
+Startaplar, talabalar, muhandislar va ijodkorlar uchun g'oyalarni baham ko'rish va jamoaviy muhokama qilish platformasi juda muhim. An'anaviy ijtimoiy tarmoqlarda g'oyalar ko'pincha noto'g'ri talqin qilinadi yoki e'tibordan chetda qoladi. Shu sababli, ixtisoslashgan g'oyalar banki platformasi talab qilinadi. "Farangiz" platformasi aynan shu ehtiyojni qondirishni maqsad qiladi.
+
+Muammo shundaki, g'oyalarni baholash, izohlash va konstruktiv fikr bildirish uchun strukturalangan muhit yo'q. Shu bois loyihada g'oyalarni tizimli saqlash, tahlil qilish va jamoaviy muhokama qilish imkoniyati yaratiladi.
 
 1.2. Loyiha maqsadi va vazifalari
 
@@ -141,7 +152,15 @@ Asosiy talablar:
 
 1.6. Analoglar va farqlovchi jihatlar
 
-Mavjud ijtimoiy platformalarda g'oyalar umumiy kontent ichida yo'qolib ketishi mumkin. "Farangiz" loyihasi esa aynan g'oya almashish va konstruktiv fikr bildirishga yo'naltirilgan. Shuningdek, real vaqt chat va push bildirishnomalar integratsiyasi platformani jamoaviy ishlash uchun qulay qiladi.
+Mavjud ijtimoiy platformalarda g'oyalar umumiy kontent ichida yo'qolib ketishi mumkin. "Farangiz" loyihasi esa aynan g'oya almashish va konstruktiv fikr bildirishga yo'naltirilgan. Shuningdek, real vaqt chat va push bildirishnomalar integratsiyasi platformani jamoaviy ishlash uchun qulay qiladi. Loyiha monorepo yondashuvi bilan web va mobil ilovalarni birgalikda boshqarish imkoniyatini beradi.
+
+1.7. Foydalanish ssenariylari (use-case)
+
+- Ssenariy 1: foydalanuvchi ro'yxatdan o'tadi, profilini to'ldiradi va birinchi g'oyasini joylaydi.
+- Ssenariy 2: boshqa foydalanuvchi g'oyani ko'radi, izoh qoldiradi va layk bosadi.
+- Ssenariy 3: muallifga bildirishnoma keladi va u chat orqali muhokamani davom ettiradi.
+- Ssenariy 4: foydalanuvchi trend g'oyalarni ko'rib, o'ziga foydali bo'lgan g'oyalarni bookmark qiladi.
+- Ssenariy 5: guruh chatda bir nechta foydalanuvchilar g'oya ustida ishlaydi va qo'shimcha fayllarni biriktiradi.
 
 ============================================================
 2-BOB. ARXITEKTURA VA TEXNOLOGIYALAR
@@ -167,7 +186,7 @@ Backend asosiy komponentlari:
 
 2.3. Web frontend: Next.js va UI qatlam
 
-Web ilova Next.js (App Router) asosida qurilgan. TypeScript orqali turlar aniqligi ta'minlanadi. UI Tailwind CSS yordamida bezatilgan. React Query server ma'lumotlarini kesh qilish va sinxronlashtirishda ishlatiladi. WebSocket orqali chat real vaqt rejimida ishlaydi.
+Web ilova Next.js (App Router) asosida qurilgan. TypeScript orqali turlar aniqligi ta'minlanadi. UI Tailwind CSS yordamida bezatilgan. React Query server ma'lumotlarini kesh qilish va sinxronlashtirishda ishlatiladi. WebSocket orqali chat real vaqt rejimida ishlaydi. Next.js sahifalarida SEO va tezkor rendering imkoniyatlari mavjud.
 
 2.4. Mobile: Expo va React Native
 
@@ -175,7 +194,7 @@ Mobil ilova Expo asosida qurilgan. Expo Router ilova marshrutlashini soddalashti
 
 2.5. Ma'lumotlar almashinuvi va API uslubi
 
-Barcha asosiy funktsiyalar REST API orqali ishlaydi. Real vaqt chat va qo'ng'iroqlar uchun WebSocket kanali ishlatiladi. API endpointlar drf-spectacular orqali hujjatlashtirilgan va Swagger UI orqali ko'rish mumkin.
+Barcha asosiy funktsiyalar REST API orqali ishlaydi. Real vaqt chat va qo'ng'iroqlar uchun WebSocket kanali ishlatiladi. API endpointlar drf-spectacular orqali hujjatlashtirilgan va Swagger UI orqali ko'rish mumkin. API javoblari JSON formatida bo'ladi.
 
 2.6. DevOps va konteynerlash
 
@@ -187,6 +206,10 @@ Loyiha Docker Compose orqali ishga tushiriladi. Compose faylida quyidagi xizmatl
 - Nginx (reverse proxy, SSL, statik fayllar)
 
 Bu yondashuv lokal va ishlab chiqarish muhitlarini bir xil sozlamada ishlatish imkonini beradi.
+
+2.7. Komponentlararo integratsiya
+
+Frontend va mobile ilovalar backend REST API orqali ma'lumot oladi. Chat real vaqt bo'lgani uchun WebSocket orqali xabarlar almashiladi. API endpointlar autentifikatsiya talab qilganda JWT tokenlar ishlatiladi. Push bildirishnomalar mobil ilovada Expo tokenlari orqali yuboriladi.
 
 ============================================================
 3-BOB. MA'LUMOTLAR MODELI VA MA'LUMOTLAR BAZASI
@@ -254,6 +277,20 @@ Call modeli:
 
 Backend media fayllarni media/ katalogida saqlaydi. G'oya rasmlari, izoh rasmlari, chat fayllari, avatarlar va portfoliolar shu katalogda joylashadi. Nginx orqali media fayllar statik tarzda tarqatiladi.
 
+3.6. ER diagramma tavsifi
+
+Ma'lumotlar modeli quyidagi asosiy bog'lanishlardan iborat:
+- User 1..* Idea (muallif - g'oyalar)
+- Idea *..* Tag (g'oyalar va teglar)
+- Idea 1..* Comment (g'oya - izohlar)
+- Comment 1..* Comment (reply)
+- User *..* Idea (IdeaLike va Bookmark)
+- User *..* User (Follow)
+- User 1..* Notification
+- User *..* ChatRoom (participants)
+- ChatRoom 1..* Message
+- ChatRoom 1..* Call
+
 ============================================================
 4-BOB. FUNKTSIONAL MODULLAR TAHLILI
 
@@ -290,11 +327,19 @@ Chat funksiyasi WebSocket orqali ishlaydi. Chat xonalari shaxsiy yoki guruh bo'l
 
 Agora SDK yordamida voice/video qo'ng'iroqlarni yaratish mexanizmi mavjud. Backend call modeli orqali qo'ng'iroq holatlari (calling, ringing, connected, ended) saqlanadi.
 
-4.8. Xalqaro til qo'llab-quvvatlashi (i18n)
+4.8. Qidiruv, trend va filtrlar
+
+G'oyalar qidiruvi full-text search asosida ishlaydi. Trend bo'limi so'nggi 7 kunlik layklar bo'yicha saralangan g'oyalarni ko'rsatadi. Filtrlar kategoriya, teg va muallifga asoslanadi.
+
+4.9. Bookmark va saqlash
+
+Foydalanuvchi o'zi yoqtirgan g'oyalarni bookmark qilib saqlaydi. Bu ro'yxat keyinchalik "My bookmarks" bo'limidan ko'rinadi.
+
+4.10. Xalqaro til qo'llab-quvvatlashi (i18n)
 
 Loyiha UI matnlarini uch tilga moslashni qo'llab-quvvatlaydi: uz, ru, en. Backendda g'oya matnlari uchun i18n maydonlar ajratilgan.
 
-4.9. Admin panel va moderatsiya
+4.11. Admin panel va moderatsiya
 
 Django admin panel Jazzmin bilan bezatilgan. Admin foydalanuvchilarni, g'oyalarni, izohlarni va bildirishnomalarni boshqarishi mumkin.
 
@@ -326,6 +371,10 @@ Mobil UI foydalanuvchi uchun qulay va tezkor boshqaruvni ta'minlaydi. Push bildi
 
 Loyihada ranglar palitrasi, typografiya, spacing va shadows kabi dizayn sistemasi mavjud. Theme boshqaruvi light/dark rejimlarini qo'llab-quvvatlaydi.
 
+5.4. UX tamoyillari va foydalanish qulayligi
+
+UI foydalanuvchi uchun minimal kognitiv yuk bilan mo'ljallangan. Har bir asosiy funksiya 2-3 bosqichda bajariladi. Navigatsiya tablar orqali sodda boshqariladi. Search va filter foydalanuvchini tezda kerakli g'oyaga olib boradi.
+
 ============================================================
 6-BOB. TESTLASH VA SIFAT NAZORATI
 
@@ -349,6 +398,10 @@ API endpointlar Swagger orqali ko'rib chiqiladi. Har bir endpoint uchun talablar
 - Bildirishnoma kelishi
 - Profil va follow tekshirish
 
+6.4. Ishonchlilik va regressiya
+
+Har bir yangi funksional qo'shilganda regressiya testlar o'tkaziladi. Asosiy foydalanish yo'llari (register, login, create idea, comment, like) doimiy tekshiriladi.
+
 ============================================================
 7-BOB. XAVFSIZLIK VA ISHONCHLILIK
 
@@ -367,6 +420,10 @@ REST Framework throttle orqali anon va autentifikatsiyalangan foydalanuvchilarga
 7.4. Fayl yuklash xavfsizligi
 
 Fayllar serverda media/ katalogda saqlanadi. Fayl turlari va o'lchamlari chekli bo'lishi rejalashtirilgan.
+
+7.5. Zaxira va tiklash strategiyasi
+
+PostgreSQL ma'lumotlar bazasi uchun backup strategiyasi ishlab chiqiladi. Redis kesh bo'lgani uchun yo'qolishi tizimga jiddiy ta'sir qilmaydi. Media fayllar alohida backup qilinadi.
 
 ============================================================
 8-BOB. ISHGA TUSHIRISH VA DEPLOY
@@ -389,6 +446,10 @@ Nginx reverse proxy sifatida xizmat qiladi. Statik fayllar va media fayllar Ngin
 8.4. Monitoring va loglar
 
 Backend loglari fayl tizimida saqlanadi. Redis va Postgres healthcheck orqali nazorat qilinadi.
+
+8.5. Kengaytirish va skalalash
+
+Kelajakda tizim yuklamasi oshsa, backend servislarini gorizontal kengaytirish mumkin. Redis va Postgres resurslari alohida serverlarga ko'chiriladi. CDN orqali statik fayllarni tez yetkazish rejalashtiriladi.
 
 ============================================================
 9-BOB. NATIJALAR VA KELAJAK REJALAR

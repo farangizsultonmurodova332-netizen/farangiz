@@ -204,24 +204,34 @@ export function CallProvider({ children }: { children: React.ReactNode }) {
         checkActiveCall();
     }, [user, apiFetch]);
 
+    // Manual join method for when permissions are needed
+    const isJoiningRef = useRef(false);
+
     // Effect to join channel when we have call state restored but not joined yet
     useEffect(() => {
         const joinRestoredCall = async () => {
-            if (!clientReady || !clientRef.current || !state.call) return;
+            if (!clientReady || !clientRef.current || !state.call || isJoiningRef.current) return;
 
             // Check if already in a channel or connecting to avoid race conditions
             if (clientRef.current.connectionState !== "DISCONNECTED") {
-                console.log("[CallContext] Client already in state:", clientRef.current.connectionState);
-                // If we are "CONNECTED" but track refs are null (e.g. after hard refresh logic failure), we might need to unpublish?
-                // Actually if clientRef persisted (unlikely on refresh), we differ. 
-                // On refresh clientRef is new. 
                 return;
             }
 
-            // If we have a call object but no local tracks, it means we just restored state
-            // and need to rejoin the channel (unless we are waiting for permission)
-            if ((state.status === "connected" || state.status === "ringing" || state.status === "calling") && !localAudioTrackRef.current && !state.isPermissionNeeded) {
-                console.log("[CallContext] Rejoining restored call...");
+            // Logic:
+            // 1. If connected: Join (restoration)
+            // 2. If calling (we are caller): Join
+            // 3. If ringing:
+            //    - If we are caller: Join (we are waiting)
+            //    - If we are callee: DO NOT JOIN (wait for answer)
+            const isCaller = state.call.caller.id === user?.id;
+            const shouldJoin =
+                state.status === "connected" ||
+                (state.status === "calling" && isCaller) ||
+                (state.status === "ringing" && isCaller);
+
+            if (shouldJoin && !localAudioTrackRef.current && !state.isPermissionNeeded) {
+                console.log("[CallContext] Rejoining restored call...", state.call.id);
+                isJoiningRef.current = true;
                 const { call } = state;
 
                 try {
@@ -229,17 +239,36 @@ export function CallProvider({ children }: { children: React.ReactNode }) {
 
                     // Create tracks again if missing
                     if (!localAudioTrackRef.current) {
-                        const audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
-                        localAudioTrackRef.current = audioTrack;
+                        try {
+                            const audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
+                            localAudioTrackRef.current = audioTrack;
+                        } catch (err) {
+                            console.warn("Failed to create mic track on restore", err);
+                            if (isCaller) {
+                                // If caller can't create mic, maybe just fail silently or show error
+                            }
+                            // If we can't get mic, we probably shouldn't join or should join as audience? 
+                            // For now proceed, but publish might fail.
+                        }
                     }
 
                     let videoTrack: ICameraVideoTrack | null = null;
                     if (call.call_type === "video" && !localVideoTrackRef.current) {
-                        videoTrack = await AgoraRTC.createCameraVideoTrack();
-                        localVideoTrackRef.current = videoTrack;
-                        setState((prev) => ({ ...prev, localVideoTrack: videoTrack }));
+                        try {
+                            videoTrack = await AgoraRTC.createCameraVideoTrack();
+                            localVideoTrackRef.current = videoTrack;
+                            setState((prev) => ({ ...prev, localVideoTrack: videoTrack }));
+                        } catch (err) {
+                            console.warn("Failed to create cam track on restore", err);
+                        }
                     } else if (localVideoTrackRef.current) {
                         videoTrack = localVideoTrackRef.current;
+                    }
+
+                    // Check again before joining
+                    if (clientRef.current.connectionState !== "DISCONNECTED") {
+                        isJoiningRef.current = false;
+                        return;
                     }
 
                     // Join using stored token (or fresh one from API if we refetched)
@@ -249,10 +278,13 @@ export function CallProvider({ children }: { children: React.ReactNode }) {
                             await clientRef.current.join(AGORA_APP_ID, call.agora_channel, token, user!.id);
 
                             // Check published state before publishing to avoid errors
-                            const tracksToPublish: (IMicrophoneAudioTrack | ICameraVideoTrack)[] = [localAudioTrackRef.current!];
+                            const tracksToPublish: (IMicrophoneAudioTrack | ICameraVideoTrack)[] = [];
+                            if (localAudioTrackRef.current) tracksToPublish.push(localAudioTrackRef.current);
                             if (videoTrack) tracksToPublish.push(videoTrack);
 
-                            await clientRef.current.publish(tracksToPublish);
+                            if (tracksToPublish.length > 0) {
+                                await clientRef.current.publish(tracksToPublish);
+                            }
                             console.log("[CallContext] Rejoined successfully");
                         } catch (joinError: any) {
                             if (joinError.code === "UID_CONFLICT" || (joinError.name === "AgoraRTCError" && joinError.message.includes("CONNECTING"))) {
@@ -268,22 +300,25 @@ export function CallProvider({ children }: { children: React.ReactNode }) {
                         console.log("Permission denied, requesting user interaction...");
                         setState(prev => ({ ...prev, isPermissionNeeded: true }));
                     }
+                } finally {
+                    isJoiningRef.current = false;
                 }
             }
         };
         joinRestoredCall();
-    }, [clientReady, state.status, state.call?.id, state.isPermissionNeeded]);
+    }, [clientReady, state.status, state.call?.id, state.isPermissionNeeded, user]);
 
-    // Manual join method for when permissions are needed
     const joinCall = useCallback(async () => {
-        if (!state.call || !clientReady || !clientRef.current) return;
+        if (!state.call || !clientReady || !clientRef.current || isJoiningRef.current) return;
 
         try {
+            isJoiningRef.current = true;
             // USE PRELOADED SDK if available to ensure we stay in trusted event context
             // Call createMicrophoneAudioTrack IMMEDIATELY
             const AgoraRTC = agoraSdkRef.current;
             if (!AgoraRTC) {
                 console.error("[CallContext] SDK not loaded yet");
+                isJoiningRef.current = false;
                 return;
             }
 
@@ -349,6 +384,8 @@ export function CallProvider({ children }: { children: React.ReactNode }) {
             if (e.name === "NotAllowedError" || e.code === "PERMISSION_DENIED") {
                 alert("Permission denied. Please reset permissions in your browser address bar.");
             }
+        } finally {
+            isJoiningRef.current = false;
         }
     }, [state.call, clientReady, user]);
 
