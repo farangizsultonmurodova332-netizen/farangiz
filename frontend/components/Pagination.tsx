@@ -60,7 +60,7 @@ export default function Pagination({
         <button
           onClick={() => onPage(1)}
           disabled={!hasPrev}
-          className="btn bg-white/70 text-ink disabled:cursor-not-allowed disabled:opacity-30"
+          className="btn border border-haze bg-card text-ink disabled:opacity-50 disabled:cursor-not-allowed hover:bg-paper"
           title={t("pagination.first")}
         >
           <ChevronsLeft className="h-4 w-4" />
@@ -69,7 +69,7 @@ export default function Pagination({
         <button
           onClick={() => onPage(page - 1)}
           disabled={!hasPrev}
-          className="btn bg-white/70 text-ink disabled:cursor-not-allowed disabled:opacity-30"
+          className="btn border border-haze bg-card text-ink disabled:opacity-50 disabled:cursor-not-allowed hover:bg-paper"
           title={t("pagination.previous")}
         >
           <ChevronLeft className="h-4 w-4" />
@@ -89,9 +89,10 @@ export default function Pagination({
               <button
                 key={pageNum}
                 onClick={() => onPage(pageNum as number)}
-                className={`btn min-w-[40px] ${
-                  pageNum === page ? "bg-ink text-white" : "bg-white/70 text-ink hover:bg-white"
-                }`}
+                className={`btn min-w-[40px] transition-colors ${pageNum === page
+                    ? "bg-primary text-primary-fg"
+                    : "bg-transparent text-ink hover:bg-haze"
+                  }`}
               >
                 {pageNum}
               </button>
@@ -102,7 +103,7 @@ export default function Pagination({
         <button
           onClick={() => onPage(page + 1)}
           disabled={!hasNext}
-          className="btn bg-white/70 text-ink disabled:cursor-not-allowed disabled:opacity-30"
+          className="btn border border-haze bg-card text-ink disabled:opacity-50 disabled:cursor-not-allowed hover:bg-paper"
           title={t("pagination.next")}
         >
           <ChevronRight className="h-4 w-4" />
@@ -111,7 +112,7 @@ export default function Pagination({
         <button
           onClick={() => onPage(totalPages)}
           disabled={!hasNext}
-          className="btn bg-white/70 text-ink disabled:cursor-not-allowed disabled:opacity-30"
+          className="btn border border-haze bg-card text-ink disabled:opacity-50 disabled:cursor-not-allowed hover:bg-paper"
           title={t("pagination.last")}
         >
           <ChevronsRight className="h-4 w-4" />

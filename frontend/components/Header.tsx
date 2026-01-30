@@ -35,7 +35,7 @@ export default function Header() {
   });
 
   return (
-    <header className="border-b border-white/60 bg-white/70 backdrop-blur dark:border-gray-700 dark:bg-gray-900/90">
+    <header className="border-b border-haze bg-card/80 backdrop-blur-md sticky top-0 z-50">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-4">
         <Link href="/" className="flex items-center" aria-label="Crowdsourced Idea Bank">
           <img src="/logo.svg" alt="Crowdsourced Idea Bank" className="h-8 w-auto dark:invert" />
@@ -74,16 +74,16 @@ export default function Header() {
               <LogIn size={16} /> {t("nav.signIn")}
             </Link>
           )}
-          <div className="flex items-center gap-2 rounded-full border border-white/60 bg-white/80 px-3 py-1 dark:border-gray-600 dark:bg-gray-800">
-            <span className="text-xs text-ink/60 dark:text-gray-400">{t("lang.label")}</span>
+          <div className="flex items-center gap-2 rounded-full border border-haze bg-paper/50 px-3 py-1">
+            <span className="text-xs text-ink-muted">{t("lang.label")}</span>
             <select
-              className="bg-transparent text-xs font-semibold text-ink focus:outline-none dark:text-gray-200"
+              className="bg-transparent text-xs font-semibold text-ink focus:outline-none cursor-pointer"
               value={language}
               onChange={(event) => setLanguage(event.target.value as "en" | "ru" | "uz")}
             >
-              <option value="en" className="dark:bg-gray-800">EN</option>
-              <option value="ru" className="dark:bg-gray-800">RU</option>
-              <option value="uz" className="dark:bg-gray-800">UZ</option>
+              <option value="en" className="bg-card text-ink">EN</option>
+              <option value="ru" className="bg-card text-ink">RU</option>
+              <option value="uz" className="bg-card text-ink">UZ</option>
             </select>
           </div>
         </nav>

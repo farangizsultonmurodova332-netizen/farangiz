@@ -164,9 +164,8 @@ export default function IdeaCommentsDrawer({
         {user ? (
           <button
             onClick={() => likeMutation.mutate(comment.id)}
-            className={`inline-flex flex-col items-center ${actionClass} font-medium transition-colors hover:text-rose-600 ${
-              comment.user_liked ? "text-rose-600" : "text-ink/60"
-            }`}
+            className={`inline-flex flex-col items-center ${actionClass} font-medium transition-colors hover:text-rose-600 ${comment.user_liked ? "text-rose-600" : "text-ink/60"
+              }`}
           >
             <Heart size={14} className={comment.user_liked ? "fill-current" : ""} />
             {likeCount > 0 && <span className="mt-0.5 text-[10px]">{likeCount}</span>}
@@ -189,9 +188,8 @@ export default function IdeaCommentsDrawer({
       <button
         onClick={() => canToggle && pinMutation.mutate(comment.id)}
         aria-label={isPinned ? t("comments.unpin") : t("comments.pin")}
-        className={`inline-flex items-center justify-center px-1 py-1 transition-colors ${
-          isPinned ? "text-teal" : "text-ink/50"
-        } ${canToggle ? "hover:text-ink" : "cursor-default"}`}
+        className={`inline-flex items-center justify-center px-1 py-1 transition-colors ${isPinned ? "text-teal" : "text-ink/50"
+          } ${canToggle ? "hover:text-ink" : "cursor-default"}`}
       >
         <Pin size={14} className={`-rotate-45 ${isPinned ? "fill-current" : ""}`} />
       </button>
@@ -251,11 +249,11 @@ export default function IdeaCommentsDrawer({
                 <p className="text-sm text-ink/80 leading-relaxed mt-1">{comment.body}</p>
               )}
             </div>
-          <div className="mt-1 flex items-start gap-2">
-            {renderPinAction(comment)}
-            {renderLikeAction(comment, true)}
+            <div className="mt-1 flex items-start gap-2">
+              {renderPinAction(comment)}
+              {renderLikeAction(comment, true)}
+            </div>
           </div>
-        </div>
           {comment.image_url && (
             <div className="mt-3 overflow-hidden rounded-xl border border-slate-200/60 bg-white/80">
               <img
@@ -274,13 +272,13 @@ export default function IdeaCommentsDrawer({
 
   return (
     <div className="w-full lg:w-[380px] lg:self-start">
-      <div className="rounded-3xl bg-gradient-to-b from-white via-slate-50 to-teal-50 shadow-2xl flex max-h-[calc(100vh-9rem)] flex-col border border-slate-200/70 backdrop-blur-xl overflow-hidden">
-        <div className="sticky top-0 z-10 px-6 py-4 border-b border-slate-200/70 bg-white/90 backdrop-blur-sm">
+      <div className="rounded-3xl bg-card shadow-lg flex max-h-[calc(100vh-9rem)] flex-col border border-haze overflow-hidden">
+        <div className="sticky top-0 z-10 px-6 py-4 border-b border-haze bg-card/95 backdrop-blur-md">
           <div className="flex items-center justify-between gap-4">
             <div className="flex min-w-0 items-center gap-2 text-ink flex-nowrap">
-              <MessageCircle size={18} className="text-teal" />
+              <MessageCircle size={18} className="text-primary" />
               <h2 className="text-lg font-semibold whitespace-nowrap">{t("comments.title")}</h2>
-              <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-semibold text-ink/60 whitespace-nowrap">
+              <span className="inline-flex items-center rounded-full bg-paper px-2.5 py-0.5 text-[11px] font-semibold text-ink-muted whitespace-nowrap">
                 {commentsList.length}{" "}
                 {commentsList.length === 1 ? t("comments.single") : t("comments.plural")}
               </span>

@@ -69,7 +69,7 @@ export default function ProfilePage() {
         <div className="relative flex flex-col gap-6 lg:flex-row lg:items-center">
           <div className="flex flex-col items-center gap-4 lg:w-64">
             <div className="group relative">
-              <div className="flex h-28 w-28 items-center justify-center overflow-hidden rounded-full bg-slate-200 text-3xl font-semibold text-ink/60 ring-4 ring-white">
+              <div className="flex h-28 w-28 items-center justify-center overflow-hidden rounded-full bg-haze text-3xl font-semibold text-ink-muted ring-4 ring-card">
                 {profileAvatar ? (
                   <img
                     src={profileAvatar}

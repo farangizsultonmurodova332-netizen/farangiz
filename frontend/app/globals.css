@@ -10,7 +10,7 @@
     --primary-fg: 255 255 255;
     /* White */
 
-    /* Backgrounds */
+    /* Backgrounds - Clean, crisp light mode */
     --paper: 248 250 252;
     /* Slate-50 #f8fafc */
     --card: 255 255 255;
@@ -34,19 +34,19 @@
   }
 
   .dark {
-    /* Brand Colors - Slightly softer/brighter for dark mode */
+    /* Brand Colors - Adjusted for dark mode contrast */
     --primary: 45 212 191;
     /* Teal-400 #2dd4bf */
     --primary-fg: 15 23 42;
     /* Slate-900 */
 
-    /* Backgrounds */
-    --paper: 10 10 12;
-    /* Custom Deep Dark */
-    --card: 23 23 26;
-    /* Slightly lighter dark */
-    --input: 30 30 34;
-    /* Input bg */
+    /* Backgrounds - Premium Deep Slate */
+    --paper: 2 6 23;
+    /* Slate-950 #020617 (Very deep) */
+    --card: 15 23 42;
+    /* Slate-900 #0f172a (Slightly lighter) */
+    --input: 30 41 59;
+    /* Slate-800 #1e293b */
 
     /* Foreground/Text */
     --ink: 241 245 249;
@@ -55,8 +55,8 @@
     /* Slate-400 #94a3b8 */
 
     /* Borders */
-    --haze: 39 39 42;
-    /* Zinc-800 */
+    --haze: 30 41 59;
+    /* Slate-800 #1e293b */
 
     /* Status */
     --glow: 251 146 60;
@@ -66,15 +66,8 @@
 
 @layer base {
   body {
-    @apply bg-paper text-ink selection:bg-primary/20 transition-colors duration-300;
+    @apply bg-paper text-ink transition-colors duration-300;
     min-height: 100vh;
-  }
-
-  /* Custom background pattern only for light mode if desired, or subtle for both */
-  body {
-    background-image:
-      radial-gradient(circle at top left, rgb(var(--glow) / 0.05), transparent 40%),
-      radial-gradient(circle at 30% 20%, rgb(var(--primary) / 0.05), transparent 35%);
   }
 }
 
