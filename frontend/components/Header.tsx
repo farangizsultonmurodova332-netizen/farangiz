@@ -38,7 +38,7 @@ export default function Header() {
     <header className="border-b border-haze bg-card/80 backdrop-blur-md sticky top-0 z-50">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-4">
         <Link href="/" className="flex items-center" aria-label="Crowdsourced Idea Bank">
-          <img src="/icon.png" alt="Crowdsourced Idea Bank" className="h-8 w-auto" />
+          <img src="/icon.png" alt="Crowdsourced Idea Bank" className="h-12 w-auto" />
         </Link>
         <nav className="flex flex-wrap items-center gap-3 text-sm">
           <Link href="/" className="btn-ghost">
