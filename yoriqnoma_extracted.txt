@@ -1,0 +1,1053 @@
+ 
+ 
+ 
+O’ZBEKISTON RESPUBLIKASI 
+OLIY VA O’RTA MAXSUS TA’LIM VAZIRLIGI 
+NAMANGAN DAVLAT UNIVERSITETI  
+“Matematika” fakulteti 
+“Ehtimollar nazariyasi va matematik statistika” mutaxassisligi 
+1 – kurs magistranti Sobitaliyev Shahzodning 
+“Kichik kvadratlar usuli” mavzusida tayyorlagan 
+ 
+ 
+ 
+ 
+ 
+ 
+                                        
+Namangan – 2021 
+ 
+     Kurs ishi  
+Ш 
+ 
+ 
+MUNDARIJA 
+KIRISH……………………………………………………………. 
+I-bob. Kichik kvadratlar usuli haqida boshlang’ich tushunchalar 
+1.1 Kichik kvadratlar usulining paydo bo'lish tarixi……………   4 
+1.2 Kichik kvadratlar usulining mohiyati……………………….   5 
+1.3 Kichik kvadratlar usuli tushunchasi va ta'rifi………………  6 
+II-bob. Kichik kvadratlar usuli yordamida funksiyani yaqinlashtirish 
+2.1  Funksiyani yaqinlashtirishning asosiy tushunchalari va ta'riflari… 7 
+2.2  Lineer funksiya parametrlarini toppish…………………………..   11 
+III-bob. Kichik kvadratlar dasturini qo'llash 
+          3.1 Kichik kvadratlar dasturini qo'llash sohalari…………………….  13 
+          3.2 Lineer funksiya uchun  kichik kvadratlar usulidan foydalanishga oid 
+misollar……………………………………………………………………….  14  
+XULOSA…………………………………………………………… 19 
+FOYDALANILGAN ADABIYOTLAR………………………….   20 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Kirish 
+  Kichik kvadratlar usuli ko'plab sohalarda keng qo'llaniladi, chunki bu tasodifiy 
+xatolarni o'z ichiga olgan o'lchovlardan miqdorlarni baholash usullaridan biridir. 
+Ko'pincha kuzatuvlarni qayta ishlash uchun foydalidir.  
+Bundan tashqari, eng kichik kvadratchalar usuli umumiy muammolarning bir 
+qismi sifatida ishlatiladi. Masalan, yaqinlashishni amalga oshirish zarur bo'lganda, u 
+eng ko'p ishlatiladigan kichik kvadratlar usuli hisoblanadi. Ushbu yondashuv asosida: 
+statistikada regressiya tahlili, muhandislikda parametrlarni baholash va h okazo. 
+Tadqiqot maqsadi:  kichik kvadratlar usulini ko'plab o'zgaruvchilar 
+funksiyalarining ekstremumini topish uchun teoremalarning qo'llanilishi sifatida 
+ko'rib chiqish. 
+Tadqiqot maqsadlari: 
+1. Kichik kvadratlar, chiziqli juftlik bilan regressiya usulini ko'rib chiqing;  
+2. Chiziqli juftlik bilan r egressiya koeffitsientlarini topish formulalarini 
+chiqarish; 
+3. Agar koeffitsientlar tizim yechimlari bo'l sa, topilgan funk siya minimal 
+qiymatni olishini isbotlang. 
+Tadqiqot usullari:  
+1. Nazariy usullar: 
+ Maxsus adabiyotlarni o'rganish. 
+ Oldingi tadqiqotchilarni tahlil qilish 
+2. Ampirik metodika: 
+ Amaliyotda matematik masalalarni yechish. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+1. Kichik kvadratlar usuli 
+ 
+1.1 Kichik kvadratlar usulining paydo bo'lish tarixi 
+19-asrning boshlariga qadar. olimlar  noma'lumlar soni tenglamalar sonidan kam 
+bo'lgan tenglamalar tizimini yechish bo'yicha aniq qoidalarga ega emas edilar; O'sha 
+vaqtga qadar tenglamalar turiga va kalkulyatorlarning aql -zakovatiga bog'liq bo'lgan 
+muayyan usullardan foydalanilgan va shuning uchun bir xil kuzatuv ma'lumotlariga 
+asoslangan har xil kalkulyatorlar turli xulosalarga kelishgan. Gauss (1795) ushbu 
+uslubning birinchi qo'llanilishining muallifi bo'lgan va Legendre (1805) mustaqil 
+ravishda uni zamonaviy nom bilan k ashf etgan va nashr e tgan (fransuzcha: Méthode 
+des moindres quarrés). Laplas bu usulni ehtimollar nazariyasi bilan bog'ladi va 
+amerikalik matematik Edrain (1808) uning ehtimollik dasturlarini ko'rib chiqdi.  
+Usul Enke, Bessel, Xansen va boshqalarning keyingi tadqiqotlari bilan tarqaldi va 
+takomillashtirildi. O'rtacha arifmetikada bo'lgani kabi, yangi ixtiro qilingan usul ham, 
+albatta, kerakli qiymatlarning haqiqiy qiymatlarini bermaydi, lekin bu eng ehtimoliy 
+qiymatlarni beradi. Bu eng kichik kvadratlar usuli deb ataladi, chunki  bu usul bilan 
+olingan noma'lum miqdorlarni dastlabki tenglamalarga almashtirgandan so'ng, 
+tenglamalarning o'ng tomonlarida, agar nollar bo'lmasa, unda kvadratchalar yig'indisi 
+bo'lgan kichik miqdorlar olinadi o'rnini bosgandan so'ng, noma'lumlarning boshq a 
+ma'nolari qanday bo'lishidan qat'i nazar, o'xshash qoldiqlar kvadratlarining 
+yig'indisidan kam bo'lib chiqadi. Tenglamalarni eng kichik kvadratlar usuli bilan 
+yechish, noma'lumlarning mumkin bo'lgan xatolarini, ya'ni xulosalarning aniqlik 
+darajasi baholanadigan qiymatlarni chiqarishga imkon beradi.  
+20-asr boshlaridagi A.A.Markovning asarlari eng kichik kvadratlar usulini matematik 
+statistikani baholash nazariyasiga kiritishga imkon berdi, bunda u muhim va tabiiy 
+qism hisoblanadi. Y. Neyman, F. Devid, A. A ytken, S. Raoning sa'yi harakatlari bilan 
+bu sohada ko'plab muhi m natijalarga erishildi. Eng kichik  kvadratchalar matematik 
+statistikada ustun mavqega ega bo'lgan. Ba'zi jihatlarga ko'ra, bu statistika uchun 
+avvalgi asrdagi matematikani hisoblash usuli bil an bir xil ahamiyatga ega edi. 
+Usulning "dalillari" statistika nazariyasini rivojlantirish yo'nalishini ko'rsatdi; yuqori 
+ 
+ 
+uslublarni qo'llash bo'yicha ko'rsatmalar ushbu usuldan foydalanishni tushuntirib 
+beradigan ma'lumotnomalar bo'lib, uni kashf etishnin g ustuvor yo'nalishi bo'yicha 
+munozaralar intellektual jamiyat tomonidan ushbu usulning ahamiyati to'g'risida 
+xabardorligidan dalolat berdi. Matematik hisoblash usuli singari, bu "kuzatuvlarni 
+hisoblash" ham yo'qdan kelib chiqmagan va uning donoligi va imk oniyatlarini 
+o'rganish bir asrdan ko'proq vaqtni oldi. Ushbu vaqtning aksariyat qismida statistik 
+usullar birgalikda "kuzatuvlar kombinatsiyasi" deb nomlangan. Ushbu ibora eng 
+kichik kvadratlar usulining asosiy tarkibiy qismini qamrab oladi va evolyutsiyas i 
+uning rivojlanish tezligini belgilagan kontseptsiyani tavsiflaydi.  
+1.2 Kichik kvadratlar usulining mohiyati 
+x
+- o'rnatilgan, 
+m  noma'lum o'zgaruvchilar (parametrlar) bo'lsin, 
+mnnixfi  ,,,1),(  - 
+ushbu o'zgaruvchilar to'plamidan funktsiyalar to'plami. Vazifa bunday qiymatlarni 
+tanlashdir
+x shuning uchun ushbu funk siyalarning qiymatlari ba'zi qiymatlarga iloji 
+boricha yaqinroq
+iy ... Aslida, biz haddan tashqari aniqlan gan tenglamalar tizimining 
+"yechimi" haqida gapiramiz 
+niyxf ii ,,1,)(   tizimning chap va o'ng qismlarining 
+maksimal yaqinligi ko'rsatilgan ma'noda. Kichik kvadratlar usuli ning mohiyati 
+"yaqinlik o'lchovi" sifatida chap va  o'ng tomonlarning og'ish kvadratlari yig'indisini 
+tanlashdan iborat.
+|)(| ii yxf  ... Shunday qilib,  eng kichik kvadratlar usuli  mohiyatini 
+quyidagicha ifodalash mumkin: 
+    
+i i xiii xfye min
+22
+ 
+Agar tenglamalar tizimida echim bo'lsa, unda kvadratlar yig'indisining minimal 
+qiymati nolga teng bo'ladi va tenglamalar tizimining aniq echimlarini analitik yoki 
+masalan, har xil sonli optimallashtirish usullari bilan topish mumkin. Agar tizim 
+qayta aniql angan bo'lsa, ya'ni erkin gapiradigan bo'lsa, mustaqil tenglamalar soni 
+izlanayotgan o'zgaruvchilar sonidan ko'p bo'lsa, unda tizim aniq echimga ega emas va 
+eng kichik kvadratlar usuli ba'zi "optimal" vektorni topishga imkon beradi
+x
+ 
+ 
+vektorlarning maksimal yaqinligi ma'nosida
+y  va 
+)(xf  yoki og'ish vektorining 
+maksimal yaqinligi 
+e  nolga intiladi (yaqinlik evklid masofasi ma'nosida tushuniladi) 
+ 
+1.3 Kichik kvadratlar usuli tushunchasi va ta'rifi 
+ Eng kichkina kvadratchalar - bu barcha qoldiqlar kvadratlari yig'indisini 
+minimallashtirishga asoslangan regressiya parametrlarini taxminlarini topish uchun 
+ishlatiladigan regressiya tahlil usullaridan biridir. 
+ Regressiya (chiziqli) tahlil - bu bog'liq o'zgaruvchining o'zaro bog'liqligini 
+tekshirishning statistik usuli 
+y  va bir yoki bir nechta mustaqil o'zgaruvchilar 
+pxxx ,...,, 21
+... Mustaqil o'zgaruvchilar aks holda regres sorlar yoki prediktorlar, qaram 
+o'zgaruvchilar esa mezon deyiladi. Bog'liq va mustaqil o'zgaruvchilar terminologiyasi 
+faqat o'zgaruvchilarning matematik bog 'liqligini aks ettiradi, sabab -natijaga bog’liq  
+emas. 
+Istalgan miqdorni to'g'ridan -to'g'ri o'lchash mumkin bo'lganda, masalan, segmentning 
+uzunligi yoki burchakning uzunligi, aniqlikni oshirish uchun o'lchov ko'p marta 
+amalga oshiriladi va yakuniy natija sifatida barcha individual o'lchovlarning arifmetik 
+o'rtacha qiymati olinadi. O'rtacha arif metikaning ushbu qoidasi ehtimollar 
+nazariyasining mulohazalariga asoslangan; individual o'lchovlarning arifmetik 
+o'rtacha qiymatdan chetga chiqish kvadratlari yig'indisi har qanday boshqa qiymatdan 
+individual o'lchovlar sapmalarining yig'indisidan kam bo' lishini ko'rsatish oson. 
+Shuning uchun o'rtacha arifmetik qoidaning o'zi eng kichik kvadratlar usulining eng 
+oddiy holatidir. 
+Ushbu usulning asosiy g'oyasi shundan iboratki, xatolar kvadratlari yig'indisi 
+minimallashtirishga intilayotgan muammoni hal qilis hning aniqligi mezonidir. Ushbu 
+usuldan foydalanganda ham sonli, ham analitik yondashuvlar qo'llanilishi mumkin.  
+Xususan, raqamli dastur sifatida eng kichik kvadratlar usuli noma'lum tasodifiy 
+o'zgaruvchining o'lchovlarini iloji boricha ko'proq qilishni an glatadi. Bundan 
+tashqari, hisob -kitoblar qanchalik ko'p bo'lsa, echim shunchalik aniq bo'ladi. Ushbu 
+hisob-kitoblar to'plamida (dastlabki ma'lumotlar) yana bir taklif qilingan yechimlar 
+ 
+ 
+to'plami olinadi, ulardan eng yaxshisi tanlanadi. Agar yechimlar to'pl ami 
+parametrlangan bo'lsa, unda eng kichik kvadratlar usuli parametrlarning optimal 
+qiymatini topishga kamayadi. 
+Dastlabki ma'lumotlar (o'lchovlar) to'plami va taxmin qilingan yechimlar 
+to'plami bo'yicha kichik kvadratlar usuli ni amalga oshirishga analitik  yondashuv 
+sifatida ma'lum bir gipoteza sifatida olingan formulada ifodalanishi mumkin bo'lgan 
+ma'lum funksional bog'liqlik (funk sional) aniqlanadi. tasdiqlash. Bunday holda, eng 
+kichik kvadratlar usuli dastlabki ma'lumotlar xatolarining kvadratlari to'pla mida 
+ushbu funksionalning minimalini topishga kamaytiriladi.  
+Ko'pincha o'lchovlarning aniq qiymatdan chetga chiqishi ham ijobiy, ham 
+salbiydir. O'rtacha o'lchov xatosini aniqlashda oddiy summa bahoning sifati 
+to'g'risida noto'g'ri xulosaga olib kelishi mum kin, chunki ijobiy va salbiy 
+qiymatlarning o'zaro bekor qilinishi o'lchovlar to'plamining namuna olish quvvatini 
+pasaytiradi. Va natijada, baholashning to'g'riligi. Bunga yo'l qo'ymaslik uchun, 
+og'ishlar kvadratlari umumlashtiriladi. Bundan tashqari, o'lch angan qiymatning 
+o'lchovi va yakuniy bahoni moslashtirish uchun, kvadrat ildizlari xatolar kvadratlari 
+yig'indisidan olinadi. 
+Eng kichik kvadratchalar u suli, shuningdek, berilgan funk siyani boshqa (oddiy) 
+funksiyalar bilan taxminiy aks yettirish uchun ishl atiladi va ko'pincha kuzatuvlarni 
+qayta ishlashda foydalidir. Biz qa yerda kuzatuvlar namunasi yordamida regressiya 
+tahlilini o'tkazamiz
+a  va 
+b  - haqiqiy (umumiy) parametrlarni tanlab baholash, 
+  va 
+
+, bu populyatsiyada (umumiy aholi) chiziqli regressiya chizig'ini belgilaydi.  
+2  Kichik kvadratlar usuli yordamida funksiyani yaqinlashtirish  
+ 
+2.1 Funksiyani yaqinlashtirishning asosiy tushunchalari va ta'riflari  
+ Eksperimental natijalarni analitik formulada yaqinlashtirish (yaqinlashtirish) 
+uchun eksperimental natijalarni qayta ishlashda eng kichik kvadratchalar usuli 
+qo'llaniladi.  
+Endi, funksiyani yaqinlashishi nimani anglatishini aniqlaylik.  
+ 
+ 
+Taxminan(taxminiy) funk siyalar
+)(xf  bunday funk siyani topish deyiladi 
+(taxminiy funk siya) 
+)(xg , bu berilganga yaqin bo'lar edi. F unksiyalarning yaqinligi 
+mezonlari har xil bo'lishi mumkin. 
+Agar yaqinlashtirish diskret nuqtalar to'plamiga asoslangan bo'lsa, yaqinlashish 
+nuqta yoki diskret deb ataladi. 
+Agar yaqinlashtirish uzluksiz nuqtalar to'plamida (segmentida) amalga oshirilsa, 
+yaqinlashuv uzluksiz yoki integral deb ataladi. Bunday yaqinlashish ga misol Teylor 
+qatoridagi funk siyani kengaytirish, ya' ni funksiyani kuch ko’xadiga almashtirish dan 
+iboratdir. 
+Nuqta yaqinlashuvining eng keng tarqalgan turi interpolatsiya - ma'lum 
+qiymatlarning mavjud bo'lgan diskret to'plamidan miqdorning oraliq qiymatlarini 
+topishdir. 
+Interpolatsiya tugunlari deb nomlangan  diskret nuqtalar to'p lami va ushbu 
+nuqtalardagi funksiya qiymatlari berilsin. Agar  funksiya yaratmoqchi bo’lsak 
+)(xg
+bunda barcha berilgan tugunlarga eng yaqin. Shunday qilib,  
+ii yxg )( ...funksiyaning 
+yaqinligi mezonidir. 
+Funksiya sifatida 
+)(xg  odatda ko’xad tanlanadi, bu interpolatsiya ko’xadasi deb 
+ataladi. 
+Agar ko’xad butun interpolatsiya mintaqasi uchun bir xil bo'lsa, interpolyatsiya 
+global deb aytiladi. 
+Agar ko’xadlar turli xil tugunlar o'rtasida farq qiladigan bo'lsa, biz parcha -
+parcha yoki mahalliy interpolatsiya haqida gapiramiz.  
+Interpolatsiya ko’xadini topib, tugunlar orasidagi funksiya qiymatlarini 
+hisoblashimiz va shuningdek, belgilangan intervaldan  tashqarida (ekstrapolyat) 
+funksiya qiymatini aniqlashimiz mumkin. 
+Formulaning o'ziga xos shakli, qoida tariqasida, jismoniy fikrlardan tanlanadi. 
+Bunday formulalar bo'lishi mumkin: 
+ 
+ 
+ 
+bx
+aycaey
+axaxaxay
+cbxaxy
+baxy
+bx
+n
+n
+n
+n
+
+
+
+
+
+
+,
+,
+,
+,
+01
+1
+1
+2
+  (2.1) 
+va boshqalar. 
+Eng kichik kvadratchalar usulining mohiyati quyidagicha.  O'lchov natijalari 
+jadvalda keltirilgan bo'lsin: 
+ 
+x
+ 
+1x  
+2x  
+  
+nx  
+y
+ 
+1y  
+2y  
+  
+ny  
+ 
+Taxminan bog'liqlikning shakli tanlangan deb o'ylaymiz va uni quyidagi shaklda 
+yozish mumkin: 
+ 
+ 
+  1,,,,, 10  nmaaaxfy m  (2.2) 
+ 
+Qaerda
+f - ma'lum funktsiya,
+maaa ,,, 10  - noma'lum doimiy parametrlar, ularning 
+qiymatlarini topish kerak. Eng kichi k kvadratlar usulida (2.2) funk siyani 
+eksperimental bog'liqlikka yaqinlashishi eng yaxshi deb hisoblanadi, agar shart  
+ 
+    
+ 
+
+n
+i
+n
+i
+miiim aaaxfyVaaaQQ
+1 1
+2
+10
+2
+10 min),,,,(,,,   (2.3) 
+ya'ni kerakli analitik funktsiya eksperimental bog'liqlikdan chetlanish kvadratlarining 
+yig'indisi minimal bo'lishi kerak. 
+Funksiyani unutmang
+Q qoldiq deb nomlangan. 
+ 
+ 
+ 
+ 
+ 
+ 
+Qoldiqdan beri 
+  
+
+
+n
+i
+im VaaaQ
+1
+2
+10 ,0,,, 
+ 
+unda u minimal darajaga ega. Bir  nechta o'zgaruvchiga ega bo'lgan funksiyalarning 
+minimal ko'rsatkichlari uchun zarur bo'lgan shart bu parametrlarning barcha qisman 
+hosilalarining nolga tengligi. Shunday qilib, taxminiy funksiya (2.2) parametrlarining 
+eng yaxshi qiymatlarini, ya'ni ular uchun shunday qiymatlarni topish
+ maaaQQ ,,, 10 
+ minimal, tenglamalar tizimini yechishga qisqartiriladi: 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+0
+0
+0
+1
+0
+ma
+Q
+a
+Q
+a
+Q
+
+ (2.4) 
+Eng kichik kvadratlar usuliga quyidagi geometrik talqin berilishi mumkin: 
+berilgan tipdagi cheksiz chiziqlar oilasi orasida bitta chiziq topilgan, buning uchun 
+eksperimental nuqtalar ordinatalari va tegishli ordinatalar orasidagi farqlar kvadratlari 
+yig'indisi berilgan. ushbu chiziq tenglamasi bilan topilgan nuqtalar eng kichik bo'ladi.  
+ 
+ 
+
+ 
+ 
+2.2 Lineer funksiya parametrlarini topish 
+Eksperimental ma'lumotlar chiziqli funktsiya bilan ifodalansin:  
+baxy 
+ 
+ Bunday qiymatlarni tanlash talab qilinadi 
+a va
+b buning uchun funksiya 
+ 
+       
+ 
+
+n
+i
+n
+i
+iiii baxybaxybaQ
+1 1
+22
+,  (2.5) 
+minimal bo'ladi. Minimal funk siya uchun zarur shartlar (3.4) tenglamalar tizimiga 
+keltiriladi: 
+ 
+     
+     
+
+
+
+
+
+
+
+
+
+
+ 
+
+ 
+n
+i
+ii
+n
+i
+ii
+n
+i
+n
+i
+iiiiiii
+baxybaxyb
+Q
+bxaxyxxbaxya
+Q
+11
+1 1
+2
+0212
+022  (2.6) 
+ 
+ Transformatsiyalardan so'ng biz ikkita noma'lum bo'lgan ikkita chiziqli tenglamalar 
+tizimini olamiz: 
+ 
+
+
+
+
+
+
+
+
+ 
+  
+ 
+ 
+n
+i
+n
+i
+ii
+n
+i
+n
+i
+iiii
+ybnxa
+yxxbxa
+1 1
+1 1
+2  (2.7) 
+echimini topsak, parametrlarning kerakli qiymatlarini topamiz
+a va
+b ... 
+ Parametrlarning qiymatini aniqlang: 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+ 
+n
+xay
+b
+xxn
+yxyxn
+a
+n
+i
+i
+n
+i
+i
+n
+i
+i
+n
+i
+i
+n
+i
+n
+i
+i
+n
+i
+iii
+11
+2
+11
+2
+1 11  (2.8) 
+Koeffitsientlarni hisoblash uchun  quyidagi komponentlarni topishimiz kerak: 
+ 
+ 
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+n
+i
+ii
+n
+i
+i
+n
+i
+i
+n
+i
+i
+yxsumxy
+xxsum
+ysumy
+xsumx
+1
+1
+2
+1
+2  (2.9) 
+ Keyin parametrlarning qiymati quyidagicha aniqlanadi:  
+ 
+ 
+
+
+
+
+
+
+
+
+n
+sumxasumyb
+sumxxsumn
+sumysumxsumxyna 22  (2.10) 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+3. Kichik kvadratlar usulini qo'llash 
+ 
+3.1 Kichik kvadratlar usulini qo'llash sohalari haqida 
+Kichik kvadratlar usulidan  turli sohalarda keng qo'llaniladi. Masalan, ehtimollar 
+nazariyasi va  matematik statistikada bu usul tasodifiy o'zgaruvchining qiymatlari 
+diapazonining kengligini belgilaydigan standart og'ish kabi tasodifiy o'zgaruvchining 
+xarakteristikasini aniqlash uchun ishlatiladi. Matematik tahlilda va farazlarni keltirib 
+chiqarish yo ki tasdiqlash uchun ishlatiladigan fizikaning turli sohalarida Kichik 
+kvadratlar usulidan  xususan, analitik konvertatsiya qili shga imkon beradigan sodda 
+funksiyalar bo'yicha sonli to'plamlarda aniqlangan funksiyalarning taxminiy 
+ko'rinishini baholash uchun ishlatiladi. 
+  Ushbu usulning yana bir qo'llanilishi - filtrlash vazifalarida foydali signalni 
+ustma-ust shovqindan ajratish. 
+Kichik kvadratlar usulidan  qo'llashning yana bir yo'nalishi - ekonometriya. Bu 
+usul shu qadar keng qo'llaniladiki, buning uchun ba'zi bir maxsus modifikatsiyalar 
+aniqlangan. Eng kichik kvadratchalar usuli ma'lumotlarning tabiati va namunaviy 
+qurilish natijalari haqidagi bir qator taxminlarga asoslanadi. Ulardan asosiylari - 
+boshlang'ich o'zgaruvchilarni bog'liq va mustaqil bo'lganl arga aniq taqsimlash, 
+tenglamalarga kiritilgan omillarning o'zaro bog'liqligi yo'qligi, munosabatlarning 
+lineerligi, qoldiqlarning avtokorrelyatsiyasining yo'qligi, ularning matematik 
+kutishlarining tengligi va nolga teng. dispersiya. Empirik ma'lumotlar h ar doim ham 
+bunday xususiyatlarga ega emas, ya'ni. Kichik kvadratlar usuli  shartlari buzilgan. 
+Ushbu usulni sof shaklda qo'llash taxmin qilingan parametrlarning siljishi, izchilligi, 
+barqarorligi pasayishi kabi nomaqbul natijalarga olib kelishi mumkin va b a'zi 
+hollarda bu umuman echim topmasligi mumkin. 
+Ekonometriya muammolarining aksariyati, u yoki bu tarzda, ba'zi tizimlarning 
+- strukturaviy modellarning xatti -harakatlarini tavsiflovchi chiziqli ekonometrik 
+tenglamalar tizimlarini yechishga kamayadi. Har bir bunday modelning asosiy 
+elementi vaqt xarakteristikalari to'plamidir, ularning qiymatlari vaqtga ham, boshqa 
+bir qator omillarga ham bog'liqdir. Bunday holda, modelning ichki (endogen) 
+ 
+ 
+xususiyatlari bilan tashqi (ekzogen) xususiyatlar o'rtasida moslik bo'lishi mumkin. 
+Ushbu yozishmalar odatda chiziqli iqtisodiy tenglamalar tizimlari shaklida 
+ifodalanadi. Bunday tizimlarning xarakterli xususiyati - bu bir tomondan uni 
+murakkablashtiradigan, ikkinchidan, uni qayta belgilaydigan individual 
+o'zgaruvchilar o 'rtasidagi munosabatlarning mavjudligi. Bunday tizimlar uchun 
+yechimni tanlashda noaniqlik paydo bo'lishining sababi nima? Qo'shimcha omil  
+ekonometriya vazifalarining asosiy maqsadi modellarni aniqlash, ya'ni tanlangan 
+modeldagi strukturaviy munosabatlarni  aniqlash, shuningdek, uning bir qator 
+parametrlarini baholashdir. Modelni tashkil etadigan vaqt seriyasidagi bog'liqliklarni 
+tiklash, xususan, to'g'ridan -to'g'ri kichik kvadratlar usuli  va uning ba'zi 
+modifikatsiyalari hamda boshqa bir qator usullar yorda mida amalga oshirilishi 
+mumkin. Bunday muammolarni yechishda kichik kvadratlar usuli ning maxsus 
+modifikatsiyalari, tenglamalar tizimlarini raqamli yechish jarayonida yuzaga 
+keladigan ba'zi masalalarni hal qilish uchun maxsus ishlab chiqilgan. Xususan, ushb u 
+muammolardan biri taxmin qilinadigan parametrlarga dastlabki cheklovlarning 
+mavjudligi bilan bog'liq. Masalan, xususiy korxona daromadi iste'molga yoki uni 
+rivojlantirishga sarflanishi mumkin. Shuning uchun, ushbu ikki turdagi xarajatlar 
+qismlarining yig 'indisi 1 ga teng apriori. Ushbu qismlar ekonometrik tenglamalar 
+tizimiga bir -biridan mustaqil ravishda kiritilishi mumkin. Binobarin, kichik 
+kvadratlar usuli  yordamida har xil turdagi xarajatlarni dastlabki cheklovni hisobga 
+olmagan holda taxmin qilish va natijani tuzatish mumkin. 
+ 
+1. 3.2 Lineer funksiya uchun Kichik kvadratlar usulidan foydalanishga oid 
+misollar 
+1-misol.  
+X va y o'zgaruvchilar qiymatlari bo'yicha eksperimental ma'lumotlar jadvalda 
+keltirilgan. 
+ 
+1i  
+2i  
+3i  
+4i  
+5i  
+ix
+ 
+0  
+1  
+2  
+4  
+5  
+ 
+ 
+iy
+ 
+1.2  
+4.2  
+6.2  
+8.2  
+3  
+ 
+ Ularning hizalanishi natijasida funktsiya
+11)( 3  xxg ... Eng kichik kvadratchalar 
+usulidan foydalanib, ushbu ma'lumotni chiziqli munosabatlar bilan taqqoslang
+baxy 
+(parametrlarni toping
+a  va
+b ). Ikkala satrdan qaysi biri yaxshiroq ekanligini 
+aniqlang (eng kichik kvadratlar usuli ma'nosida) eksperimental ma'lumotlarga mos 
+keladi. Chizma chizish. 
+ 
+Qaror: 
+Bizning misolimizda n = 5. Kerakli koeffitsientlarning formulalariga kiritilgan 
+miqdorlarni hisoblash qulayligi uchun jadvalni to'ldiramiz. 
+ 
+1i  
+2i  
+3i  
+4i  
+5i  
+
+
+5
+1i  
+ix
+ 0 bitta 2018-
+04-01 
+121 2 
+to'rt besh 12 
+iy
+ 2.1 2.4 2.6 2.8 3 12.9 
+ii yx
+ 0 2.4 5.2 11.2 o'n 
+besh 
+33.8 
+2
+ix
+ 0 bitta to'rt o'n 
+olti 
+25 46 
+ Jadvalning to'rtinchi qatoridagi qiymatlar har bir i son uchun 2 -qator qiymatlarini 3 -
+qator qiymatlariga ko'paytirish orqali olinadi. 
+ Jadvalning beshinchi qatoridagi qiymatlar har bir i son uchun 2 -qator qiymatlarini 
+kvadratga solish yo'li bilan olinadi. 
+ Jadvalning oxirgi ustunidagi qiymatlar qatorlar bo'yicha qiymatlarning yig'indisidir.  
+ 
+ 
+A va b koeffitsientlarini topish uchun eng kichik kvadrat usulining formulalaridan 
+foydalanamiz. Ularda jadvalning oxirgi ustunidan tegishli qiymatlarni almashtiramiz: 
+n
+xay
+b
+xxn
+yxyxn
+a
+n
+i
+i
+n
+i
+i
+n
+i
+n
+i
+ii
+n
+i
+n
+i
+i
+n
+i
+iii
+
+ 
+ 
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+11
+1
+2
+1
+2
+1 11
+
+5
+129.12
+12465
+9.12128.335
+3
+
+
+
+ab
+a
+
+
+
+
+
+
+184.2
+165.0
+b
+a
+ 
+ 
+Shuning uchun,
+184.2165.0  xy kerakli taxminiy to'g'ri chiziq. 
+Qatorlarning qaysi birini topish kerak
+184.2165.0  xy  yoki
+11)( 3  xxg asl 
+ma'lumotlarga yaxshiroq yaqinlashadi, ya'ni eng kichik kvadratlar usuli yordamida 
+taxmin qilish. 
+Grafalarda hamma narsa juda yaxshi ko'rinadi. Qizil chiziq topilgan y = 0,165x 
++ 2,184 to'g'ri chiziq, ko'k chiziq
+11)( 3  xxg , pushti nuqtalar xom ma'lumotlar. 
+ 
+Eng kichik kvadratlar usulining xatosini baholash. 
+
+ 
+ 
+Buning uchun siz ushbu ma'lumotlardan dastlabki ma'lumotlarning og'ish kvadratlari 
+yig'indisini hisoblashingiz kerak
+  
+2
+1
+1 
+
+
+n
+i
+ii baxy va
+  
+
+
+n
+i
+ii xgy
+1
+2
+2 , kichikroq 
+qiymat eng kichik kvadratlar usuli ma'nosida asl ma'lumotlarga yaxshiroq 
+yaqinlashadigan chiziqqa to'g'ri keladi. 
+  
+  
+
+
+
+
+
+5
+1
+2
+2
+1
+1
+019.0184.2165.0
+i
+ii
+n
+i
+ii
+xy
+baxy
+ 
+  
+  
+
+
+
+
+
+5
+1
+2
+3
+1
+2
+2
+096.011
+i
+ii
+n
+i
+ii
+xy
+xgy
+ 
+Sifatida
+21   , keyin y = 0.165x + 2.184 to'g'ri chiziq asl ma'lumotlarga yaxshiroq 
+yaqinlashadi. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+2-misol.  
+ Jadvalda belgilangan funksiyani birinchi darajali ko’pxad bilan berilgan beshta nuqta 
+bo'yicha taxminiy hisoblash yoki eng kichik kvadratlar usuli yordamida chiziqli 
+munosabatlarni qurish. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+1. 
+BAxy  - birinchi darajali ko’pxad: 
+
+
+
+
+
+
+n
+i
+kk
+n
+i
+i
+n
+i
+i
+n
+i
+i
+n
+i
+i
+yxxBxA
+yNBxA
+111
+2
+11
+,
+ 
+bu yerda N = 5 - ballar soni. 
+2. Endi, barcha kerakli summalarni hisoblaymiz: N = 5,  
+.25,5.8,30,10
+111
+2
+1
+ 
+
+n
+i
+kk
+n
+i
+k
+n
+i
+k
+n
+i
+k yxyxx
+ 
+Shunday qilib, yig'indilarning raqamli qiymatlarini normal tizimga almashtirish va 
+uni noma'lumlarga nisbatan yechish natijasida biz quyidagilarga erishamiz.
+1.08.01.08.0  xyBA
+ 
+K
+ 0 bitta 2018-
+04-01 
+121 2 
+3 to'rt 
+kX
+ 0 bitta 2018-
+04-01 
+121 2 
+3 to'rt 
+kY
+ 0 bitta 2018-
+04-01 
+121 2 
+2018-
+04-01 
+121 2 
+3.5 
+ 
+ 
+ 
+ 
+Xulosa 
+Amalga oshirilgan harakatlar natijasida, tenglamalarning normal tizimidan foydalanib 
+topilgan chiziqli juftlik bilan regressiya koeffitsientlari boshqalar orasida eng yaxshi 
+deb ta'kidlash mumkin. Haqiqatan ham, buni bilish uchun eng kichik kvadratlar 
+usulini ko'rib chiqish va bir nechta o'zgaruvchilar funktsiyalarining ekstremumini 
+topish uchun teoremalarni qo'llash kerak edi. Chiziqli regressiya misoli ham 
+keltirilgan, uning gra figi qurilgan bo'lib, unda to'g'ri chiziq kuzatuv ma'lumotlari 
+nuqtalariga "eng yaqin" hisoblanadi. 
+Haddan tashqari aniqlangan tenglamalar tizimini " yechish" (tenglamalar soni 
+noma'lumlar sonidan oshib ketganda), oddiy (haddan tashqari aniqlanmagan) chiziq li 
+bo'lmagan tenglamalar tizimida yechim topish, taxminiy nuqta qiymatlari uchun eng 
+kichik kvadratchalar usulidan foydalanish mumkin. Ba'zi funksiyalar bo'yicha. kichik 
+kvadratlar usuli - namunaviy ma'lumotlarga asoslangan regressiya modellarining 
+noma'lum parametrlarini baholash uchun asosiy regressiya tahlil usullaridan biridir. 
+Hozirgi kunda ushbu usul matematik statistikaning muhim tarmoqlaridan biri bo'lib, 
+fan va texnikaning turli sohalarida statistik xulosalar chiqarish uchun keng 
+qo'llanilmoqda. Axir, bu usul ayirboshlangan ma'lumotlarga aniq qo'llaniladi va 
+nafaqat xolislik xususiyatiga ega bo'lgan, balki ilm -fan va texnika uchun muhim shart 
+bo'lgan kichik namunaviy farqlarga ega bo'lgan taxminlarni olishga imkon beradi.  
+ 
+ 
+ 
+
+ 
+ 
+Foydalanilgan adabiyotlar ro'yxati 
+ 
+1. Kolmogorov A.N. "Ehtimollar nazariyasining asosiy tushunchalari" _2009 y  
+2. Wentzel E. "Ehtimollar nazariyasi" _C_2010, 4-nashr. 
+3. Yozma D.T. "Ehtimollar nazariyasi, matematik statistika va stoxastik 
+jarayonlar bo'yicha ma'ruza matnlari." 3-nashr (2010) 
+4. V.N.Tutubalin "Ehtimollar va stoxastik jarayonlar nazariyasi". (2009) 
+5. V.N.Tutubalin universiteti darsligi, “Amaliy matematika va informatika. 
+Ehtimollar nazariyasi "(2008) 
+6. N. D. Vysk "Ehtimollar nazariyasi va matematik statistika", o'quv qo' llanma 
+(2011) 
+7. Gabor Szekey. "Ehtimollar nazariyasi va matematik statistika paradokslari" 
+(1990) 
+ 
+Ishlatilgan Internet manbalari: 
+1. URL: http://www.vevivi.ru/best/Klassicheskii -metod-naimenshikh-kvadratov-
+ref108272.html 
+2. URL: http://www.okultur.narod.ru/Lections/MethodsForecasting.pdf  
+3. URL: http: //fb.ru/article/32814/gde-primenyaetsya-metod-naimenshih-
+kvadratov 
+ 
+ 
+ 
+ 
+ 
