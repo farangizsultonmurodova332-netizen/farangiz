@@ -91,6 +91,7 @@ export type ChatMessage = {
   is_read: boolean;
   is_deleted?: boolean;
   is_edited?: boolean;
+  message_type?: 'text' | 'image' | 'audio' | 'file' | 'call' | 'system';
 };
 
 // Call types

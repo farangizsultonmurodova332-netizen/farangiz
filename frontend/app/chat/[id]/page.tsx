@@ -13,7 +13,7 @@ import { timeAgo } from "../../../lib/format";
 import { useLanguage } from "../../../lib/i18n";
 import Picker from "@emoji-mart/react";
 import emojiData from "@emoji-mart/data";
-import { Phone, Video } from "lucide-react";
+import { Phone, Video, Info, PhoneIncoming, PhoneMissed } from "lucide-react";
 
 type ChatRoomContentProps = {
   roomId: number;
@@ -508,117 +508,149 @@ function ChatRoomContent({ roomId, user, apiFetch }: ChatRoomContentProps) {
             const isMine = message.sender_id === user.id;
             const replyPreview = message.reply_to_preview;
             return (
+            return (
               <div
                 key={message.id}
-                className={`flex ${isMine ? "justify-end" : "justify-start"}`}
+                className={`flex ${message.message_type === 'system'
+                    ? "justify-center my-4"
+                    : isMine
+                      ? "justify-end"
+                      : "justify-start"
+                  }`}
                 onTouchStart={(event) => handleSwipeStart(event, message)}
                 onTouchEnd={(event) => handleSwipeEnd(event, message)}
               >
-                <div
-                  className={`group relative max-w-[70%] min-w-[160px] rounded-2xl px-4 py-2 ${isMine ? "bg-teal text-white" : "bg-haze text-ink"
-                    }`}
-                >
-                  {replyPreview && (
-                    <div className={`mb-2 rounded-xl px-3 py-2 text-xs ${isMine ? "bg-white/20" : "bg-ink/5"}`}>
-                      <p className={`font-semibold ${isMine ? "text-white/80" : "text-ink/70"}`}>
-                        {t("chat.replyingTo")} {replyPreview.sender_username}
-                      </p>
-                      <p className={`${isMine ? "text-white/80" : "text-ink/60"}`}>
-                        {replyPreview.is_deleted ? t("chat.deletedMessage") : replyPreview.body}
-                      </p>
+                {/* System Message */}
+                {message.message_type === 'system' && (
+                  <div className="bg-ink/5 border border-ink/10 rounded-full px-4 py-1 text-xs text-ink/60 flex items-center gap-2">
+                    <Info size={12} />
+                    <span>{message.body}</span>
+                  </div>
+                )}
+
+                {/* Call Message */}
+                {message.message_type === 'call' && (
+                  <div className={`flex items-center gap-3 rounded-2xl px-4 py-3 border ${isMine
+                      ? "bg-teal/10 border-teal/20 text-teal-900 dark:text-teal-100"
+                      : "bg-card border-haze text-ink"
+                    }`}>
+                    <div className={`p-2 rounded-full ${isMine ? "bg-teal/20" : "bg-ink/10"}`}>
+                      {(message.body && message.body.toLowerCase().includes('video')) ? <Video size={20} /> : <Phone size={20} />}
                     </div>
-                  )}
-                  {!isMine && (
-                    <p className="text-xs font-semibold mb-1 opacity-80">
-                      {message.sender_username}
-                    </p>
-                  )}
-                  {message.is_deleted ? (
-                    <p className={`break-words italic ${isMine ? "text-white/80" : "text-ink/60"}`}>
-                      {t("chat.deletedMessage")}
-                    </p>
-                  ) : (
-                    <>
-                      {message.body && (
-                        <div className="flex items-end gap-2">
-                          <p className="break-words flex-1">{message.body}</p>
-                          <span
-                            className={`text-xs whitespace-nowrap ${isMine ? "text-white/70" : "text-ink/50"}`}
-                          >
-                            {timeAgo(message.created_at)}
-                            {message.is_edited && <span>{` • ${t("chat.edited")}`}</span>}
-                          </span>
-                        </div>
-                      )}
-                      {message.image_url && (
-                        <a
-                          href={message.image_url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="mt-2 block"
-                        >
-                          <img
-                            src={message.image_url}
-                            alt={t("chat.imageAttachment")}
-                            className={`w-full max-w-xs rounded-2xl border object-cover ${isMine ? "border-white/30" : "border-ink/10"
-                              }`}
-                            loading="lazy"
-                          />
-                        </a>
-                      )}
-                      {message.audio_url && (
-                        <audio
-                          controls
-                          preload="metadata"
-                          src={message.audio_url}
-                          className={`mt-2 w-full min-w-[220px] max-w-sm rounded-2xl ${isMine ? "border border-white/30" : "border border-ink/10"
-                            }`}
-                        />
-                      )}
-                    </>
-                  )}
-                  <div className="absolute -top-2 -right-2 hidden items-center gap-1 rounded-full bg-card border border-haze px-2 py-1 text-[11px] text-ink shadow-sm group-hover:flex">
-                    <button
-                      type="button"
-                      onClick={() => handleReply(message)}
-                      className="font-medium text-ink/70 hover:text-ink"
-                    >
-                      {t("chat.reply")}
-                    </button>
-                    {(isMine || (isGroup && canDeleteAny)) && !message.is_deleted && (
+                    <div>
+                      <p className="font-semibold text-sm">{message.body}</p>
+                      <p className="text-xs opacity-70">{timeAgo(message.created_at)}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Standard Message (Text/Image/Audio) */}
+                {!['system', 'call'].includes(message.message_type || 'text') && (
+                  <div
+                    className={`group relative max-w-[70%] min-w-[160px] rounded-2xl px-4 py-2 ${isMine ? "bg-teal text-white" : "bg-haze text-ink"}`}
+                  >
+                    {replyPreview && (
+                      <div className={`mb-2 rounded-xl px-3 py-2 text-xs ${isMine ? "bg-white/20" : "bg-ink/5"}`}>
+                        <p className={`font-semibold ${isMine ? "text-white/80" : "text-ink/70"}`}>
+                          {t("chat.replyingTo")} {replyPreview.sender_username}
+                        </p>
+                        <p className={`${isMine ? "text-white/80" : "text-ink/60"}`}>
+                          {replyPreview.is_deleted ? t("chat.deletedMessage") : replyPreview.body}
+                        </p>
+                      </div>
+                    )}
+                    {!isMine && (
+                      <p className="text-xs font-semibold mb-1 opacity-80">
+                        {message.sender_username}
+                      </p>
+                    )}
+                    {message.is_deleted ? (
+                      <p className={`break-words italic ${isMine ? "text-white/80" : "text-ink/60"}`}>
+                        {t("chat.deletedMessage")}
+                      </p>
+                    ) : (
                       <>
-                        {isMine && (
-                          <>
-                            <span className="text-ink/30">•</span>
-                            <button
-                              type="button"
-                              onClick={() => handleEdit(message)}
-                              className="font-medium text-ink/70 hover:text-ink"
+                        {message.body && (
+                          <div className="flex items-end gap-2">
+                            <p className="break-words flex-1">{message.body}</p>
+                            <span
+                              className={`text-xs whitespace-nowrap ${isMine ? "text-white/70" : "text-ink/50"}`}
                             >
-                              {t("chat.edit")}
-                            </button>
-                          </>
+                              {timeAgo(message.created_at)}
+                              {message.is_edited && <span>{` • ${t("chat.edited")}`}</span>}
+                            </span>
+                          </div>
                         )}
-                        <span className="text-ink/30">•</span>
-                        <button
-                          type="button"
-                          onClick={() => handleDelete(message)}
-                          className="font-medium text-ink/70 hover:text-ink"
-                        >
-                          {t("chat.delete")}
-                        </button>
+                        {message.image_url && (
+                          <a
+                            href={message.image_url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="mt-2 block"
+                          >
+                            <img
+                              src={message.image_url}
+                              alt={t("chat.imageAttachment")}
+                              className={`w-full max-w-xs rounded-2xl border object-cover ${isMine ? "border-white/30" : "border-ink/10"
+                                }`}
+                              loading="lazy"
+                            />
+                          </a>
+                        )}
+                        {message.audio_url && (
+                          <audio
+                            controls
+                            preload="metadata"
+                            src={message.audio_url}
+                            className={`mt-2 w-full min-w-[220px] max-w-sm rounded-2xl ${isMine ? "border border-white/30" : "border border-ink/10"
+                              }`}
+                          />
+                        )}
                       </>
                     )}
-                  </div>
-                  {(!message.body || message.is_deleted) && (
-                    <div className={`mt-1 flex justify-end text-xs ${isMine ? "text-white/70" : "text-ink/50"}`}>
-                      {timeAgo(message.created_at)}
-                      {message.is_edited && !message.is_deleted && (
-                        <span>{` • ${t("chat.edited")}`}</span>
+                    <div className="absolute -top-2 -right-2 hidden items-center gap-1 rounded-full bg-card border border-haze px-2 py-1 text-[11px] text-ink shadow-sm group-hover:flex">
+                      <button
+                        type="button"
+                        onClick={() => handleReply(message)}
+                        className="font-medium text-ink/70 hover:text-ink"
+                      >
+                        {t("chat.reply")}
+                      </button>
+                      {(isMine || (isGroup && canDeleteAny)) && !message.is_deleted && (
+                        <>
+                          {isMine && (
+                            <>
+                              <span className="text-ink/30">•</span>
+                              <button
+                                type="button"
+                                onClick={() => handleEdit(message)}
+                                className="font-medium text-ink/70 hover:text-ink"
+                              >
+                                {t("chat.edit")}
+                              </button>
+                            </>
+                          )}
+                          <span className="text-ink/30">•</span>
+                          <button
+                            type="button"
+                            onClick={() => handleDelete(message)}
+                            className="font-medium text-ink/70 hover:text-ink"
+                          >
+                            {t("chat.delete")}
+                          </button>
+                        </>
                       )}
                     </div>
-                  )}
-                </div>
+                    {(!message.body || message.is_deleted) && (
+                      <div className={`mt-1 flex justify-end text-xs ${isMine ? "text-white/70" : "text-ink/50"}`}>
+                        {timeAgo(message.created_at)}
+                        {message.is_edited && !message.is_deleted && (
+                          <span>{` • ${t("chat.edited")}`}</span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             );
           })}
