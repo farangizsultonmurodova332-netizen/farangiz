@@ -53,7 +53,7 @@ class IdeaViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.action in ('create', 'like', 'following', 'bookmark', 'my_bookmarks'):
-            return [permissions.AllowAny()]
+            return [permissions.IsAuthenticated()]
         if self.action in ('update', 'partial_update', 'destroy'):
             return [permissions.IsAuthenticated(), IsAuthorOrReadOnly()]
         return [permissions.AllowAny()]

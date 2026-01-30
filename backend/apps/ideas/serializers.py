@@ -28,14 +28,24 @@ class TagsField(serializers.ListField):
         return [tag.name if hasattr(tag, 'name') else str(tag) for tag in value]
 
     def to_internal_value(self, data):
-        print(f"DEBUG TAGS DATA: {type(data)} - {data}")
         if data in (None, ''):
             return []
+        
         if isinstance(data, str):
-            data = [param.strip() for param in data.split(',') if param.strip()]
+            try:
+                # Try handling string representation of list "['a', 'b']"
+                import ast
+                if data.strip().startswith('[') and data.strip().endswith(']'):
+                     data = ast.literal_eval(data)
+                else:
+                     data = [param.strip() for param in data.split(',') if param.strip()]
+            except (ValueError, SyntaxError):
+                # Fallback to simple split
+                data = [param.strip() for param in data.split(',') if param.strip()]
 
         if not isinstance(data, list):
-            raise serializers.ValidationError('Tags must be a list of strings.')
+             # If somehow it's still not a list, wrap it
+             data = [str(data)]
 
         if len(data) > 10:
             raise serializers.ValidationError('You can add at most 10 tags.')
