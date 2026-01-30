@@ -846,6 +846,30 @@ class CallViewSet(viewsets.ViewSet):
         serializer = CallSerializer(call, context={'request': request})
         return Response(serializer.data)
 
+    @action(detail=False, methods=['get'], url_path='active')
+    def get_active_call(self, request):
+        """Get the current active call for the user"""
+        call = Call.objects.filter(
+            Q(caller=request.user) | Q(callee=request.user),
+            status__in=[Call.STATUS_PENDING, Call.STATUS_RINGING, Call.STATUS_CONNECTING, Call.STATUS_CONNECTED]
+        ).select_related('caller', 'callee').first()
+
+        if not call:
+            return Response(None)
+
+        # Generate/regenerate token if missing
+        agora_token = call.agora_token
+        if not agora_token:
+             agora_token = self._generate_agora_token(call.agora_channel, request.user.id)
+        
+        serializer = CallSerializer(call, context={'request': request})
+        data = serializer.data
+        # Generate fresh token for session restore
+        fresh_token = self._generate_agora_token(call.agora_channel, request.user.id)
+        data['agora_token'] = fresh_token
+        
+        return Response(data)
+
     @action(detail=False, methods=['get'], url_path='history')
     def call_history(self, request):
         """Get call history for the current user"""

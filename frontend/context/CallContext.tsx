@@ -81,6 +81,179 @@ export function CallProvider({ children }: { children: React.ReactNode }) {
         }
     }, []);
 
+    // Check for active call on mount (Persistence)
+    useEffect(() => {
+        if (!user || state.call) return; // Already have state or no user
+
+        const checkActiveCall = async () => {
+            try {
+                const activeCall = await apiFetch<Call & { agora_token?: string }>("/calls/active/");
+                if (activeCall && activeCall.status !== "ended") {
+                    console.log("[CallContext] Found active call:", activeCall.id);
+
+                    // Restore call state
+                    setState((prev) => ({
+                        ...prev,
+                        call: activeCall,
+                        status: activeCall.status,
+                        // If we are refreshing, we assume video was enabled if it was a video call
+                        isVideoEnabled: activeCall.call_type === "video",
+                    }));
+                }
+            } catch (error) {
+                // No active call or error
+            }
+        };
+
+        checkActiveCall();
+    }, [user, apiFetch]);
+
+    // Effect to join channel when we have call state restored but not joined yet
+    useEffect(() => {
+        const joinRestoredCall = async () => {
+            if (!clientReady || !clientRef.current || !state.call) return;
+
+            // If we have a call object but no local tracks, it means we just restored state
+            // and need to rejoin the channel
+            if ((state.status === "connected" || state.status === "ringing" || state.status === "calling") && !localAudioTrackRef.current) {
+                console.log("[CallContext] Rejoining restored call...");
+                const { call } = state;
+
+                try {
+                    const AgoraRTC = (await import("agora-rtc-sdk-ng")).default;
+
+                    // Create tracks again
+                    const audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
+                    localAudioTrackRef.current = audioTrack;
+
+                    let videoTrack: ICameraVideoTrack | null = null;
+                    if (call.call_type === "video") {
+                        videoTrack = await AgoraRTC.createCameraVideoTrack();
+                        localVideoTrackRef.current = videoTrack;
+                        setState((prev) => ({ ...prev, localVideoTrack: videoTrack }));
+                    }
+
+                    // Join using stored token (or fresh one from API if we refetched)
+                    if (call.agora_channel && call.agora_token) {
+                        try {
+                            await clientRef.current.join(AGORA_APP_ID, call.agora_channel, call.agora_token, user!.id);
+
+                            if (videoTrack) {
+                                await clientRef.current.publish([audioTrack, videoTrack]);
+                            } else {
+                                await clientRef.current.publish([audioTrack]);
+                            }
+                            console.log("[CallContext] Rejoined successfully");
+                        } catch (joinError: any) {
+                            if (joinError.code === "UID_CONFLICT") {
+                                console.log("Already in channel, ignoring");
+                            } else {
+                                throw joinError;
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.error("Failed to rejoin restored call:", e);
+                }
+            }
+        };
+        joinRestoredCall();
+    }, [clientReady, state.status, state.call?.id]);
+
+    // Check for active call on mount (Persistence)
+    useEffect(() => {
+        if (!user || state.call) return; // Already have state or no user
+
+        const checkActiveCall = async () => {
+            try {
+                const activeCall = await apiFetch<Call & { agora_token?: string }>("/calls/active/");
+                if (activeCall && activeCall.status !== "ended") {
+                    console.log("[CallContext] Found active call:", activeCall.id);
+
+                    // Restore call state
+                    setState((prev) => ({
+                        ...prev,
+                        call: activeCall,
+                        status: activeCall.status,
+                        // If we are refreshing, we assume video was enabled if it was a video call
+                        isVideoEnabled: activeCall.call_type === "video",
+                    }));
+
+                    // If connected or ringing, we might need to rejoin Agora
+                    if (["connected", "ringing"].includes(activeCall.status) || activeCall.status === "calling") {
+                        // We need the token. The endpoint should return it.
+                        if (activeCall.agora_channel && activeCall.agora_token) {
+                            if (!clientRef.current) return; // Wait for client
+
+                            // We need to wait for clientReady before joining
+                            // But since client initialized in separate effect, we might race.
+                            // Simple retry logic or dependency check
+                        }
+                    }
+                }
+            } catch (error) {
+                // No active call or error
+            }
+        };
+
+        checkActiveCall();
+    }, [user, apiFetch]);
+
+    // Effect to join channel when we have call state restored but not joined yet
+    useEffect(() => {
+        const joinRestoredCall = async () => {
+            if (!clientReady || !clientRef.current || !state.call) return;
+
+            // If we have a call object but no local tracks, it means we just restored state
+            // and need to rejoin the channel
+            if ((state.status === "connected" || state.status === "ringing" || state.status === "calling") && !localAudioTrackRef.current) {
+                console.log("[CallContext] Rejoining restored call...");
+                const { call } = state;
+
+                try {
+                    const AgoraRTC = (await import("agora-rtc-sdk-ng")).default;
+
+                    // Create tracks again
+                    const audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
+                    localAudioTrackRef.current = audioTrack;
+
+                    let videoTrack: ICameraVideoTrack | null = null;
+                    if (call.call_type === "video") {
+                        videoTrack = await AgoraRTC.createCameraVideoTrack();
+                        localVideoTrackRef.current = videoTrack;
+                        setState((prev) => ({ ...prev, localVideoTrack: videoTrack }));
+                    }
+
+                    // Join using stored token (or fresh one from API if we refetched)
+                    if (call.agora_channel && call.agora_token) {
+                        try {
+                            await clientRef.current.join(AGORA_APP_ID, call.agora_channel, call.agora_token, user!.id);
+
+                            if (videoTrack) {
+                                await clientRef.current.publish([audioTrack, videoTrack]);
+                            } else {
+                                await clientRef.current.publish([audioTrack]);
+                            }
+                            console.log("[CallContext] Rejoined successfully");
+                        } catch (joinError: any) {
+                            if (joinError.code === "UID_CONFLICT") {
+                                console.log("Already in channel, ignoring");
+                            } else {
+                                throw joinError;
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.error("Failed to rejoin restored call:", e);
+                    // If failing to restore, maybe end it?
+                    // endCall(); 
+                }
+            }
+        };
+        joinRestoredCall();
+    }, [clientReady, state.status, state.call?.id]); // Depend on ID to avoid loops
+
+
     // Setup Agora Event Listeners - depends on clientReady
     useEffect(() => {
         if (!clientReady) {
