@@ -80,6 +80,11 @@ export const metadata: Metadata = {
   verification: {
     google: "google-site-verification-code", // Placeholder, user needs to provide actual code if they have it
   },
+  icons: {
+    icon: "/icon.png", // Next.js will resolve this from app/icon.png or public/icon.png
+    shortcut: "/icon.png",
+    apple: "/icon.png",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
