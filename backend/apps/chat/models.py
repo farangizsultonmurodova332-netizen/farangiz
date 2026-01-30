@@ -88,6 +88,22 @@ class Message(models.Model):
     is_read = models.BooleanField(default=False, db_index=True)
     is_deleted = models.BooleanField(default=False)
 
+    MESSAGE_TYPE_TEXT = 'text'
+    MESSAGE_TYPE_IMAGE = 'image'
+    MESSAGE_TYPE_AUDIO = 'audio'
+    MESSAGE_TYPE_FILE = 'file'
+    MESSAGE_TYPE_CALL = 'call'
+    MESSAGE_TYPE_SYSTEM = 'system'
+    MESSAGE_TYPE_CHOICES = (
+        (MESSAGE_TYPE_TEXT, 'Text'),
+        (MESSAGE_TYPE_IMAGE, 'Image'),
+        (MESSAGE_TYPE_AUDIO, 'Audio'),
+        (MESSAGE_TYPE_FILE, 'File'),
+        (MESSAGE_TYPE_CALL, 'Call'),
+        (MESSAGE_TYPE_SYSTEM, 'System'),
+    )
+    message_type = models.CharField(max_length=20, choices=MESSAGE_TYPE_CHOICES, default=MESSAGE_TYPE_TEXT)
+
     class Meta:
         ordering = ['created_at']
         indexes = [

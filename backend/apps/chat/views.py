@@ -420,6 +420,15 @@ class ChatRoomViewSet(viewsets.ModelViewSet):
         if room.created_by == request.user:
             return Response({'error': 'Owner cannot leave the group'}, status=status.HTTP_400_BAD_REQUEST)
         room.participants.remove(request.user)
+        
+        # Create system message
+        Message.objects.create(
+            room=room,
+            sender=request.user,
+            body=f"{request.user.username} left the group",
+            message_type=Message.MESSAGE_TYPE_SYSTEM
+        )
+
         ChatRoomMembership.objects.filter(room=room, user=request.user).delete()
         return Response({'detail': 'Left group.'})
 
@@ -461,6 +470,16 @@ class ChatRoomViewSet(viewsets.ModelViewSet):
         if not allowed:
             return Response({'error': 'Not allowed to kick users'}, status=status.HTTP_403_FORBIDDEN)
         room.participants.remove(target_id)
+        
+        # Create system message
+        target_user = User.objects.get(id=target_id)
+        Message.objects.create(
+            room=room,
+            sender=request.user, 
+            body=f"{target_user.username} was removed from the group",
+            message_type=Message.MESSAGE_TYPE_SYSTEM
+        )
+
         ChatRoomMembership.objects.filter(room=room, user_id=target_id).delete()
         return Response({'detail': 'User removed.'})
 
@@ -639,6 +658,15 @@ class CallViewSet(viewsets.ViewSet):
             status=Call.STATUS_RINGING,
             agora_channel=channel_name,
             agora_token=agora_token,
+        )
+
+        # Create chat message for the call
+        call_msg_body = "Incoming Video Call" if call_type == 'video' else "Incoming Voice Call"
+        Message.objects.create(
+            room=room,
+            sender=request.user,
+            body=call_msg_body,
+            message_type=Message.MESSAGE_TYPE_CALL
         )
 
         # Send call signal via WebSocket to callee
