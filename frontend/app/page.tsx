@@ -66,7 +66,7 @@ export default function HomePage() {
               </a>
             </div>
           </div>
-          <div className="rounded-2xl border border-white/60 bg-white/60 p-4 md:p-6 text-sm text-ink/70">
+          <div className="rounded-2xl border border-haze bg-card p-4 md:p-6 text-sm text-ink/70">
             <p className="font-semibold text-ink">{t("home.noFakeTitle")}</p>
             <p className="mt-2">
               {t("home.noFakeBody")}
@@ -117,7 +117,7 @@ export default function HomePage() {
             {["following", "new", "trending"].map((value) => (
               <button
                 key={value}
-                className={`btn whitespace-nowrap ${feed === value ? "bg-ink text-white" : "bg-white/70 text-ink"}`}
+                className={`btn whitespace-nowrap ${feed === value ? "btn-primary" : "btn-secondary"}`}
                 onClick={() => {
                   setFeed(value);
                   setPage(1);

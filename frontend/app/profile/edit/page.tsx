@@ -148,7 +148,7 @@ export default function EditProfilePage() {
         </Link>
       </div>
 
-      <section className="rounded-3xl border border-white/70 bg-white/90 p-6 shadow-soft">
+      <section className="rounded-3xl border border-haze bg-card p-6 shadow-soft">
         <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
           <form className="space-y-4" onSubmit={handleEditSubmit}>
             <div>
@@ -266,12 +266,12 @@ export default function EditProfilePage() {
               </button>
             </div>
           </form>
-          <aside className="rounded-2xl border border-white/60 bg-white/80 p-5 shadow-sm">
+          <aside className="rounded-2xl border border-haze bg-card p-5 shadow-sm">
             <p className="text-xs font-semibold uppercase tracking-wide text-ink/50">
               {t("profile.livePreview")}
             </p>
             <div className="mt-4 flex items-center gap-4">
-              <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-slate-200 text-lg font-semibold text-ink/60">
+              <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-haze text-lg font-semibold text-ink-muted">
                 {formState.avatar_url ? (
                   <img
                     src={formState.avatar_url}
@@ -289,7 +289,7 @@ export default function EditProfilePage() {
                 <p className="text-xs text-ink/60">{formState.email || user.email}</p>
               </div>
             </div>
-            <div className="mt-4 rounded-xl border border-white/70 bg-white/70 px-3 py-3 text-sm text-ink/70">
+            <div className="mt-4 rounded-xl border border-haze bg-card/50 px-3 py-3 text-sm text-ink-muted">
               <p className="font-semibold text-ink">{t("profile.bio")}</p>
               <p className="mt-1">
                 {formState.bio || t("profile.bioPreviewPlaceholder")}

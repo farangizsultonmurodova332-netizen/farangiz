@@ -225,7 +225,7 @@ export default function IdeaCommentsDrawer({
               className="h-full w-full object-cover"
             />
           ) : (
-            <span className="flex h-full w-full items-center justify-center bg-gradient-to-br from-teal to-sky-500 text-white font-semibold text-xs">
+            <span className="flex h-full w-full items-center justify-center bg-primary text-primary-fg font-semibold text-xs">
               {comment.author.username.charAt(0).toUpperCase()}
             </span>
           )}
@@ -255,7 +255,7 @@ export default function IdeaCommentsDrawer({
             </div>
           </div>
           {comment.image_url && (
-            <div className="mt-3 overflow-hidden rounded-xl border border-slate-200/60 bg-white/80">
+            <div className="mt-3 overflow-hidden rounded-xl border border-haze bg-card/80">
               <img
                 src={comment.image_url}
                 alt={t("comments.attachment")}
@@ -293,7 +293,7 @@ export default function IdeaCommentsDrawer({
             </div>
             <button
               onClick={onClose}
-              className="p-2 rounded-full border border-slate-200/70 text-ink/60 hover:text-ink hover:bg-slate-100 transition-all duration-200"
+              className="p-2 rounded-full border border-haze text-ink/60 hover:text-ink hover:bg-haze transition-all duration-200"
               aria-label={t("comments.close")}
             >
               <X size={20} className="text-ink/60" />
@@ -353,7 +353,7 @@ export default function IdeaCommentsDrawer({
         </div>
 
         {user ? (
-          <div className="p-4 border-t border-slate-200 bg-white/90 backdrop-blur-sm">
+          <div className="p-4 border-t border-haze bg-card/90 backdrop-blur-sm">
             {replyTarget && (
               <div className="mb-3 flex items-center justify-between px-3 py-2 bg-teal/10 rounded-lg">
                 <div className="flex items-center gap-2">
@@ -371,7 +371,7 @@ export default function IdeaCommentsDrawer({
               </div>
             )}
             {imagePreview && (
-              <div className="mb-3 flex items-center gap-3 rounded-xl border border-slate-200/60 bg-white/80 p-2">
+              <div className="mb-3 flex items-center gap-3 rounded-xl border border-haze bg-card/80 p-2">
                 <img
                   src={imagePreview}
                   alt={t("comments.selectedImage")}
@@ -410,13 +410,13 @@ export default function IdeaCommentsDrawer({
                   <button
                     type="button"
                     onClick={() => setIsEmojiOpen((prev) => !prev)}
-                    className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 text-ink/60 hover:text-ink hover:bg-slate-100"
+                    className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-haze text-ink/60 hover:text-ink hover:bg-haze"
                     aria-label={t("comments.addEmoji")}
                   >
                     :)
                   </button>
                   {isEmojiOpen && (
-                    <div className="absolute bottom-9 right-0 z-10 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg">
+                    <div className="absolute bottom-9 right-0 z-10 overflow-hidden rounded-xl border border-haze bg-card shadow-lg">
                       <Picker
                         data={emojiData}
                         onEmojiSelect={(emoji: { native: string }) => {
@@ -433,7 +433,7 @@ export default function IdeaCommentsDrawer({
                     </div>
                   )}
                 </div>
-                <label className="inline-flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border border-slate-200 text-ink/60 hover:text-ink hover:bg-slate-100">
+                <label className="inline-flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border border-haze text-ink/60 hover:text-ink hover:bg-haze">
                   <input
                     type="file"
                     accept="image/*"
@@ -455,7 +455,7 @@ export default function IdeaCommentsDrawer({
                 <button
                   onClick={handleSubmit}
                   disabled={!canSubmit || postCommentMutation.isPending}
-                  className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-r from-teal to-sky-500 text-white hover:shadow-lg active:scale-[0.99] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-fg hover:shadow-lg active:scale-[0.99] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   aria-label={t("comments.postComment")}
                 >
                   <Send size={14} />
@@ -464,12 +464,12 @@ export default function IdeaCommentsDrawer({
             </div>
           </div>
         ) : (
-          <div className="p-6 border-t border-slate-200 bg-white/90 backdrop-blur-sm text-center">
+          <div className="p-6 border-t border-haze bg-card/90 backdrop-blur-sm text-center">
             <MessageCircle size={32} className="mx-auto mb-3 text-ink/20" />
             <p className="text-sm text-ink/60 mb-3">{t("comments.signInPrompt")}</p>
             <a
               href="/login"
-              className="inline-block px-6 py-2.5 bg-gradient-to-r from-teal to-sky-500 text-white rounded-xl font-medium text-sm hover:shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all duration-200"
+              className="inline-block px-6 py-2.5 bg-primary text-primary-fg rounded-xl font-medium text-sm hover:shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all duration-200"
               onClick={onClose}
             >
               {t("nav.signIn")}

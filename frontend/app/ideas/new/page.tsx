@@ -117,7 +117,7 @@ export default function NewIdeaPage() {
       <aside className="space-y-4">
         <div className="card p-6">
           <p className="text-sm font-semibold text-ink">{t("ideas.livePreview")}</p>
-          <div className="mt-4 rounded-xl border border-haze bg-white/80 p-4">
+          <div className="mt-4 rounded-xl border border-haze bg-card/80 p-4">
             <p className="text-lg font-semibold text-ink">
               {preview.title || t("ideas.previewTitle")}
             </p>

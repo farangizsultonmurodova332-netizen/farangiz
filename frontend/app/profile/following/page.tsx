@@ -64,7 +64,7 @@ export default function FollowingPage() {
             href={`/users/${followedUser.id}`}
             className="card p-4 flex items-center gap-4"
           >
-            <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-slate-200 text-lg font-semibold text-ink/60">
+            <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-haze text-lg font-semibold text-ink-muted">
               {followedUser.avatar_url ? (
                 <img
                   src={followedUser.avatar_url}

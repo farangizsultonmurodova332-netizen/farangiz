@@ -187,7 +187,7 @@ export default function ChangePasswordPage() {
         </Link>
       </div>
 
-      <section className="rounded-3xl border border-white/70 bg-white/90 p-6 shadow-soft">
+      <section className="rounded-3xl border border-haze bg-card p-6 shadow-soft">
         <div className="space-y-4">
           <p className="text-sm text-ink/60">
             {t("password.otpInfoPrefix")}
@@ -212,7 +212,7 @@ export default function ChangePasswordPage() {
                       onChange={(event) => handleOtpChange(index, event.target.value)}
                       onKeyDown={(event) => handleOtpKeyDown(index, event)}
                       onPaste={handleOtpPaste}
-                      className="h-12 w-12 rounded-xl border border-haze bg-white/80 text-center text-lg font-semibold text-ink focus:outline-none focus:ring-2 focus:ring-ink/20"
+                      className="h-12 w-12 rounded-xl border border-haze bg-input text-center text-lg font-semibold text-ink focus:outline-none focus:ring-2 focus:ring-primary/20"
                       inputMode="numeric"
                       autoComplete="one-time-code"
                       aria-label={`${t("password.otpDigit")} ${index + 1}`}
@@ -260,7 +260,7 @@ export default function ChangePasswordPage() {
                     {showPassword ? t("auth.hide") : t("auth.show")}
                   </button>
                 </div>
-                <div className="mt-2 h-1.5 w-full rounded-full bg-slate-100">
+                <div className="mt-2 h-1.5 w-full rounded-full bg-haze">
                   <div
                     className={`h-full rounded-full transition-all ${strength.color}`}
                     style={{ width: `${(strength.score / 4) * 100}%` }}

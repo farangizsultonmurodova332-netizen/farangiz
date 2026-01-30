@@ -6,7 +6,7 @@ import { Download } from "lucide-react";
 export default function DownloadPage() {
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 px-4">
-            <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 text-center space-y-6">
+            <div className="max-w-md w-full bg-card rounded-2xl shadow-xl p-8 text-center space-y-6">
                 <div className="w-20 h-20 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto">
                     <Download className="w-10 h-10 text-blue-600 dark:text-blue-400" />
                 </div>

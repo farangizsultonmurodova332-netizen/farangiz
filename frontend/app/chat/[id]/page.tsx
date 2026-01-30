@@ -519,7 +519,7 @@ function ChatRoomContent({ roomId, user, apiFetch }: ChatRoomContentProps) {
                     }`}
                 >
                   {replyPreview && (
-                    <div className={`mb-2 rounded-xl px-3 py-2 text-xs ${isMine ? "bg-white/20" : "bg-white/70"}`}>
+                    <div className={`mb-2 rounded-xl px-3 py-2 text-xs ${isMine ? "bg-white/20" : "bg-ink/5"}`}>
                       <p className={`font-semibold ${isMine ? "text-white/80" : "text-ink/70"}`}>
                         {t("chat.replyingTo")} {replyPreview.sender_username}
                       </p>
@@ -577,7 +577,7 @@ function ChatRoomContent({ roomId, user, apiFetch }: ChatRoomContentProps) {
                       )}
                     </>
                   )}
-                  <div className="absolute -top-2 -right-2 hidden items-center gap-1 rounded-full bg-white/90 px-2 py-1 text-[11px] text-ink shadow-sm group-hover:flex">
+                  <div className="absolute -top-2 -right-2 hidden items-center gap-1 rounded-full bg-card border border-haze px-2 py-1 text-[11px] text-ink shadow-sm group-hover:flex">
                     <button
                       type="button"
                       onClick={() => handleReply(message)}
@@ -636,7 +636,7 @@ function ChatRoomContent({ roomId, user, apiFetch }: ChatRoomContentProps) {
 
         <form onSubmit={handleSend} className="p-4 border-t border-ink/10">
           {editingMessage && (
-            <div className="mb-3 flex items-center justify-between rounded-xl border border-ink/10 bg-white/70 px-3 py-2 text-xs">
+            <div className="mb-3 flex items-center justify-between rounded-xl border border-haze bg-card/50 px-3 py-2 text-xs">
               <span className="font-medium text-ink/70">{t("chat.editing")}</span>
               <button
                 type="button"
@@ -651,7 +651,7 @@ function ChatRoomContent({ roomId, user, apiFetch }: ChatRoomContentProps) {
             </div>
           )}
           {replyToMessage && !editingMessage && (
-            <div className="mb-3 flex items-center justify-between rounded-xl border border-ink/10 bg-white/70 px-3 py-2 text-xs">
+            <div className="mb-3 flex items-center justify-between rounded-xl border border-haze bg-card/50 px-3 py-2 text-xs">
               <span className="text-ink/70">
                 {t("chat.replyingTo")}{" "}
                 <strong className="font-semibold">{replyToMessage.sender_username}</strong>
@@ -666,7 +666,7 @@ function ChatRoomContent({ roomId, user, apiFetch }: ChatRoomContentProps) {
             </div>
           )}
           {imagePreview && (
-            <div className="mb-3 flex items-center gap-3 rounded-xl border border-ink/10 bg-white/70 p-2">
+            <div className="mb-3 flex items-center gap-3 rounded-xl border border-haze bg-card/50 p-2">
               <img
                 src={imagePreview}
                 alt={t("chat.selectedImage")}
@@ -688,7 +688,7 @@ function ChatRoomContent({ roomId, user, apiFetch }: ChatRoomContentProps) {
             </div>
           )}
           {audioPreview && (
-            <div className="mb-3 flex items-center gap-3 rounded-xl border border-ink/10 bg-white/70 p-2">
+            <div className="mb-3 flex items-center gap-3 rounded-xl border border-haze bg-card/50 p-2">
               <audio controls preload="metadata" src={audioPreview} className="w-full min-w-[220px] max-w-sm" />
               <button
                 type="button"
@@ -716,7 +716,7 @@ function ChatRoomContent({ roomId, user, apiFetch }: ChatRoomContentProps) {
                 :)
               </button>
               {isEmojiOpen && (
-                <div className="absolute bottom-11 left-0 z-10 overflow-hidden rounded-xl border border-ink/10 bg-white shadow-lg">
+                <div className="absolute bottom-11 left-0 z-10 overflow-hidden rounded-xl border border-haze bg-card shadow-lg">
                   <Picker
                     data={emojiData}
                     onEmojiSelect={(emoji: { native: string }) => {
@@ -819,7 +819,7 @@ function ChatRoomContent({ roomId, user, apiFetch }: ChatRoomContentProps) {
 
       {isGroup && isMembersOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-          <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-lg">
+          <div className="w-full max-w-lg rounded-2xl bg-card p-6 shadow-lg">
             <div className="flex items-start justify-between">
               <div>
                 <h3 className="text-lg font-semibold text-ink">{t("chat.members")}</h3>

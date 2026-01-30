@@ -189,7 +189,7 @@ export default function ChatListPage() {
             </button>
           )}
           {debouncedQuery.length > 1 && (
-            <div className="absolute z-40 mt-2 w-full rounded-2xl border border-white/60 bg-white/95 shadow-lg">
+            <div className="absolute z-40 mt-2 w-full rounded-2xl border border-haze bg-card/95 shadow-lg">
               {searchUsersQuery.isLoading && (
                 <div className="p-4 text-sm text-ink/60">{t("common.loading")}</div>
               )}
@@ -376,7 +376,7 @@ export default function ChatListPage() {
                 </button>
                 {isMenuOpen && (
                   <div
-                    className="absolute right-0 mt-2 w-44 rounded-xl border border-white/60 bg-white shadow-lg z-30"
+                    className="absolute right-0 mt-2 w-44 rounded-xl border border-haze bg-card shadow-lg z-30"
                     onClick={(event) => event.stopPropagation()}
                   >
                     <button

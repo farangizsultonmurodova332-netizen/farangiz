@@ -154,12 +154,12 @@ export default function DevicesPage() {
                     description={t("devices.emptyBody") || "You don't have any other active sessions."}
                 />
             ) : (
-                <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+                <div className="overflow-hidden rounded-xl border border-haze bg-card shadow-sm">
                     <ul role="list" className="divide-y divide-slate-100">
                         {devices.map((device) => (
                             <li
                                 key={device.id}
-                                className={`flex items-center justify-between gap-x-6 p-5 hover:bg-slate-50 ${device.is_current ? "bg-teal-50/30" : ""}`}
+                                className={`flex items-center justify-between gap-x-6 p-5 hover:bg-haze/50 ${device.is_current ? "bg-primary/10" : ""}`}
                             >
                                 <div className="flex min-w-0 gap-x-4">
                                     <div className="flex h-12 w-12 flex-none items-center justify-center rounded-full bg-teal-50">

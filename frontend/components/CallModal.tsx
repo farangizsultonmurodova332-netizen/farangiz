@@ -138,10 +138,10 @@ export default function CallModal() {
           </div>
         ) : (
           /* Audio call or waiting UI */
-          <div className="bg-gradient-to-b from-teal-600 to-teal-800 rounded-2xl p-8">
+          <div className="bg-card border border-haze rounded-2xl p-8">
             <div className="text-center">
               {/* Avatar */}
-              <div className="w-28 h-28 mx-auto bg-white/20 rounded-full flex items-center justify-center mb-6">
+              <div className="w-28 h-28 mx-auto bg-black/20 rounded-full flex items-center justify-center mb-6">
                 {otherUser.avatar_url ? (
                   <img
                     src={otherUser.avatar_url}
@@ -212,7 +212,7 @@ export default function CallModal() {
             <>
               <button
                 onClick={toggleMute}
-                className={`w-14 h-14 rounded-full flex items-center justify-center transition-colors ${isMuted ? "bg-red-500 hover:bg-red-600" : "bg-white/20 hover:bg-white/30"
+                className={`w-14 h-14 rounded-full flex items-center justify-center transition-colors ${isMuted ? "bg-red-500 hover:bg-red-600" : "bg-black/30 hover:bg-black/40"
                   }`}
                 title={isMuted ? t("call.unmute") : t("call.mute")}
               >
@@ -238,7 +238,7 @@ export default function CallModal() {
               {isVideo && (
                 <button
                   onClick={toggleVideo}
-                  className={`w-14 h-14 rounded-full flex items-center justify-center transition-colors ${!isVideoEnabled ? "bg-red-500 hover:bg-red-600" : "bg-white/20 hover:bg-white/30"
+                  className={`w-14 h-14 rounded-full flex items-center justify-center transition-colors ${!isVideoEnabled ? "bg-red-500 hover:bg-red-600" : "bg-black/30 hover:bg-black/40"
                     }`}
                   title={isVideoEnabled ? t("call.videoOff") : t("call.videoOn")}
                 >

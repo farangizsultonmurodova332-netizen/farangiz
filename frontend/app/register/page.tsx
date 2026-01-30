@@ -104,109 +104,109 @@ export default function RegisterPage() {
         <h1 className="section-title">{t("auth.registerTitle")}</h1>
         <p className="mt-2 section-subtitle">{t("auth.registerSubtitle")}</p>
         <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-4">
-        <div>
-          <input {...register("username")} placeholder={t("auth.username")} className="input" />
-          {errors.username && <p className="text-sm text-red-600 mt-1">{errors.username.message}</p>}
-        </div>
-        <div>
-          <input
-            {...register("email")}
-            type="email"
-            placeholder={t("auth.email")}
-            className="input"
-            required
-          />
-          {errors.email && <p className="text-sm text-red-600 mt-1">{errors.email.message}</p>}
-        </div>
-        <div>
-          <input
-            {...register("birth_date")}
-            type="date"
-            className="input"
-            required
-          />
-          {errors.birth_date && <p className="text-sm text-red-600 mt-1">{errors.birth_date.message}</p>}
-        </div>
-        <div>
-          <input
-            {...register("phone")}
-            type="tel"
-            placeholder={t("auth.phonePlaceholder")}
-            className="input"
-            required
-          />
-          {errors.phone && <p className="text-sm text-red-600 mt-1">{errors.phone.message}</p>}
-        </div>
-        <div>
-          <input
-            {...register("portfolio_file")}
-            type="file"
-            accept=".pdf,.doc,.docx,.zip,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/zip"
-            className="input"
-            required
-          />
-          <p className="text-xs text-ink/60 mt-1">{t("auth.portfolioHint")}</p>
-          {errors.portfolio_file && (
-            <p className="text-sm text-red-600 mt-1">{errors.portfolio_file.message}</p>
-          )}
-        </div>
-        <div>
-          <input
-            {...register("location")}
-            placeholder={t("auth.locationPlaceholder")}
-            className="input"
-            required
-          />
-          {errors.location && <p className="text-sm text-red-600 mt-1">{errors.location.message}</p>}
-        </div>
-        <div className="relative">
-          <input
-            {...register("password")}
-            type={showPassword ? "text" : "password"}
-            placeholder={t("auth.password")}
-            className="input pr-12"
-          />
-          <button
-            type="button"
-            className="absolute right-3 top-[14px] text-xs font-semibold text-ink/60 hover:text-ink"
-            onClick={() => setShowPassword((prev) => !prev)}
-          >
-            {showPassword ? t("auth.hide") : t("auth.show")}
-          </button>
-          <div className="mt-2 h-1.5 w-full rounded-full bg-slate-100">
-            <div
-              className={`h-full rounded-full transition-all ${strength.color}`}
-              style={{ width: `${(strength.score / 4) * 100}%` }}
-            />
+          <div>
+            <input {...register("username")} placeholder={t("auth.username")} className="input" />
+            {errors.username && <p className="text-sm text-red-600 mt-1">{errors.username.message}</p>}
           </div>
-          <p className="text-xs text-ink/60 mt-2">
-            {t("auth.strength")}: {strength.label}
-          </p>
-          {errors.password && <p className="text-sm text-red-600 mt-1">{errors.password.message}</p>}
-        </div>
-        <div className="relative">
-          <input
-            {...register("confirmPassword")}
-            type={showConfirmPassword ? "text" : "password"}
-            placeholder={t("auth.confirmPassword")}
-            className="input pr-12"
-            onPaste={(event) => event.preventDefault()}
-          />
-          <button
-            type="button"
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-ink/60 hover:text-ink"
-            onClick={() => setShowConfirmPassword((prev) => !prev)}
-          >
-            {showConfirmPassword ? t("auth.hide") : t("auth.show")}
+          <div>
+            <input
+              {...register("email")}
+              type="email"
+              placeholder={t("auth.email")}
+              className="input"
+              required
+            />
+            {errors.email && <p className="text-sm text-red-600 mt-1">{errors.email.message}</p>}
+          </div>
+          <div>
+            <input
+              {...register("birth_date")}
+              type="date"
+              className="input"
+              required
+            />
+            {errors.birth_date && <p className="text-sm text-red-600 mt-1">{errors.birth_date.message}</p>}
+          </div>
+          <div>
+            <input
+              {...register("phone")}
+              type="tel"
+              placeholder={t("auth.phonePlaceholder")}
+              className="input"
+              required
+            />
+            {errors.phone && <p className="text-sm text-red-600 mt-1">{errors.phone.message}</p>}
+          </div>
+          <div>
+            <input
+              {...register("portfolio_file")}
+              type="file"
+              accept=".pdf,.doc,.docx,.zip,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/zip"
+              className="input"
+              required
+            />
+            <p className="text-xs text-ink/60 mt-1">{t("auth.portfolioHint")}</p>
+            {errors.portfolio_file && (
+              <p className="text-sm text-red-600 mt-1">{errors.portfolio_file.message}</p>
+            )}
+          </div>
+          <div>
+            <input
+              {...register("location")}
+              placeholder={t("auth.locationPlaceholder")}
+              className="input"
+              required
+            />
+            {errors.location && <p className="text-sm text-red-600 mt-1">{errors.location.message}</p>}
+          </div>
+          <div className="relative">
+            <input
+              {...register("password")}
+              type={showPassword ? "text" : "password"}
+              placeholder={t("auth.password")}
+              className="input pr-12"
+            />
+            <button
+              type="button"
+              className="absolute right-3 top-[14px] text-xs font-semibold text-ink/60 hover:text-ink"
+              onClick={() => setShowPassword((prev) => !prev)}
+            >
+              {showPassword ? t("auth.hide") : t("auth.show")}
+            </button>
+            <div className="mt-2 h-1.5 w-full rounded-full bg-haze">
+              <div
+                className={`h-full rounded-full transition-all ${strength.color}`}
+                style={{ width: `${(strength.score / 4) * 100}%` }}
+              />
+            </div>
+            <p className="text-xs text-ink/60 mt-2">
+              {t("auth.strength")}: {strength.label}
+            </p>
+            {errors.password && <p className="text-sm text-red-600 mt-1">{errors.password.message}</p>}
+          </div>
+          <div className="relative">
+            <input
+              {...register("confirmPassword")}
+              type={showConfirmPassword ? "text" : "password"}
+              placeholder={t("auth.confirmPassword")}
+              className="input pr-12"
+              onPaste={(event) => event.preventDefault()}
+            />
+            <button
+              type="button"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-ink/60 hover:text-ink"
+              onClick={() => setShowConfirmPassword((prev) => !prev)}
+            >
+              {showConfirmPassword ? t("auth.hide") : t("auth.show")}
+            </button>
+            {errors.confirmPassword && (
+              <p className="text-sm text-red-600 mt-1">{errors.confirmPassword.message}</p>
+            )}
+          </div>
+          {error && <p className="text-sm text-red-600">{error}</p>}
+          <button type="submit" disabled={isSubmitting} className="btn-primary">
+            {isSubmitting ? t("auth.creating") : t("auth.createAccount")}
           </button>
-          {errors.confirmPassword && (
-            <p className="text-sm text-red-600 mt-1">{errors.confirmPassword.message}</p>
-          )}
-        </div>
-        {error && <p className="text-sm text-red-600">{error}</p>}
-        <button type="submit" disabled={isSubmitting} className="btn-primary">
-          {isSubmitting ? t("auth.creating") : t("auth.createAccount")}
-        </button>
         </form>
       </div>
     </div>

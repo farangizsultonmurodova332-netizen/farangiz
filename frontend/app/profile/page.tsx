@@ -63,9 +63,8 @@ export default function ProfilePage() {
 
   return (
     <div className="space-y-8">
-      <section className="relative overflow-visible rounded-3xl border border-white/70 bg-gradient-to-br from-white via-slate-50 to-teal-50 p-6 shadow-soft">
-        <div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-teal-200/40 blur-3xl" />
-        <div className="pointer-events-none absolute -left-20 -bottom-20 h-56 w-56 rounded-full bg-sky-200/40 blur-3xl" />
+      <section className="relative overflow-visible rounded-3xl border border-haze bg-card p-6 shadow-soft">
+
         <div className="relative flex flex-col gap-6 lg:flex-row lg:items-center">
           <div className="flex flex-col items-center gap-4 lg:w-64">
             <div className="group relative">
@@ -82,7 +81,7 @@ export default function ProfilePage() {
               </div>
               <Link
                 href="/profile/edit"
-                className="absolute -bottom-1 -right-1 inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-ink/70 opacity-0 shadow-sm transition-opacity group-hover:opacity-100"
+                className="absolute -bottom-1 -right-1 inline-flex h-8 w-8 items-center justify-center rounded-full bg-card text-ink shadow-md border border-haze opacity-0 transition-opacity group-hover:opacity-100 hover:bg-primary hover:text-white"
                 aria-label={t("profile.editAvatar")}
               >
                 <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
@@ -127,38 +126,38 @@ export default function ProfilePage() {
                     </svg>
                   </button>
                   {isMenuOpen && (
-                    <div className="absolute right-0 z-50 mt-2 w-44 rounded-xl border border-white/60 bg-white/90 p-2 shadow-lg backdrop-blur">
+                    <div className="absolute right-0 z-50 mt-2 w-44 rounded-xl border border-haze bg-card p-2 shadow-lg backdrop-blur">
                       <Link
                         href="/profile/edit"
-                        className="block w-full rounded-lg px-3 py-2 text-left text-sm text-ink hover:bg-slate-100"
+                        className="block w-full rounded-lg px-3 py-2 text-left text-sm text-ink hover:bg-haze"
                         onClick={() => setIsMenuOpen(false)}
                       >
                         {t("profile.editProfile")}
                       </Link>
                       <Link
                         href="/profile/password"
-                        className="block w-full rounded-lg px-3 py-2 text-left text-sm text-ink hover:bg-slate-100"
+                        className="block w-full rounded-lg px-3 py-2 text-left text-sm text-ink hover:bg-haze"
                         onClick={() => setIsMenuOpen(false)}
                       >
                         {t("profile.changePassword")}
                       </Link>
                       <Link
                         href="/profile/devices"
-                        className="block w-full rounded-lg px-3 py-2 text-left text-sm text-ink hover:bg-slate-100"
+                        className="block w-full rounded-lg px-3 py-2 text-left text-sm text-ink hover:bg-haze"
                         onClick={() => setIsMenuOpen(false)}
                       >
                         {t("profile.devices")}
                       </Link>
                       <Link
                         href="/logout"
-                        className="block w-full rounded-lg px-3 py-2 text-left text-sm text-ink hover:bg-slate-100"
+                        className="block w-full rounded-lg px-3 py-2 text-left text-sm text-ink hover:bg-haze"
                         onClick={() => setIsMenuOpen(false)}
                       >
                         {t("profile.signOut")}
                       </Link>
                       <Link
                         href="/profile/groups/new"
-                        className="block w-full rounded-lg px-3 py-2 text-left text-sm text-ink hover:bg-slate-100"
+                        className="block w-full rounded-lg px-3 py-2 text-left text-sm text-ink hover:bg-haze"
                         onClick={() => setIsMenuOpen(false)}
                       >
                         {t("profile.createGroup")}

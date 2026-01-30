@@ -24,7 +24,7 @@ module.exports = {
         teal: "#14b8a6", // Keeping for compatibility if used directly
       },
       boxShadow: {
-        soft: "0 12px 40px -10px rgb(var(--ink) / 0.05)",
+        soft: "0 12px 40px -10px rgb(0 0 0 / 0.05)",
       },
       fontFamily: {
         sans: ["var(--font-space)", "sans-serif"],

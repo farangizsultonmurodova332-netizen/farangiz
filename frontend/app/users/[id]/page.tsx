@@ -58,12 +58,11 @@ export default function UserProfilePage() {
 
   return (
     <div className="space-y-6">
-      <section className="relative overflow-hidden rounded-3xl border border-white/70 bg-gradient-to-br from-white via-slate-50 to-teal-50 p-6 shadow-soft">
-        <div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-teal-200/40 blur-3xl" />
-        <div className="pointer-events-none absolute -left-20 -bottom-20 h-56 w-56 rounded-full bg-sky-200/40 blur-3xl" />
+      <section className="relative overflow-hidden rounded-3xl border border-haze bg-card p-6 shadow-soft">
+
         <div className="relative flex flex-col gap-6 lg:flex-row lg:items-center">
           <div className="flex flex-col items-center gap-4 lg:w-64">
-            <div className="flex h-28 w-28 items-center justify-center overflow-hidden rounded-full bg-slate-200 text-3xl font-semibold text-ink/60 ring-4 ring-white">
+            <div className="flex h-28 w-28 items-center justify-center overflow-hidden rounded-full bg-haze text-3xl font-semibold text-ink-muted ring-4 ring-card">
               {profile.avatar_url ? (
                 <img
                   src={profile.avatar_url}
@@ -119,10 +118,10 @@ export default function UserProfilePage() {
 
       {/* Location & Portfolio Section */}
       {(profile.location || profile.portfolio_url) && (
-        <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <section className="overflow-hidden rounded-2xl border border-haze bg-card p-5 shadow-sm">
           <div className="flex flex-wrap items-center gap-4">
             {profile.location && (
-              <div className="flex items-center gap-2 text-sm text-slate-600">
+              <div className="flex items-center gap-2 text-sm text-ink-muted">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-teal-500">
                   <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
                   <circle cx="12" cy="10" r="3" />
@@ -135,7 +134,7 @@ export default function UserProfilePage() {
                 href={profile.portfolio_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-lg bg-teal-50 px-4 py-2 text-sm font-medium text-teal-700 transition-colors hover:bg-teal-100"
+                className="inline-flex items-center gap-2 rounded-lg bg-primary/10 px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary/20"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" />
