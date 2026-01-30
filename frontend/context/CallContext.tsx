@@ -204,6 +204,12 @@ export function CallProvider({ children }: { children: React.ReactNode }) {
         const joinRestoredCall = async () => {
             if (!clientReady || !clientRef.current || !state.call) return;
 
+            // Check if already in a channel or connecting to avoid race conditions
+            if (clientRef.current.connectionState !== "DISCONNECTED") {
+                console.log("[CallContext] Client already in state:", clientRef.current.connectionState);
+                return;
+            }
+
             // If we have a call object but no local tracks, it means we just restored state
             // and need to rejoin the channel
             if ((state.status === "connected" || state.status === "ringing" || state.status === "calling") && !localAudioTrackRef.current) {
@@ -213,31 +219,36 @@ export function CallProvider({ children }: { children: React.ReactNode }) {
                 try {
                     const AgoraRTC = (await import("agora-rtc-sdk-ng")).default;
 
-                    // Create tracks again
-                    const audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
-                    localAudioTrackRef.current = audioTrack;
+                    // Create tracks again if missing
+                    if (!localAudioTrackRef.current) {
+                        const audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
+                        localAudioTrackRef.current = audioTrack;
+                    }
 
                     let videoTrack: ICameraVideoTrack | null = null;
-                    if (call.call_type === "video") {
+                    if (call.call_type === "video" && !localVideoTrackRef.current) {
                         videoTrack = await AgoraRTC.createCameraVideoTrack();
                         localVideoTrackRef.current = videoTrack;
                         setState((prev) => ({ ...prev, localVideoTrack: videoTrack }));
+                    } else if (localVideoTrackRef.current) {
+                        videoTrack = localVideoTrackRef.current;
                     }
 
                     // Join using stored token (or fresh one from API if we refetched)
-                    if (call.agora_channel && call.agora_token) {
+                    if (call.agora_channel) {
                         try {
-                            await clientRef.current.join(AGORA_APP_ID, call.agora_channel, call.agora_token, user!.id);
+                            const token = call.agora_token || null;
+                            await clientRef.current.join(AGORA_APP_ID, call.agora_channel, token, user!.id);
 
-                            if (videoTrack) {
-                                await clientRef.current.publish([audioTrack, videoTrack]);
-                            } else {
-                                await clientRef.current.publish([audioTrack]);
-                            }
+                            // Check published state before publishing to avoid errors
+                            const tracksToPublish: (IMicrophoneAudioTrack | ICameraVideoTrack)[] = [localAudioTrackRef.current!];
+                            if (videoTrack) tracksToPublish.push(videoTrack);
+
+                            await clientRef.current.publish(tracksToPublish);
                             console.log("[CallContext] Rejoined successfully");
                         } catch (joinError: any) {
-                            if (joinError.code === "UID_CONFLICT") {
-                                console.log("Already in channel, ignoring");
+                            if (joinError.code === "UID_CONFLICT" || joinError.name === "AgoraRTCError" && joinError.message.includes("CONNECTING")) {
+                                console.log("Already in channel or connecting, ignoring");
                             } else {
                                 throw joinError;
                             }
@@ -245,8 +256,6 @@ export function CallProvider({ children }: { children: React.ReactNode }) {
                     }
                 } catch (e) {
                     console.error("Failed to rejoin restored call:", e);
-                    // If failing to restore, maybe end it?
-                    // endCall(); 
                 }
             }
         };
