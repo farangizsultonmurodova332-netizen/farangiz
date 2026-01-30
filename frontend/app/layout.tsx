@@ -4,7 +4,7 @@ import "./globals.css";
 import Header from "../components/Header";
 import Providers from "./providers";
 import SnowEffect from "../components/SnowEffect";
-
+import { ThemeProvider, ThemeToggle } from "../components/ThemeProvider";
 
 import { Toaster } from "react-hot-toast";
 
