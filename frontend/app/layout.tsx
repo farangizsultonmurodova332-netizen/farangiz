@@ -103,14 +103,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         <Providers>
-          <div className="min-h-screen">
-            <Header />
-            <main className="mx-auto max-w-6xl px-6 pb-16 pt-8 fade-in">
-              {children}
-            </main>
-          </div>
-          <SnowEffect />
-          <Toaster position="bottom-right" />
+          <ThemeProvider>
+            <div className="min-h-screen">
+              <Header />
+              <main className="mx-auto max-w-6xl px-6 pb-16 pt-8 fade-in">
+                {children}
+              </main>
+            </div>
+            <ThemeToggle />
+            <SnowEffect />
+            <Toaster position="bottom-right" />
+          </ThemeProvider>
         </Providers>
       </body>
     </html>
