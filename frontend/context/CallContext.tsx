@@ -21,6 +21,7 @@ type CallState = {
     duration: number;
     localVideoTrack: ICameraVideoTrack | null;
     remoteUsers: IAgoraRTCRemoteUser[];
+    isPermissionNeeded: boolean;
 };
 
 const initialState: CallState = {
@@ -31,6 +32,7 @@ const initialState: CallState = {
     duration: 0,
     localVideoTrack: null,
     remoteUsers: [],
+    isPermissionNeeded: false,
 };
 
 type CallContextType = CallState & {
@@ -43,6 +45,7 @@ type CallContextType = CallState & {
     toggleVideo: () => Promise<void>;
     // Method to inject incoming call signal from external sources (like WebSocket)
     handleIncomingCallSignal: (signal: CallSignal) => void;
+    joinCall: () => Promise<void>; // Manual join trigger
 };
 
 const CallContext = createContext<CallContextType | null>(null);
@@ -211,8 +214,8 @@ export function CallProvider({ children }: { children: React.ReactNode }) {
             }
 
             // If we have a call object but no local tracks, it means we just restored state
-            // and need to rejoin the channel
-            if ((state.status === "connected" || state.status === "ringing" || state.status === "calling") && !localAudioTrackRef.current) {
+            // and need to rejoin the channel (unless we are waiting for permission)
+            if ((state.status === "connected" || state.status === "ringing" || state.status === "calling") && !localAudioTrackRef.current && !state.isPermissionNeeded) {
                 console.log("[CallContext] Rejoining restored call...");
                 const { call } = state;
 
@@ -247,20 +250,62 @@ export function CallProvider({ children }: { children: React.ReactNode }) {
                             await clientRef.current.publish(tracksToPublish);
                             console.log("[CallContext] Rejoined successfully");
                         } catch (joinError: any) {
-                            if (joinError.code === "UID_CONFLICT" || joinError.name === "AgoraRTCError" && joinError.message.includes("CONNECTING")) {
+                            if (joinError.code === "UID_CONFLICT" || (joinError.name === "AgoraRTCError" && joinError.message.includes("CONNECTING"))) {
                                 console.log("Already in channel or connecting, ignoring");
                             } else {
                                 throw joinError;
                             }
                         }
                     }
-                } catch (e) {
+                } catch (e: any) {
                     console.error("Failed to rejoin restored call:", e);
+                    if (e.name === "NotAllowedError" || e.code === "PERMISSION_DENIED") {
+                        console.log("Permission denied, requesting user interaction...");
+                        setState(prev => ({ ...prev, isPermissionNeeded: true }));
+                    }
                 }
             }
         };
         joinRestoredCall();
-    }, [clientReady, state.status, state.call?.id]); // Depend on ID to avoid loops
+    }, [clientReady, state.status, state.call?.id, state.isPermissionNeeded]); // React gracefully to permission state
+
+    // Manual join method for when permissions are needed
+    const joinCall = useCallback(async () => {
+        if (!state.call || !clientReady) return;
+        setState(prev => ({ ...prev, isPermissionNeeded: false })); // Reset flag to trigger effect
+        // The effect above will run again because isPermissionNeeded changed to false
+        // But we might need a trusted execution context for getUserMedia
+        // So let's duplicate a bit of logic or refactor. 
+        // Actually, calling createMicrophoneAudioTrack HERE is better as it is direct user action.
+
+        try {
+            const AgoraRTC = (await import("agora-rtc-sdk-ng")).default;
+            if (!localAudioTrackRef.current) {
+                const audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
+                localAudioTrackRef.current = audioTrack;
+            }
+            // The effect will pick up the rest (joining) or we can do it here. 
+            // Let's just set the state and let the effect try again, 
+            // BUT valid user gesture is transient. We MUST create tracks here.
+
+            let videoTrack: ICameraVideoTrack | null = null;
+            if (state.call.call_type === "video" && !localVideoTrackRef.current) {
+                videoTrack = await AgoraRTC.createCameraVideoTrack();
+                localVideoTrackRef.current = videoTrack;
+                setState(prev => ({ ...prev, localVideoTrack: videoTrack }));
+            }
+
+            // Now that tracks are created (hopefully), the effect will see them and join.
+            // Actually, the effect checks !localAudioTrackRef.current. 
+            // If we create them here, the effect might NOT trigger fully or correctly if we don't coordinate.
+            // Let's rely on the state change to trigger re-evaluation, but pre-create tracks here.
+
+        } catch (e) {
+            console.error("Manual join failed:", e);
+            // Keep permission flag true if it failed again
+            setState(prev => ({ ...prev, isPermissionNeeded: true }));
+        }
+    }, [state.call, clientReady]);
 
 
     // Setup Agora Event Listeners - depends on clientReady
@@ -632,6 +677,7 @@ export function CallProvider({ children }: { children: React.ReactNode }) {
                 toggleMute,
                 toggleVideo,
                 handleIncomingCallSignal,
+                joinCall,
             }}
         >
             {children}

@@ -22,6 +22,8 @@ export default function CallModal() {
     endCall,
     toggleMute,
     toggleVideo,
+    isPermissionNeeded,
+    joinCall,
   } = useCall();
 
   // Callback ref for local video
@@ -100,6 +102,24 @@ export default function CallModal() {
         return "";
     }
   };
+
+  // Permission Interruption Overlay
+  if (isPermissionNeeded) {
+    return (
+      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 md:p-4">
+        <div className="bg-card border border-haze rounded-2xl p-8 max-w-sm w-full text-center">
+          <h2 className="text-xl font-semibold text-white mb-4">{t("call.resumeSession")}</h2>
+          <p className="text-white/70 mb-6">{t("call.permissionNeeded") || "Click below to resume your call session."}</p>
+          <button
+            onClick={() => joinCall()}
+            className="w-full py-3 bg-primary text-white rounded-xl font-medium hover:bg-primary/90 transition-colors"
+          >
+            {t("call.resume")}
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 md:p-4">
