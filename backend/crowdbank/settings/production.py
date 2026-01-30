@@ -12,6 +12,10 @@ CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_HTTPONLY = True
 CSRF_USE_SESSIONS = True
 
+# Email settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_Subject_PREFIX = '[CrowdBank] '
+
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
