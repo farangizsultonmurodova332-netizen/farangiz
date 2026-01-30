@@ -9,7 +9,7 @@ from rest_framework.decorators import action
 from rest_framework.generics import DestroyAPIView, ListCreateAPIView
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
-from rest_framework.parsers import FormParser, MultiPartParser
+from rest_framework.parsers import FormParser, MultiPartParser, JSONParser
 
 from apps.notifications.models import Notification
 from .models import Bookmark, Comment, CommentLike, Idea, IdeaLike, PublicComment
@@ -46,7 +46,7 @@ class IsAuthorOrReadOnly(permissions.BasePermission):
 class IdeaViewSet(viewsets.ModelViewSet):
     serializer_class = IdeaSerializer
     filterset_class = IdeaFilter
-    parser_classes = [MultiPartParser, FormParser]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
     search_fields = ('title', 'short_description', 'full_description')
     ordering_fields = ('created_at', 'like_count')
     ordering = ('-created_at',)
@@ -191,7 +191,7 @@ class IdeaViewSet(viewsets.ModelViewSet):
 class IdeaCommentsView(ListCreateAPIView):
     serializer_class = CommentSerializer
     pagination_class = None
-    parser_classes = [MultiPartParser, FormParser]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     def get_permissions(self):
         if self.request.method == 'POST':
