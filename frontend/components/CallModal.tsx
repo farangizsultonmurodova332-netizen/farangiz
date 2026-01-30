@@ -102,11 +102,11 @@ export default function CallModal() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
-      <div className="relative w-full max-w-2xl mx-4">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 md:p-4">
+      <div className="relative w-full h-full md:h-auto md:max-w-4xl bg-background md:rounded-2xl overflow-hidden">
         {/* Video container */}
         {isVideo && status === "connected" ? (
-          <div className="relative aspect-video bg-gray-900 rounded-2xl overflow-hidden">
+          <div className="relative w-full h-full md:aspect-video bg-gray-900">
             {/* Remote video (full screen) */}
             <div
               id={`remote-video-${remoteUsers[0]?.uid}`}

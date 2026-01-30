@@ -35,7 +35,7 @@ export default function Header() {
   });
 
   return (
-    <header className="border-b border-haze bg-card/80 backdrop-blur-md sticky top-0 z-50">
+    <header className="border-b border-haze bg-card/80 backdrop-blur-md relative z-40">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-4">
         <Link href="/" className="flex items-center gap-2" aria-label="Crowdsourced Idea Bank">
           <span className="font-space text-2xl font-bold tracking-tight text-ink">
