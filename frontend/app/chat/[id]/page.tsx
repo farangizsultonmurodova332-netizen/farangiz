@@ -508,14 +508,13 @@ function ChatRoomContent({ roomId, user, apiFetch }: ChatRoomContentProps) {
             const isMine = message.sender_id === user.id;
             const replyPreview = message.reply_to_preview;
             return (
-            return (
               <div
                 key={message.id}
                 className={`flex ${message.message_type === 'system'
-                    ? "justify-center my-4"
-                    : isMine
-                      ? "justify-end"
-                      : "justify-start"
+                  ? "justify-center my-4"
+                  : isMine
+                    ? "justify-end"
+                    : "justify-start"
                   }`}
                 onTouchStart={(event) => handleSwipeStart(event, message)}
                 onTouchEnd={(event) => handleSwipeEnd(event, message)}
@@ -531,8 +530,8 @@ function ChatRoomContent({ roomId, user, apiFetch }: ChatRoomContentProps) {
                 {/* Call Message */}
                 {message.message_type === 'call' && (
                   <div className={`flex items-center gap-3 rounded-2xl px-4 py-3 border ${isMine
-                      ? "bg-teal/10 border-teal/20 text-teal-900 dark:text-teal-100"
-                      : "bg-card border-haze text-ink"
+                    ? "bg-teal/10 border-teal/20 text-teal-900 dark:text-teal-100"
+                    : "bg-card border-haze text-ink"
                     }`}>
                     <div className={`p-2 rounded-full ${isMine ? "bg-teal/20" : "bg-ink/10"}`}>
                       {(message.body && message.body.toLowerCase().includes('video')) ? <Video size={20} /> : <Phone size={20} />}
