@@ -860,7 +860,7 @@ class CallViewSet(viewsets.ViewSet):
         # Generate/regenerate token if missing
         agora_token = call.agora_token
         if not agora_token:
-             agora_token = self._generate_agora_token(call.agora_channel, request.user.id)
+            agora_token = self._generate_agora_token(call.agora_channel, request.user.id)
         
         serializer = CallSerializer(call, context={'request': request})
         data = serializer.data
