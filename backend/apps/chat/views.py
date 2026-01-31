@@ -735,20 +735,29 @@ class CallViewSet(viewsets.ViewSet):
 
         # Notify caller that call was answered
         channel_layer = get_channel_layer()
+        signal_payload = {
+            'type': 'call_signal',
+            'signal': {
+                'type': 'call_answer',
+                'call_id': str(call.id),
+                'room_id': call.room_id,
+                'caller_id': call.caller_id,
+                'callee_id': call.callee_id,
+                'agora_channel': call.agora_channel,
+                'agora_token': call.agora_token, # Caller keeps their own token
+            }
+        }
+        
+        # Send to Chat Room
         async_to_sync(channel_layer.group_send)(
             f'chat_{call.room_id}',
-            {
-                'type': 'call_signal',
-                'signal': {
-                    'type': 'call_answer',
-                    'call_id': str(call.id),
-                    'room_id': call.room_id,
-                    'caller_id': call.caller_id,
-                    'callee_id': call.callee_id,
-                    'agora_channel': call.agora_channel,
-                    'agora_token': call.agora_token, # Caller keeps their own token
-                }
-            }
+            signal_payload
+        )
+        
+        # Send to Caller's Personal Channel (Global Notification)
+        async_to_sync(channel_layer.group_send)(
+            f'user_{call.caller_id}',
+            signal_payload
         )
 
         serializer = CallSerializer(call, context={'request': request})

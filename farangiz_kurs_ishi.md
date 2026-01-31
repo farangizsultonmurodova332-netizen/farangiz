@@ -1130,3 +1130,105 @@ N.10. Performance va monitoring
 
 Performance optimizatsiya uchun indekslar, cache, paginatsiya va minimal so'rovlar ishlatiladi. Monitoring uchun healthcheck endpointlar mavjud bo'lib, containerlar holati nazorat qilinadi. Loglar file tizimda saqlanadi, bu esa troubleshooting jarayonini osonlashtiradi.
 
+
+
+============================================================
+ILOVA O. KENGAYTIRILGAN UX, XAVFSIZLIK VA TEST REJASI
+
+O.1. UX bo'yicha chuqur tahlil
+
+Foydalanuvchi tajribasi (UX) platformaning muvaffaqiyati uchun muhim omillardan biridir. "Farangiz" loyihasida UX dizayni quyidagi tamoyillarga tayanadi: qisqa yo'l (short path), tezkor javob, vizual aniqlik, hamda foydalanuvchi boshqaruvini minimallashtirish. Masalan, g'oya yaratish jarayoni bir ekran ichida amalga oshadi, foydalanuvchi minimal ma'lumotni to'ldirib yuborishi mumkin. Bu esa "time-to-first-idea" ko'rsatkichini kamaytiradi.
+
+UX jarayonida foydalanuvchi uchun muhim bo'lgan harakatlar (like, comment, follow, chat) doim ko'z oldida bo'lishi kerak. UI design shunday qurilganki, foydalanuvchi har bir g'oyaning tagida interaction tugmalarini ko'radi. Har bir muhim action animatsiya va haptik feedback bilan boyitilgan (mobil ilovada), bu foydalanuvchiga tizim javob berayotganini bildiradi.
+
+Onboarding jarayoni ham muhim. Ro'yxatdan o'tish paytida foydalanuvchi to'liq ma'lumot kiritadi (portfolio, location, phone). Bu ba'zi foydalanuvchilar uchun ko'proq vaqt olishi mumkin, ammo platformada ishonch muhitini yaratadi. Kelajakda optional onboarding bosqichlari qo'shilishi mumkin.
+
+O.2. Accessibility va foydalanish qulayligi
+
+Accessibility tamoyillari platformani barcha foydalanuvchilar uchun ochiq qilishga xizmat qiladi. Rang kontrasti, font o'lchamlari va UI elementlarining yetarlicha katta bo'lishi foydalanuvchilar uchun qulaylik yaratadi. Mobil ilovada screen reader bilan ishlash uchun accessibilityLabel va hintlardan foydalanish mumkin. Chat xabarlarida ham accessibilityLabel ishlatilgan, bu ko'rish qobiliyati cheklangan foydalanuvchilar uchun muhim.
+
+O.3. Xavfsizlik bo'yicha chuqur tahlil
+
+"Farangiz" loyihasida xavfsizlik bir necha qatlamlarda ta'minlanadi:
+- Autentifikatsiya darajasi (JWT tokenlar, refresh cookie)
+- Ma'lumotlarni validatsiya qilish (serializerlar va validatorlar)
+- Rate limit va brute-force himoya
+- Fayl yuklashda MIME type va size tekshiruvlari
+
+Refresh token cookie sifatida saqlanadi va HTTP-only bo'lgani sababli XSS hujumlariga qarshi nisbatan himoyalangan. Password policies esa weak passwordlarni cheklaydi. Bundan tashqari, follow va like kabi interaktiv amallar o'zini-o'zi kuzatish (self-follow) kabi holatlarda bloklanadi.
+
+O.4. Testlash bo'yicha kengaytirilgan reja
+
+Testlash rejasida uch asosiy qatlam bor: unit testlar, integration testlar va end-to-end testlar. Backendda pytest asosida unit testlar yozilgan. Bu testlar individual funksiyalar (like, follow, notification yaratish) to'g'ri ishlayotganini tekshiradi.
+
+Integration testlar esa API orqali to'liq jarayonni sinaydi. Masalan, ro'yxatdan o'tish -> login -> g'oya yaratish -> izoh qoldirish -> notification olish kabi ketma-ket jarayon test qilinadi.
+
+End-to-end testlar web va mobile interfeyslar orqali foydalanuvchi oqimini tekshiradi. Bunda UI va backend to'liq integratsiyada ishlashi nazorat qilinadi. Kelajakda Cypress yoki Playwright kabi vositalar yordamida avtomatlashtirilgan testlar qo'shish rejalashtiriladi.
+
+O.5. Ishonchlilik va ishga tayyorgarlik
+
+Tizimni ishlab chiqarish muhiti uchun tayyorlashda monitoring va loglar muhim rol o'ynaydi. Healthcheck endpointlar konteynerlarning ish holatini tekshiradi. Loglar esa xatolarni tezda aniqlashga yordam beradi. Redis cache holati, database response vaqtlarini kuzatish tizim barqarorligini oshiradi.
+
+O.6. Kengaytirish (scalability) istiqbollari
+
+Yuklama oshganda quyidagi strategiyalar qo'llanilishi mumkin:
+- Backend servislarini gorizontal kengaytirish
+- Postgresni replika bilan kengaytirish
+- Redisni klasterlash
+- CDN orqali statik fayllarni tez yetkazish
+- Chat va notification servislarini alohida microservicega ajratish
+
+Bu yondashuvlar platformani katta foydalanuvchilar sonida ham barqaror ishlashini ta'minlaydi.
+
+============================================================
+ILOVA P. FOYDALANUVCHI SARIYASI VA ANALITIKA
+
+P.1. Foydalanuvchi sariyasi (journey)
+
+1) Foydalanuvchi web yoki mobile ilovaga kiradi.
+2) Register sahifasida profil ma'lumotlarini to'ldiradi.
+3) Login orqali tizimga kiradi.
+4) Home feedda g'oyalarni ko'radi.
+5) Qiziqarli g'oyaga layk bosadi va izoh qoldiradi.
+6) G'oya muallifi bilan chat boshlaydi.
+7) O'z g'oyasini yaratadi va e'lon qiladi.
+8) Bildirishnomalar orqali yangi izoh va layklarni ko'rib boradi.
+
+Bu sariya foydalanuvchi uchun asosiy qiymatni yaratadi: g'oya almashish, muhokama va tarmoq yaratish.
+
+P.2. Analitika ko'rsatkichlari (taklif)
+
+- Kunlik faol foydalanuvchilar (DAU)
+- Haftalik faol foydalanuvchilar (WAU)
+- Yangi g'oyalar soni
+- O'rtacha izohlar soni
+- O'rtacha layklar soni
+- Chatda yuborilgan xabarlar soni
+
+Bu metrikalar platformaning foydalanuvchilar bilan ishlashini tahlil qilishga yordam beradi. Kelajakda admin panelga analitika grafiklari qo'shilishi mumkin.
+
+============================================================
+ILOVA Q. LOYIHA HAYOTIY SIKLI VA HUJJATLASH
+
+Q.1. Loyiha hayotiy sikli
+
+Loyiha hayotiy sikli quyidagi bosqichlardan iborat:
+- Tahlil va talablar yig'ish
+- Loyihalash (arxitektura va DB schema)
+- Implementatsiya
+- Testlash
+- Deploy
+- Qo'llab-quvvatlash va rivojlantirish
+
+Q.2. Hujjatlash standarti
+
+API dokumentatsiya uchun drf-spectacular ishlatilgan. Frontend va mobile kodlari uchun README va inline commentlar yozilishi tavsiya etiladi. Kurs ishi hujjati esa loyihaning to'liq texnik tavsifini beradi.
+
+Q.3. Qayta foydalanish va modullilik
+
+Monorepo struktura orqali backend, frontend va mobile bir joyda boshqariladi. Bu yondashuv kodni qayta foydalanishga va versiyalarni sinxronlashtirishga yordam beradi.
+
+Q.4. Kelajakda ilmiy izlanish imkoniyatlari
+
+Platforma g'oyalarni tahlil qilish va kategoriyalash bo'yicha ilmiy izlanishlar uchun ham asos bo'lishi mumkin. ML algoritmlar orqali g'oyalarni avtomatik guruhlash, sentiment analysis va tavsiya tizimlari yaratish istiqbolli yo'nalishdir.
+

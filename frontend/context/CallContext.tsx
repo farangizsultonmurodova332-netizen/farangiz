@@ -114,6 +114,59 @@ export function CallProvider({ children }: { children: React.ReactNode }) {
         checkActiveCall();
     }, [user, apiFetch]);
 
+    // ----------------------------------------------------
+    // GLOBAL SIGNAL LISTENER (User Channel)
+    // ----------------------------------------------------
+    useEffect(() => {
+        if (!user) return;
+
+        let ws: WebSocket | null = null;
+        let reconnectTimer: NodeJS.Timeout | null = null;
+        const accessToken = localStorage.getItem("access_token");
+
+        if (!accessToken) return;
+
+        const connectUserSocket = () => {
+            const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            let wsHost = process.env.NEXT_PUBLIC_WS_URL || (typeof window !== 'undefined' ? window.location.host : 'localhost:8000');
+
+            // Connect to User Channel
+            const wsUrl = `${wsProtocol}//${wsHost}/ws/user/?token=${accessToken}`;
+
+            ws = new WebSocket(wsUrl);
+
+            ws.onopen = () => {
+                console.log("[CallContext] Global User Socket connected");
+            };
+
+            ws.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    if (data.type === 'call_signal' && data.signal) {
+                        console.log("[CallContext] Global socket received signal:", data.signal);
+                        handleIncomingCallSignal(data.signal);
+                    }
+                } catch (e) {
+                    console.error("Failed to parse global socket message", e);
+                }
+            };
+
+            ws.onclose = () => {
+                reconnectTimer = setTimeout(() => {
+                    // Only reconnect if we still have a user
+                    if (user) connectUserSocket();
+                }, 3000);
+            };
+        };
+
+        connectUserSocket();
+
+        return () => {
+            if (ws) ws.close();
+            if (reconnectTimer) clearTimeout(reconnectTimer);
+        };
+    }, [user, handleIncomingCallSignal]);
+
     // Effect to join channel when we have call state restored but not joined yet
     useEffect(() => {
         const joinRestoredCall = async () => {
@@ -756,6 +809,59 @@ export function CallProvider({ children }: { children: React.ReactNode }) {
             });
         }
     }, [user]);
+
+    // ----------------------------------------------------
+    // GLOBAL SIGNAL LISTENER (User Channel)
+    // ----------------------------------------------------
+    useEffect(() => {
+        if (!user) return;
+
+        let ws: WebSocket | null = null;
+        let reconnectTimer: NodeJS.Timeout | null = null;
+        const accessToken = localStorage.getItem("access_token");
+
+        if (!accessToken) return;
+
+        const connectUserSocket = () => {
+            const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            let wsHost = process.env.NEXT_PUBLIC_WS_URL || (typeof window !== 'undefined' ? window.location.host : 'localhost:8000');
+
+            // Connect to User Channel
+            const wsUrl = `${wsProtocol}//${wsHost}/ws/user/?token=${accessToken}`;
+
+            ws = new WebSocket(wsUrl);
+
+            ws.onopen = () => {
+                console.log("[CallContext] Global User Socket connected");
+            };
+
+            ws.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    if (data.type === 'call_signal' && data.signal) {
+                        console.log("[CallContext] Global socket received signal:", data.signal);
+                        handleIncomingCallSignal(data.signal);
+                    }
+                } catch (e) {
+                    console.error("Failed to parse global socket message", e);
+                }
+            };
+
+            ws.onclose = () => {
+                reconnectTimer = setTimeout(() => {
+                    // Only reconnect if we still have a user
+                    if (user) connectUserSocket();
+                }, 3000);
+            };
+        };
+
+        connectUserSocket();
+
+        return () => {
+            if (ws) ws.close();
+            if (reconnectTimer) clearTimeout(reconnectTimer);
+        };
+    }, [user, handleIncomingCallSignal]);
 
     // Helper: Format Duration
     const formattedDuration = React.useMemo(() => {
