@@ -76,6 +76,7 @@ class Message(models.Model):
     )
     body = models.TextField(max_length=2000)
     image = models.FileField(upload_to='chat-images/', blank=True, null=True)
+    video = models.FileField(upload_to='chat-videos/', blank=True, null=True)
     audio = models.FileField(upload_to='chat-audio/', blank=True, null=True)
     audio_duration = models.FloatField(null=True, blank=True)  # seconds
     audio_size = models.PositiveIntegerField(null=True, blank=True)  # bytes
@@ -90,6 +91,7 @@ class Message(models.Model):
 
     MESSAGE_TYPE_TEXT = 'text'
     MESSAGE_TYPE_IMAGE = 'image'
+    MESSAGE_TYPE_VIDEO = 'video'
     MESSAGE_TYPE_AUDIO = 'audio'
     MESSAGE_TYPE_FILE = 'file'
     MESSAGE_TYPE_CALL = 'call'
@@ -97,6 +99,7 @@ class Message(models.Model):
     MESSAGE_TYPE_CHOICES = (
         (MESSAGE_TYPE_TEXT, 'Text'),
         (MESSAGE_TYPE_IMAGE, 'Image'),
+        (MESSAGE_TYPE_VIDEO, 'Video'),
         (MESSAGE_TYPE_AUDIO, 'Audio'),
         (MESSAGE_TYPE_FILE, 'File'),
         (MESSAGE_TYPE_CALL, 'Call'),

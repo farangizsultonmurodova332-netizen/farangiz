@@ -13,7 +13,7 @@ import { timeAgo } from "../../../lib/format";
 import { useLanguage } from "../../../lib/i18n";
 import Picker from "@emoji-mart/react";
 import emojiData from "@emoji-mart/data";
-import { Phone, Video, Info, PhoneIncoming, PhoneMissed } from "lucide-react";
+import { Phone, Video, Info, PhoneIncoming, PhoneMissed, FileText, Film, X } from "lucide-react";
 
 type ChatRoomContentProps = {
   roomId: number;
@@ -36,6 +36,9 @@ function ChatRoomContent({ roomId, user, apiFetch }: ChatRoomContentProps) {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [audioFile, setAudioFile] = useState<File | null>(null);
   const [audioPreview, setAudioPreview] = useState<string | null>(null);
+  const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [videoPreview, setVideoPreview] = useState<string | null>(null);
+  const [docFile, setDocFile] = useState<File | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [isEmojiOpen, setIsEmojiOpen] = useState(false);
   const [isMembersOpen, setIsMembersOpen] = useState(false);
@@ -173,6 +176,14 @@ function ChatRoomContent({ roomId, user, apiFetch }: ChatRoomContentProps) {
     };
   }, [audioPreview]);
 
+  useEffect(() => {
+    return () => {
+      if (videoPreview) {
+        URL.revokeObjectURL(videoPreview);
+      }
+    };
+  }, [videoPreview]);
+
   const startRecording = async () => {
     if (isRecording) return;
     if (!navigator.mediaDevices?.getUserMedia) {
@@ -257,7 +268,7 @@ function ChatRoomContent({ roomId, user, apiFetch }: ChatRoomContentProps) {
 
   const handleSend = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (!messageBody.trim() && !imageFile && !audioFile && !editingMessage) return;
+    if (!messageBody.trim() && !imageFile && !audioFile && !videoFile && !docFile && !editingMessage) return;
 
     if (editingMessage) {
       if (!messageBody.trim() && !editingMessage.image_url && !editingMessage.audio_url) return;
@@ -278,7 +289,7 @@ function ChatRoomContent({ roomId, user, apiFetch }: ChatRoomContentProps) {
       }
     }
 
-    const useSocket = !imageFile && !audioFile && !replyToMessage;
+    const useSocket = !imageFile && !audioFile && !videoFile && !docFile && !replyToMessage;
     if (useSocket) {
       const sent = sendMessage(messageBody);
       if (sent) {
@@ -290,7 +301,7 @@ function ChatRoomContent({ roomId, user, apiFetch }: ChatRoomContentProps) {
     try {
       let body: BodyInit;
       let headers: HeadersInit | undefined;
-      if (imageFile || audioFile) {
+      if (imageFile || audioFile || videoFile || docFile) {
         const payload = new FormData();
         if (messageBody.trim()) {
           payload.append("body", messageBody.trim());
@@ -300,6 +311,12 @@ function ChatRoomContent({ roomId, user, apiFetch }: ChatRoomContentProps) {
         }
         if (audioFile) {
           payload.append("audio", audioFile);
+        }
+        if (videoFile) {
+          payload.append("video", videoFile);
+        }
+        if (docFile) {
+          payload.append("file", docFile);
         }
         if (replyToMessage) {
           payload.append("reply_to", String(replyToMessage.id));
@@ -322,16 +339,21 @@ function ChatRoomContent({ roomId, user, apiFetch }: ChatRoomContentProps) {
       }
       setMessageBody("");
       setReplyToMessage(null);
-      if (imagePreview) {
-        URL.revokeObjectURL(imagePreview);
-      }
+
+      if (imagePreview) URL.revokeObjectURL(imagePreview);
       setImageFile(null);
       setImagePreview(null);
-      if (audioPreview) {
-        URL.revokeObjectURL(audioPreview);
-      }
+
+      if (audioPreview) URL.revokeObjectURL(audioPreview);
       setAudioFile(null);
       setAudioPreview(null);
+
+      if (videoPreview) URL.revokeObjectURL(videoPreview);
+      setVideoFile(null);
+      setVideoPreview(null);
+
+      setDocFile(null);
+
       scrollToBottom();
     } catch (error) {
       alert(t("chat.sendFailed"));
@@ -605,6 +627,40 @@ function ChatRoomContent({ roomId, user, apiFetch }: ChatRoomContentProps) {
                               }`}
                           />
                         )}
+                        {message.video_url && (
+                          <video
+                            controls
+                            src={message.video_url}
+                            className={`mt-2 w-full max-w-sm rounded-2xl ${isMine ? "border border-white/30" : "border border-ink/10"
+                              }`}
+                          />
+                        )}
+                        {message.file_url && (
+                          <a
+                            href={message.file_url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className={`mt-2 flex items-center gap-3 p-3 rounded-xl border ${isMine
+                              ? "bg-white/10 border-white/20 hover:bg-white/20"
+                              : "bg-ink/5 border-ink/10 hover:bg-ink/10"
+                              } transition-colors`}
+                            download
+                          >
+                            <div className={`p-2 rounded-lg ${isMine ? "bg-white/20" : "bg-white"}`}>
+                              <FileText size={20} className={isMine ? "text-white" : "text-primary"} />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className={`text-sm font-medium truncate ${isMine ? "text-white" : "text-ink"}`}>
+                                {message.file_name || "Document"}
+                              </p>
+                              {message.file_size && (
+                                <p className={`text-xs ${isMine ? "text-white/70" : "text-ink/60"}`}>
+                                  {(message.file_size / 1024).toFixed(1)} KB
+                                </p>
+                              )}
+                            </div>
+                          </a>
+                        )}
                       </>
                     )}
                     <div className="absolute -top-2 -right-2 hidden items-center gap-1 rounded-full bg-card border border-haze px-2 py-1 text-[11px] text-ink shadow-sm group-hover:flex">
@@ -736,6 +792,39 @@ function ChatRoomContent({ roomId, user, apiFetch }: ChatRoomContentProps) {
               </button>
             </div>
           )}
+          {videoPreview && (
+            <div className="mb-3 flex items-center gap-3 rounded-xl border border-haze bg-card/50 p-2">
+              <video controls src={videoPreview} className="h-32 rounded-lg" />
+              <button
+                type="button"
+                className="text-xs font-medium text-ink/60 hover:text-ink"
+                onClick={() => {
+                  if (videoPreview) {
+                    URL.revokeObjectURL(videoPreview);
+                  }
+                  setVideoFile(null);
+                  setVideoPreview(null);
+                }}
+              >
+                <X size={16} />
+              </button>
+            </div>
+          )}
+          {docFile && (
+            <div className="mb-3 flex items-center gap-3 rounded-xl border border-haze bg-card/50 p-2">
+              <div className="h-10 w-10 flex items-center justify-center bg-gray-100 rounded-lg">
+                <FileText size={20} className="text-gray-500" />
+              </div>
+              <span className="text-sm text-ink truncate max-w-[200px]">{docFile.name}</span>
+              <button
+                type="button"
+                className="text-xs font-medium text-ink/60 hover:text-ink ml-auto"
+                onClick={() => setDocFile(null)}
+              >
+                <X size={16} />
+              </button>
+            </div>
+          )}
           <div className="flex items-center gap-2">
             <div className="relative">
               <button
@@ -819,6 +908,38 @@ function ChatRoomContent({ roomId, user, apiFetch }: ChatRoomContentProps) {
                 />
                 <circle cx="12" cy="12" r="3.25" fill="none" stroke="currentColor" strokeWidth="1.5" />
               </svg>
+            </label>
+            <label className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-ink/10 text-ink/60 hover:text-ink hover:bg-haze/50">
+              <input
+                type="file"
+                accept="video/*"
+                className="hidden"
+                onChange={(event) => {
+                  const file = event.target.files?.[0] ?? null;
+                  if (!file) return;
+                  if (videoPreview) {
+                    URL.revokeObjectURL(videoPreview);
+                  }
+                  setVideoFile(file);
+                  setVideoPreview(URL.createObjectURL(file));
+                }}
+                disabled={!!editingMessage}
+              />
+              <Film size={16} />
+            </label>
+            <label className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-ink/10 text-ink/60 hover:text-ink hover:bg-haze/50">
+              <input
+                type="file"
+                accept="*/*"
+                className="hidden"
+                onChange={(event) => {
+                  const file = event.target.files?.[0] ?? null;
+                  if (!file) return;
+                  setDocFile(file);
+                }}
+                disabled={!!editingMessage}
+              />
+              <FileText size={16} />
             </label>
             <input
               ref={inputRef}

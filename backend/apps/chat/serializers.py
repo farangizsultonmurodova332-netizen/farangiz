@@ -7,6 +7,7 @@ class MessageSerializer(serializers.ModelSerializer):
     sender_username = serializers.CharField(source='sender.username', read_only=True)
     sender_id = serializers.IntegerField(source='sender.id', read_only=True)
     image_url = serializers.SerializerMethodField()
+    video_url = serializers.SerializerMethodField()
     audio_url = serializers.SerializerMethodField()
     file_url = serializers.SerializerMethodField()
     reply_to_preview = serializers.SerializerMethodField()
@@ -24,6 +25,7 @@ class MessageSerializer(serializers.ModelSerializer):
             'reply_to_preview',
             'body',
             'image_url',
+            'video_url',
             'audio_url',
             'audio_duration',
             'audio_size',
@@ -44,6 +46,14 @@ class MessageSerializer(serializers.ModelSerializer):
             return request.build_absolute_uri(obj.image.url)
         if obj.image:
             return obj.image.url
+        return None
+
+    def get_video_url(self, obj):
+        request = self.context.get('request')
+        if obj.video and request:
+            return request.build_absolute_uri(obj.video.url)
+        if obj.video:
+            return obj.video.url
         return None
 
     def get_audio_url(self, obj):

@@ -85,13 +85,17 @@ export type ChatMessage = {
   } | null;
   body: string;
   image_url?: string | null;
+  video_url?: string | null;
   audio_url?: string | null;
+  file_url?: string | null;
+  file_name?: string | null;
+  file_size?: number | null;
   created_at: string;
   updated_at?: string;
   is_read: boolean;
   is_deleted?: boolean;
   is_edited?: boolean;
-  message_type?: 'text' | 'image' | 'audio' | 'file' | 'call' | 'system';
+  message_type?: 'text' | 'image' | 'video' | 'audio' | 'file' | 'call' | 'system';
 };
 
 // Call types
