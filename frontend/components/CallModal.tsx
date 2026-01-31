@@ -123,89 +123,102 @@ export default function CallModal() {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 md:p-4">
-      <div className="relative w-full h-full md:h-auto md:max-w-4xl bg-background md:rounded-2xl overflow-hidden">
-        {/* Video container */}
-        {isVideo && status === "connected" ? (
-          <div className="relative w-full h-full md:aspect-video bg-gray-900">
-            {/* Remote video (full screen) */}
-            <div
-              id={`remote-video-${remoteUsers[0]?.uid}`}
-              ref={setRemoteVideoRef}
-              className="absolute inset-0"
-            />
+      {/* 
+        Mobile: Full screen, flex-col
+        Desktop: Rounded box, fixed size
+      */}
+      <div className="relative w-full h-full md:h-auto md:max-w-4xl bg-background md:rounded-2xl overflow-hidden flex flex-col">
 
-            {/* Local video (small overlay) */}
-            <div
-              id={`local-video-${currentUserId}`}
-              ref={setLocalVideoRef}
-              className="absolute bottom-4 right-4 w-32 h-24 bg-gray-800 rounded-lg overflow-hidden border-2 border-white/20"
-            />
+        {/* Main Content Area (Video or Audio UI) - takes available space */}
+        <div className="flex-1 relative overflow-hidden bg-gray-900">
+          {isVideo && status === "connected" ? (
+            <div className="w-full h-full">
+              {/* Remote video (full screen) */}
+              <div
+                id={`remote-video-${remoteUsers[0]?.uid}`}
+                ref={setRemoteVideoRef}
+                className="absolute inset-0 w-full h-full object-cover"
+              />
 
-            {/* No remote video placeholder */}
-            {remoteUsers.length === 0 && (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="w-24 h-24 mx-auto bg-gray-700 rounded-full flex items-center justify-center mb-4">
-                    <span className="text-4xl text-white">
-                      {otherUser.username.charAt(0).toUpperCase()}
-                    </span>
+              {/* Local video (small overlay) */}
+              <div
+                id={`local-video-${currentUserId}`}
+                ref={setLocalVideoRef}
+                className="absolute top-4 right-4 w-28 h-20 md:w-32 md:h-24 bg-gray-800 rounded-lg overflow-hidden border-2 border-white/20 z-10"
+              />
+
+              {/* No remote video placeholder */}
+              {remoteUsers.length === 0 && (
+                <div className="absolute inset-0 flex items-center justify-center z-0">
+                  <div className="text-center">
+                    <div className="w-24 h-24 mx-auto bg-gray-700 rounded-full flex items-center justify-center mb-4">
+                      <span className="text-4xl text-white">
+                        {otherUser.username.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                    <p className="text-white text-lg">{otherUser.username}</p>
+                    <p className="text-white/60 text-sm mt-1">{getStatusText()}</p>
                   </div>
-                  <p className="text-white text-lg">{otherUser.username}</p>
-                  <p className="text-white/60 text-sm mt-1">{getStatusText()}</p>
-                </div>
-              </div>
-            )}
-          </div>
-        ) : (
-          /* Audio call or waiting UI */
-          <div className="bg-card border border-haze rounded-2xl p-8">
-            <div className="text-center">
-              {/* Avatar */}
-              <div className="w-28 h-28 mx-auto bg-black/20 rounded-full flex items-center justify-center mb-6">
-                {otherUser.avatar_url ? (
-                  <img
-                    src={otherUser.avatar_url}
-                    alt={otherUser.username}
-                    className="w-full h-full rounded-full object-cover"
-                  />
-                ) : (
-                  <span className="text-5xl text-white">
-                    {otherUser.username.charAt(0).toUpperCase()}
-                  </span>
-                )}
-              </div>
-
-              {/* Name */}
-              <h2 className="text-2xl font-semibold text-white mb-2">
-                {otherUser.username}
-              </h2>
-
-              {/* Status */}
-              <p className="text-white/80 text-lg">
-                {isVideo ? t("call.videoCall") : t("call.voiceCall")}
-              </p>
-              <p className="text-white/60 mt-2">{getStatusText()}</p>
-
-              {/* Pulse animation for calling/ringing */}
-              {(status === "calling" || status === "ringing" || status === "connecting") && (
-                <div className="flex justify-center mt-6 space-x-2">
-                  <div className="w-3 h-3 bg-white/60 rounded-full animate-pulse" />
-                  <div className="w-3 h-3 bg-white/60 rounded-full animate-pulse delay-100" />
-                  <div className="w-3 h-3 bg-white/60 rounded-full animate-pulse delay-200" />
                 </div>
               )}
             </div>
-          </div>
-        )}
+          ) : (
+            /* Audio call or waiting UI */
+            <div className="w-full h-full flex flex-col items-center justify-center p-8 bg-card border border-haze">
+              <div className="text-center">
+                {/* Avatar */}
+                <div className="w-32 h-32 mx-auto bg-black/20 rounded-full flex items-center justify-center mb-6">
+                  {otherUser.avatar_url ? (
+                    <img
+                      src={otherUser.avatar_url}
+                      alt={otherUser.username}
+                      className="w-full h-full rounded-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-5xl text-white">
+                      {otherUser.username.charAt(0).toUpperCase()}
+                    </span>
+                  )}
+                </div>
 
-        {/* Controls */}
-        <div className="mt-6 flex justify-center items-center gap-4">
+                {/* Name */}
+                <h2 className="text-2xl font-semibold text-white mb-2">
+                  {otherUser.username}
+                </h2>
+
+                {/* Status */}
+                <p className="text-white/80 text-lg">
+                  {isVideo ? t("call.videoCall") : t("call.voiceCall")}
+                </p>
+                <p className="text-white/60 mt-2">{getStatusText()}</p>
+
+                {/* Pulse animation for calling/ringing */}
+                {(status === "calling" || status === "ringing" || status === "connecting") && (
+                  <div className="flex justify-center mt-6 space-x-2">
+                    <div className="w-3 h-3 bg-white/60 rounded-full animate-pulse" />
+                    <div className="w-3 h-3 bg-white/60 rounded-full animate-pulse delay-100" />
+                    <div className="w-3 h-3 bg-white/60 rounded-full animate-pulse delay-200" />
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Controls Bar - Overlay on mobile video or fixed at bottom */}
+        <div className={`
+            p-6 flex justify-center items-center gap-6 w-full
+            ${isVideo && status === "connected"
+            ? "absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent pt-12 pb-8 z-20"
+            : "bg-background border-t border-haze relative z-20"
+          }
+        `}>
           {/* Incoming call buttons */}
           {isIncoming ? (
             <>
               <button
                 onClick={rejectCall}
-                className="w-16 h-16 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center transition-colors"
+                className="w-16 h-16 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center transition-colors shadow-lg"
                 title={t("call.reject")}
               >
                 <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -214,7 +227,7 @@ export default function CallModal() {
               </button>
               <button
                 onClick={answerCall}
-                className="w-16 h-16 bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center transition-colors"
+                className="w-16 h-16 bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center transition-colors shadow-lg animate-bounce"
                 title={t("call.answer")}
               >
                 <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -232,11 +245,11 @@ export default function CallModal() {
             <>
               <button
                 onClick={toggleMute}
-                className={`w-14 h-14 rounded-full flex items-center justify-center transition-colors ${isMuted ? "bg-red-500 hover:bg-red-600" : "bg-black/30 hover:bg-black/40"
+                className={`w-14 h-14 rounded-full flex items-center justify-center transition-colors backdrop-blur-md ${isMuted ? "bg-red-500 hover:bg-red-600 text-white" : "bg-white/20 hover:bg-white/30 text-white"
                   }`}
                 title={isMuted ? t("call.unmute") : t("call.mute")}
               >
-                <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   {isMuted ? (
                     <path
                       strokeLinecap="round"
@@ -258,11 +271,11 @@ export default function CallModal() {
               {isVideo && (
                 <button
                   onClick={toggleVideo}
-                  className={`w-14 h-14 rounded-full flex items-center justify-center transition-colors ${!isVideoEnabled ? "bg-red-500 hover:bg-red-600" : "bg-black/30 hover:bg-black/40"
+                  className={`w-14 h-14 rounded-full flex items-center justify-center transition-colors backdrop-blur-md ${!isVideoEnabled ? "bg-red-500 hover:bg-red-600 text-white" : "bg-white/20 hover:bg-white/30 text-white"
                     }`}
                   title={isVideoEnabled ? t("call.videoOff") : t("call.videoOn")}
                 >
-                  <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     {isVideoEnabled ? (
                       <path
                         strokeLinecap="round"
@@ -284,7 +297,7 @@ export default function CallModal() {
 
               <button
                 onClick={endCall}
-                className="w-16 h-16 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center transition-colors"
+                className="w-16 h-16 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center transition-colors shadow-lg"
                 title={t("call.endCall")}
               >
                 <svg className="w-8 h-8 text-white transform rotate-135" fill="none" viewBox="0 0 24 24" stroke="currentColor">

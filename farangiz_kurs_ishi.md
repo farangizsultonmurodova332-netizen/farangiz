@@ -1057,3 +1057,76 @@ ILOVA M. FOYDALANUVCHI YO'RIQNOMASI (QISQA)
 5) Chat: foydalanuvchi profilidan chat boshlanadi.
 6) Profil: sozlamalar va avatarni yangilash.
 
+
+
+============================================================
+ILOVA N. MODULLAR BO'YICHA KENGAYTIRILGAN TAHLIL
+
+N.1. Accounts va autentifikatsiya moduli
+
+Accounts moduli foydalanuvchi hayot siklini boshqaradi: ro'yxatdan o'tish, login, profilni ko'rish va tahrirlash, parolni tiklash, hamda qurilmalar ro'yxatini yuritish. "Farangiz" loyihasida ro'yxatdan o'tish jarayoni oddiy email-parol mexanizmidan ko'ra ko'proq ma'lumot talab qiladi. Bu orqali foydalanuvchini haqiqiyligini oshirish, spam va soxta profil ehtimolini kamaytirish ko'zda tutilgan. Ro'yxatdan o'tishda portfolio faylini talab qilish ham shu maqsadga xizmat qiladi.
+
+Login jarayonida JWT tokenlar ishlatiladi. Access token qisqa muddatli bo'lib, tez-tez yangilanadi. Refresh token esa httpOnly cookie sifatida saqlanadi, bu JS orqali o'g'irlashni qiyinlashtiradi. Parolni tiklashda OTP yuborish mexanizmi bor. OTPning amal qilish vaqti, maksimal urinishlar va qayta so'rov oralig'i serverda nazorat qilinadi. Bu tizim foydalanuvchi xavfsizligini kuchaytiradi.
+
+Profilni tahrirlash jarayonida avatar URL yoki avatar faylini yangilash mumkin. Agar avatar fayl yuklansa, sistemada avatar_url tozalanadi va lokal fayl ustuvor bo'ladi. Foydalanuvchi bio, location, telefon raqami kabi maydonlarni tahrirlab, o'z profilini to'liqroq qiladi. Ushbu ma'lumotlar keyinchalik jamoa a'zolari uchun foydali bo'lishi mumkin.
+
+Device moduli foydalanuvchi qurilmalarini boshqaradi. Bu modul mobil qurilma ID, device_name va refresh tokenni saqlaydi. Agar foydalanuvchi bir nechta qurilmadan foydalansa, har bir qurilma alohida qayd etiladi va kerak bo'lsa terminate qilish mumkin. Bu xavfsizlik nuqtai nazaridan foydali, chunki foydalanuvchi yo'qolgan qurilmani tizimdan chiqarib yuborishi mumkin.
+
+N.2. Ideas moduli (g'oyalar boshqaruvi)
+
+G'oyalar moduli loyiha yadrosidir. Har bir g'oya sarlavha, qisqa va to'liq tavsif, kategoriya va teglar bilan ifodalanadi. Kategoriya va teglar g'oyalarni strukturali qidirish va tahlil qilish uchun zarur. Taglar max 10 ta bo'lishi mumkin, har biri 50 belgidan oshmasligi kerak. Bu cheklovlar tizimning tartibli ishlashiga xizmat qiladi.
+
+G'oyalar uchun i18n maydonlar mavjud bo'lib, har bir matnli maydonning tarjimasi alohida JSON sifatida saqlanadi. Bu yondashuv kelajakda ko'p tilli kontentni boshqarishni osonlashtiradi. Masalan, g'oya ingliz tilida yaratilgan bo'lsa, keyinchalik uzbek yoki rus tiliga tarjima qo'shish mumkin.
+
+G'oyani ko'rish jarayonida views_count avtomatik oshadi. Bu ko'rsatkich g'oyaning mashhurligini aniqlashda ishlatiladi. Trend bo'limida esa so'nggi N kun ichida eng ko'p layk olgan g'oyalar ko'rsatiladi. Bu algoritm g'oyalarni vaqt bo'yicha dinamik tarzda saralash imkonini beradi.
+
+G'oyani tahrirlash faqat muallifga ruxsat etilgan. Bu xavfsizlik qoidasi ma'lumotlar yaxlitligini saqlaydi. G'oyani o'chirish ham muallif yoki admin tomonidan amalga oshirilishi mumkin.
+
+N.3. Comments va reaksiyalar moduli
+
+Izohlar g'oyaning muhokama maydonidir. Har bir izoh muallifga va g'oyaga bog'langan. Izohlar ierarxik (parent/reply) bo'lishi mumkin, bu esa muhokamani chuqurroq qilish imkonini beradi. Izohlar uchun image yuklash imkoniyati ham mavjud. Bu foydalanuvchilar uchun vizual tushuntirishlarni qo'shish imkonini beradi.
+
+Izohlar va g'oyalar layk qilish mexanizmi o'xshash: user va object bo'yicha unique bog'lanish yaratiladi. Agar layk mavjud bo'lsa, qayta bosilganda o'chiriladi. Bu oddiy va tushunarli UX yaratadi. Layklar muallifga bildirishnoma yuboradi va g'oyaning ommabopligini oshiradi.
+
+PublicComment modeli esa umumiy devor yoki umumiy izohlar bo'limi uchun ishlatiladi. Bu modul turli vaziyatlarda umumiy fikr almashish imkonini beradi.
+
+N.4. Notifications moduli
+
+Bildirishnomalar foydalanuvchining faoliyatini kuzatib borishga yordam beradi. Ular uchta asosiy holatda yaratiladi: g'oya layk qilinsa, izoh yozilsa yoki follow bosilsa. Notification modeli message va type maydonlari orqali foydalanuvchiga tushunarli matn qaytaradi.
+
+Bildirishnomalarning is_read flagi foydalanuvchi ko'rgan yoki ko'rmaganini aniqlaydi. Foydalanuvchi bitta notificationni yoki barcha notificationlarni o'qilgan qilish imkoniga ega. Mobil ilovada bu bildirishnomalar push orqali ham yuboriladi, bu esa foydalanuvchining real vaqt xabardor bo'lishini ta'minlaydi.
+
+N.5. Chat moduli
+
+Chat moduli real vaqt kommunikatsiyaning asosi hisoblanadi. Chat xonalari shaxsiy yoki guruh bo'lishi mumkin. Shaxsiy chat ikki foydalanuvchi orasida avtomatik yaratiladi. Guruh chatlar esa maxsus create-group endpoint orqali yaratiladi, u yerda owner va admin roli mavjud.
+
+Guruh chatlarda a'zo qo'shish, chiqarish, admin tayinlash kabi boshqaruv imkoniyatlari bor. ChatRoomMembership modeli orqali rollar va ruxsatlar nazorat qilinadi. Bu yondashuv guruh chatni tartibli boshqarishga imkon beradi.
+
+Chat xabarlarida turli media turlarini yuborish mumkin: matn, rasm, audio, hujjat. Fayl turlariga cheklov qo'yilgan va maksimal o'lcham 50MB. Audio xabarlar uchun duration (uzunlik) ham hisoblanadi, bu UI da ko'rsatish uchun kerak.
+
+Xabarlar o'qilgan holati read receipts orqali belgilanadi. Shaxsiy chatlarda unread count cache orqali hisoblanadi, guruh chatlarda esa last_read_at asosida aniqlanadi.
+
+N.6. Calls moduli
+
+Qo'ng'iroqlar moduli voice va video aloqalarni ta'minlaydi. Call lifecycle quyidagi holatlardan iborat: calling, ringing, connecting, connected, ended, rejected, missed, failed, busy. Qo'ng'iroq boshlanganida Agora kanal va token yaratiladi. Caller uchun token darhol qaytadi, callee esa /answer endpointi orqali o'z tokenini oladi.
+
+Qo'ng'iroq jarayonida WebSocket signal almashinuvi ishlatiladi. Bu real vaqt qo'ng'iroqni boshqarish, reject yoki end signalni yetkazish uchun zarur. Qo'ng'iroq yakunlanganda duration hisoblanadi va call tarixiga yoziladi.
+
+N.7. Mobile moduli
+
+Mobil ilova Expo asosida ishlab chiqilgan. Mobil ilovada offline caching uchun React Query va AsyncStorage qo'llaniladi. Theme boshqaruvi light/dark rejimlarini qo'llab-quvvatlaydi. Push bildirishnomalar Expo tokenlari orqali ishlaydi, bu esa real vaqt xabarlarni foydalanuvchiga yetkazadi.
+
+Mobile ilova geolokatsiya bilan ishlaydi va foydalanuvchi joylashuvini profilga bog'lash imkonini beradi. MapView komponenti orqali foydalanuvchi joylashuvi vizual ko'rsatiladi.
+
+N.8. Web moduli
+
+Web ilova Next.js App Router orqali sahifalarni boshqaradi. SSR (Server Side Rendering) va SSG (Static Site Generation) imkoniyatlari mavjud. React Query orqali data fetching va caching amalga oshiriladi. Form validatsiya uchun zod va react-hook-form ishlatiladi. UI komponentlari minimalistik bo'lib, g'oyalarni tez ko'rish va yaratishga yo'naltirilgan.
+
+N.9. DevOps va deploy moduli
+
+Loyiha Docker Compose orqali boshqariladi. Nginx reverse proxy sifatida ishlaydi va statik/media fayllarni foydalanuvchilarga taqdim etadi. Backend Daphne ASGI server orqali WebSocketni qo'llab-quvvatlaydi. Redis real vaqt chat va cache uchun ishlatiladi.
+
+N.10. Performance va monitoring
+
+Performance optimizatsiya uchun indekslar, cache, paginatsiya va minimal so'rovlar ishlatiladi. Monitoring uchun healthcheck endpointlar mavjud bo'lib, containerlar holati nazorat qilinadi. Loglar file tizimda saqlanadi, bu esa troubleshooting jarayonini osonlashtiradi.
+
