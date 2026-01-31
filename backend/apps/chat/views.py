@@ -23,7 +23,7 @@ class ChatRoomViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """Return chat rooms for the current user"""
-        return ChatRoom.objects.filter(participants=self.request.user).prefetch_related('participants', 'messages')
+        return ChatRoom.objects.filter(participants=self.request.user).prefetch_related('participants')
 
     def destroy(self, request, *args, **kwargs):
         room = self.get_object()

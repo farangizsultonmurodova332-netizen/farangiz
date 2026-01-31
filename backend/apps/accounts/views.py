@@ -80,15 +80,23 @@ class LoginView(TokenObtainPairView):
     throttle_scope = 'login'
 
     def post(self, request, *args, **kwargs):
-        response = super().post(request, *args, **kwargs)
-        if response.status_code == status.HTTP_200_OK:
-            refresh = response.data.get('refresh')
-            if refresh:
-                if should_include_refresh(request):
-                    return response
-                set_refresh_cookie(response, refresh)
-                response.data.pop('refresh', None)
-        return response
+        try:
+            response = super().post(request, *args, **kwargs)
+            if response.status_code == status.HTTP_200_OK:
+                refresh = response.data.get('refresh')
+                if refresh:
+                    if should_include_refresh(request):
+                        return response
+                    set_refresh_cookie(response, refresh)
+                    response.data.pop('refresh', None)
+            return response
+        except Exception as e:
+            import logging
+            import traceback
+            logger = logging.getLogger('django.request')
+            logger.error(f"Login failed: {str(e)}")
+            logger.error(traceback.format_exc())
+            raise e
 
 
 class RefreshView(APIView):
