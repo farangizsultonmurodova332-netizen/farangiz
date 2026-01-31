@@ -122,12 +122,12 @@ export default function CallModal() {
   }
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 md:p-4">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 md:p-4">
       {/* 
         Mobile: Full screen (100dvh), flex-col
         Desktop: Rounded box, fixed size
       */}
-      <div className="relative w-full h-[100dvh] md:h-auto md:max-w-4xl bg-background md:rounded-2xl overflow-hidden flex flex-col supports-[height:100dvh]:h-[100dvh] supports-[height:100svh]:h-[100svh]">
+      <div className="relative w-full h-full md:h-auto md:max-w-4xl bg-background md:rounded-2xl overflow-hidden flex flex-col h-[100dvh]">
 
         {/* Main Content Area (Video or Audio UI) - takes available space */}
         <div className="flex-1 relative overflow-hidden bg-gray-900">
@@ -207,10 +207,10 @@ export default function CallModal() {
 
         {/* Controls Bar - Overlay on mobile video or fixed at bottom */}
         <div className={`
-            p-6 pb-8 md:pb-6 flex justify-center items-center gap-6 w-full z-50
-            safe-area-bottom
+            p-6 flex justify-center items-center gap-6 w-full z-[100]
+            pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))]
             ${isVideo && status === "connected"
-            ? "absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent pt-20"
+            ? "absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent pt-24"
             : "bg-background border-t border-haze relative shadow-[0_-4px_20px_rgba(0,0,0,0.2)]"
           }
         `}>
