@@ -64,3 +64,5 @@ Thumbs.db
 .DS_Store
 nul
 */nul
+*.apk
+frontend/public/*.apk

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useAuth } from "../lib/auth";
 import { useLanguage } from "../lib/i18n";
 import { useQuery } from "@tanstack/react-query";
-import { Bell, Compass, LogIn, MessageCircle, PlusCircle, UserCircle } from "lucide-react";
+import { Bell, Compass, Download, LogIn, MessageCircle, PlusCircle, UserCircle } from "lucide-react";
 
 export default function Header() {
   const { user, apiFetch } = useAuth();
@@ -49,6 +49,9 @@ export default function Header() {
           <Link href="/ideas/new" className="btn-primary">
             <PlusCircle size={16} /> {t("nav.newIdea")}
           </Link>
+          <a href="/farangiz.apk" download className="btn-ghost text-primary hover:bg-primary/10">
+            <Download size={16} /> Mobile App
+          </a>
           {user ? (
             <>
               <Link href="/chat" className="btn-ghost relative">
