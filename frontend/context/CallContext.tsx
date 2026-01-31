@@ -411,10 +411,19 @@ export function CallProvider({ children }: { children: React.ReactNode }) {
             await client.subscribe(user, mediaType);
             if (mediaType === "video") {
                 console.log("[Agora] Adding remote user video to state:", user.uid);
-                setState((prev) => ({
-                    ...prev,
-                    remoteUsers: [...prev.remoteUsers.filter((u) => u.uid !== user.uid), user],
-                }));
+                setState((prev) => {
+                    // Check if already exists to avoid duplicates
+                    if (prev.remoteUsers.some(u => u.uid === user.uid)) {
+                        return {
+                            ...prev,
+                            remoteUsers: prev.remoteUsers.map(u => u.uid === user.uid ? user : u)
+                        };
+                    }
+                    return {
+                        ...prev,
+                        remoteUsers: [...prev.remoteUsers, user],
+                    };
+                });
             }
             if (mediaType === "audio") {
                 console.log("[Agora] Playing remote user audio:", user.uid);
@@ -427,7 +436,11 @@ export function CallProvider({ children }: { children: React.ReactNode }) {
             if (mediaType === "video") {
                 setState((prev) => ({
                     ...prev,
-                    remoteUsers: prev.remoteUsers.filter((u) => u.uid !== user.uid),
+                    // We typically don't remove the user from the list on unpublish, 
+                    // just let the video track become undefined in the object reference if updated.
+                    // However, Agora objects are mutable.
+                    // Safest is to keep them in the list but trigger a re-render.
+                    remoteUsers: prev.remoteUsers.map(u => u.uid === user.uid ? user : u)
                 }));
             }
         };
