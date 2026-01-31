@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
+import toast from "react-hot-toast";
 import type {
     IAgoraRTCClient,
     ICameraVideoTrack,
@@ -587,14 +588,15 @@ export function CallProvider({ children }: { children: React.ReactNode }) {
 
             setState((prev) => ({ ...prev, status: "connected" }));
 
-        } catch (error) {
+        } catch (error: any) {
             console.error("Failed to answer call", error);
-            // Clean up tracks on error
-            localAudioTrackRef.current?.close();
-            localAudioTrackRef.current = null;
-            localVideoTrackRef.current?.close();
-            localVideoTrackRef.current = null;
-            endCall();
+            toast.error(error.message || "Failed to answer call");
+
+            // Do NOT end the call immediately on error. 
+            // Allow the user to try again or see the error.
+            // Only clean up if it's a critical failure that leaves us in a bad state?
+            // For now, valid strategy is just to LOG it and show toast.
+            // endCall(); 
         }
     }, [state.call, user, apiFetch]);
 
