@@ -720,9 +720,19 @@ export function CallProvider({ children }: { children: React.ReactNode }) {
                 isVideoEnabled: signal.call_type === "video"
             }));
         } else if (signal.type === "call_end" || signal.type === "call_reject") {
+            const isReject = signal.type === "call_reject";
+            const reason = signal.reason || (isReject ? "Call rejected" : "Call ended");
+
             // Handle remote end - use setState callback to get current state
             setState((prev) => {
                 if (prev.call?.id === signal.call_id) {
+                    // Show toast
+                    if (isReject) {
+                        toast.error("Call rejected");
+                    } else {
+                        toast(reason === 'busy' ? "User is busy" : "Call ended", { icon: "📞" });
+                    }
+
                     // Trigger cleanup asynchronously to avoid dependency on endCall
                     setTimeout(() => {
                         // Stop Timer
