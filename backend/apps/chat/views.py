@@ -671,25 +671,23 @@ class CallViewSet(viewsets.ViewSet):
 
         # Send call signal via WebSocket to callee
         channel_layer = get_channel_layer()
-        async_to_sync(channel_layer.group_send)(
-            f'chat_{room.id}',
-            {
-                'type': 'call_signal',
-                'signal': {
-                    'type': 'call_offer',
-                    'call_id': str(call.id),
-                    'room_id': room.id,
-                    'caller_id': request.user.id,
-                    'caller_username': request.user.username,
-                    'caller_avatar': request.user.avatar_url or (
-                        request.build_absolute_uri(request.user.avatar_file.url) if request.user.avatar_file else None
-                    ),
-                    'callee_id': callee.id,
-                    'call_type': call_type,
-                    'agora_channel': channel_name,
-                }
+        socket_message = {
+            'type': 'call_signal',
+            'signal': {
+                'type': 'call_offer',
+                'call_id': str(call.id),
+                'room_id': room.id,
+                'caller_id': request.user.id,
+                'caller_username': request.user.username,
+                'caller_avatar': request.user.avatar_url or (
+                    request.build_absolute_uri(request.user.avatar_file.url) if request.user.avatar_file else None
+                ),
+                'callee_id': callee.id,
+                'call_type': call_type,
+                'agora_channel': channel_name,
             }
-        )
+        }
+        async_to_sync(channel_layer.group_send)(f'chat_{room.id}', socket_message)
 
         # Send push notification to callee
         from apps.notifications.utils import send_push_to_user
