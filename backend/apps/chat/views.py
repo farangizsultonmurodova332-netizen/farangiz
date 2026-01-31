@@ -781,7 +781,12 @@ class CallViewSet(viewsets.ViewSet):
         terminal_statuses = [Call.STATUS_CONNECTING, Call.STATUS_CONNECTED, Call.STATUS_ENDED, 
                             Call.STATUS_REJECTED, Call.STATUS_MISSED, Call.STATUS_FAILED]
         if call.status in terminal_statuses:
+            print(f"[CallView] Call {call.id} reject attempt by {request.user.username} but status is {call.status}")
             return Response({'detail': 'Call already processed'})
+
+        if call.status in [Call.STATUS_CONNECTED, Call.STATUS_ENDED]:
+            print(f"[CallView] Call {call.id} reject attempt by {request.user.username} but status is {call.status}")
+            return Response({'error': f'Call cannot be rejected (status: {call.status})'}, status=status.HTTP_400_BAD_REQUEST)
 
         if call.status not in [Call.STATUS_PENDING, Call.STATUS_RINGING]:
             return Response({'error': f'Call cannot be rejected (status: {call.status})'}, status=status.HTTP_400_BAD_REQUEST)
@@ -848,6 +853,8 @@ class CallViewSet(viewsets.ViewSet):
                 }
             }
         )
+        print(f"[CallView] Call {call.id} ended by {request.user.username} (reason: {reason}, duration: {duration})")
+        return Response({'detail': 'Call ended', 'duration': duration})
 
         serializer = CallSerializer(call, context={'request': request})
         return Response(serializer.data)
