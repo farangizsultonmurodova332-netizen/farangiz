@@ -6,7 +6,6 @@ import { AuthProvider } from "../lib/auth";
 import { LanguageProvider } from "../lib/i18n";
 import { CallProvider } from "../context/CallContext";
 import CallModal from "../components/CallModal";
-import DebugCall from "../components/DebugCall";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient());
@@ -17,7 +16,6 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         <AuthProvider>
           <CallProvider>
             <CallModal />
-            <DebugCall />
             {children}
           </CallProvider>
         </AuthProvider>
