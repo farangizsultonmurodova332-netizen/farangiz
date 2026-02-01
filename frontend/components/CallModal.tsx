@@ -109,26 +109,30 @@ export default function CallModal() {
   // ... (Permission check omitted for brevity, ensure logic matches)
   // ... (Permission check omitted)
   if (isPermissionNeeded) {
-    return (
+    return createPortal(
       <div className="fixed inset-0 z-[2147483647] flex items-center justify-center bg-black/90 md:p-4">
         <div className="bg-card border border-haze rounded-2xl p-8 max-w-sm w-full text-center">
           <h2 className="text-xl font-semibold text-white mb-4">{t("call.resumeSession")}</h2>
-          <p className="text-white/70 mb-6">{t("call.permissionNeeded") || "Click below to resume session."}</p>
           <button onClick={() => joinCall()} className="w-full py-3 bg-primary text-white rounded-xl font-medium">
             {t("call.resume")}
           </button>
         </div>
-      </div>
+      </div>,
+      document.body
     );
   }
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-[2147483647] flex items-center justify-center bg-black/90 md:p-4">
-      {/* 
+      {/*
         Mobile: Full screen (100dvh), flex-col
         Desktop: Rounded box, fixed size
       */}
       <div className="relative w-full h-full md:h-auto md:max-w-4xl bg-background md:rounded-2xl overflow-hidden flex flex-col h-[100dvh]">
+        {/* Status Indicator for Debugging */}
+        <div className="absolute top-2 left-2 z-50 bg-black/50 text-white text-xs px-2 py-1 rounded">
+          {status} ({call?.call_type})
+        </div>
 
         {/* Main Content Area (Video or Audio UI) - takes available space */}
         <div className="flex-1 relative overflow-hidden bg-gray-900">
@@ -152,13 +156,8 @@ export default function CallModal() {
               {remoteUsers.length === 0 && (
                 <div className="absolute inset-0 flex items-center justify-center z-0">
                   <div className="text-center">
-                    <div className="w-24 h-24 mx-auto bg-gray-700 rounded-full flex items-center justify-center mb-4">
-                      <span className="text-4xl text-white">
-                        {otherUser.username.charAt(0).toUpperCase()}
-                      </span>
-                    </div>
                     <p className="text-white text-lg">{otherUser.username}</p>
-                    <p className="text-white/60 text-sm mt-1">{getStatusText()}</p>
+                    <p className="text-white/60">Waiting for video...</p>
                   </div>
                 </div>
               )}
@@ -192,15 +191,6 @@ export default function CallModal() {
                   {isVideo ? t("call.videoCall") : t("call.voiceCall")}
                 </p>
                 <p className="text-white/60 mt-2">{getStatusText()}</p>
-
-                {/* Pulse animation for calling/ringing */}
-                {(status === "calling" || status === "ringing" || (status as any) === "connecting") && (
-                  <div className="flex justify-center mt-6 space-x-2">
-                    <div className="w-3 h-3 bg-white/60 rounded-full animate-pulse" />
-                    <div className="w-3 h-3 bg-white/60 rounded-full animate-pulse delay-100" />
-                    <div className="w-3 h-3 bg-white/60 rounded-full animate-pulse delay-200" />
-                  </div>
-                )}
               </div>
             </div>
           )}
@@ -247,7 +237,7 @@ export default function CallModal() {
             <>
               <button
                 onClick={toggleMute}
-                className={`w-14 h-14 rounded-full flex items-center justify-center transition-colors backdrop-blur-md ${isMuted ? "bg-red-500 hover:bg-red-600 text-white" : "bg-white/20 hover:bg-white/30 text-white"
+                className={`w-14 h-14 rounded-full flex items-center justify-center transition-colors ${isMuted ? "bg-red-500 text-white" : "bg-white/20 text-white"
                   }`}
                 title={isMuted ? t("call.unmute") : t("call.mute")}
               >
@@ -273,7 +263,7 @@ export default function CallModal() {
               {isVideo && (
                 <button
                   onClick={toggleVideo}
-                  className={`w-14 h-14 rounded-full flex items-center justify-center transition-colors backdrop-blur-md ${!isVideoEnabled ? "bg-red-500 hover:bg-red-600 text-white" : "bg-white/20 hover:bg-white/30 text-white"
+                  className={`w-14 h-14 rounded-full flex items-center justify-center transition-colors ${!isVideoEnabled ? "bg-red-500 text-white" : "bg-white/20 text-white"
                     }`}
                   title={isVideoEnabled ? t("call.videoOff") : t("call.videoOn")}
                 >
@@ -315,6 +305,7 @@ export default function CallModal() {
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
