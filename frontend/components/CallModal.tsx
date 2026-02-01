@@ -104,7 +104,7 @@ export default function CallModal() {
   console.log("[CallModal] RENDER. Status:", status, "Mounted:", mounted);
 
   if (!mounted) return null;
-  if (!call || status === "idle") return null;
+  if (!call || (status as any) === "idle") return null;
 
   // ... (Permission check omitted for brevity, ensure logic matches)
   if (isPermissionNeeded) {
