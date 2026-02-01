@@ -32,7 +32,6 @@ export default function SnowEffect() {
     // Generate snowflakes when snowing
     useEffect(() => {
         if (isSnowing) {
-            document.body.classList.add("snow-accumulating");
             const flakes: Snowflake[] = Array.from({ length: 50 }, (_, i) => ({
                 id: i,
                 x: Math.random() * 100,
@@ -45,7 +44,6 @@ export default function SnowEffect() {
             }));
             setSnowflakes(flakes);
         } else {
-            document.body.classList.remove("snow-accumulating");
             setSnowflakes([]);
         }
     }, [isSnowing]);
