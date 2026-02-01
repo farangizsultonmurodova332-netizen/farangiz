@@ -572,46 +572,64 @@ export function CallProvider({ children }: { children: React.ReactNode }) {
     const answerCall = useCallback(async () => {
         if (!state.call || !user || !clientRef.current) return;
 
+        // Security Check for WebRTC
+        if (typeof window !== 'undefined' && !window.isSecureContext && window.location.hostname !== 'localhost') {
+            toast.error("Video calls require HTTPS! Please set up SSL or use Localhost.", { duration: 5000 });
+            return;
+        }
+
         try {
             const call = state.call;
             setState((prev) => ({ ...prev, status: "connecting" }));
+            toast("Connecting...", { icon: "⏳" });
 
             const response = await apiFetch<Call & { agora_token: string }>(`/calls/${call.id}/answer/`, { method: "POST" });
 
             // Initialize Tracks
             const AgoraRTC = (await import("agora-rtc-sdk-ng")).default;
-            const audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
-            localAudioTrackRef.current = audioTrack;
+
+            // Explicit Try/Catch for Media Devices
+            try {
+                const audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
+                localAudioTrackRef.current = audioTrack;
+            } catch (mediaError: any) {
+                console.error("Microphone access failed:", mediaError);
+                toast.error("Could not access Microphone. Check permissions.");
+                // We continue, but audio won't work.
+            }
 
             let videoTrack: ICameraVideoTrack | null = null;
             if (call.call_type === "video") {
-                videoTrack = await AgoraRTC.createCameraVideoTrack();
-                localVideoTrackRef.current = videoTrack;
-                setState((prev) => ({ ...prev, localVideoTrack: videoTrack }));
+                try {
+                    videoTrack = await AgoraRTC.createCameraVideoTrack();
+                    localVideoTrackRef.current = videoTrack;
+                    setState((prev) => ({ ...prev, localVideoTrack: videoTrack }));
+                } catch (camError: any) {
+                    console.error("Camera access failed:", camError);
+                    toast.error("Could not access Camera. Check permissions.");
+                }
             }
 
             // Join Channel with FRESH token for the callee
             if (response.agora_channel && response.agora_token) {
                 await clientRef.current.join(AGORA_APP_ID, response.agora_channel, response.agora_token, user.id);
 
-                if (videoTrack) {
-                    await clientRef.current.publish([audioTrack, videoTrack]);
-                } else {
-                    await clientRef.current.publish([audioTrack]);
+                const tracksToPublish = [];
+                if (localAudioTrackRef.current) tracksToPublish.push(localAudioTrackRef.current);
+                if (videoTrack) tracksToPublish.push(videoTrack);
+
+                if (tracksToPublish.length > 0) {
+                    await clientRef.current.publish(tracksToPublish);
                 }
             }
 
             setState((prev) => ({ ...prev, status: "connected" }));
+            toast.success("Connected!");
 
         } catch (error: any) {
             console.error("Failed to answer call", error);
             toast.error(error.message || "Failed to answer call");
-
-            // Do NOT end the call immediately on error. 
-            // Allow the user to try again or see the error.
-            // Only clean up if it's a critical failure that leaves us in a bad state?
-            // For now, valid strategy is just to LOG it and show toast.
-            // endCall(); 
+            // Do NOT end call, let user retry
         }
     }, [state.call, user, apiFetch]);
 

@@ -81,6 +81,7 @@ export default function CallModal() {
     }
   }, [remoteUsers]);
 
+  console.log("[CallModal] Render Check. Status:", status, "Call:", !!call);
   if (!call || status === "idle") return null;
 
   const currentUserId = user?.id || 0;
