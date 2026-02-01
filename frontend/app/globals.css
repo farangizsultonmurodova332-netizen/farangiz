@@ -149,75 +149,91 @@
     scrollbar-width: none;
   }
 
-  /* Snow Accumulation Logic */
+  /* Snow Accumulation Logic - Organic & Realistic */
   body.snow-accumulating .card,
   body.snow-accumulating .btn,
   body.snow-accumulating .input,
   body.snow-accumulating h1,
   body.snow-accumulating nav {
     position: relative;
-    /* Ensure z-index context for snow */
   }
 
+  /* The Snow Cap */
   body.snow-accumulating .card::before,
   body.snow-accumulating .btn::before,
   body.snow-accumulating .input::before,
   body.snow-accumulating nav::before {
     content: '';
     position: absolute;
-    top: -1px;
-    left: 4px;
-    right: 4px;
-    height: 0px;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.8));
-    border-radius: 8px 8px 2px 2px;
-    pointer-events: none;
-    box-shadow: 0 -2px 10px rgba(255, 255, 255, 0.6), 0 1px 4px rgba(255, 255, 255, 0.4);
+    top: -12px;
+    left: -2px;
+    right: -2px;
+    height: 16px;
+    /* Create irregular mounds using radial gradients */
+    background-image:
+      radial-gradient(circle at 10% 100%, white 10px, transparent 11px),
+      radial-gradient(circle at 30% 100%, white 12px, transparent 13px),
+      radial-gradient(circle at 50% 100%, white 14px, transparent 15px),
+      radial-gradient(circle at 70% 100%, white 10px, transparent 11px),
+      radial-gradient(circle at 90% 100%, white 13px, transparent 14px);
+    background-position: 0 0;
+    background-repeat: repeat-x;
+    background-size: 100px 100%;
+    /* Repeat pattern */
     z-index: 50;
     opacity: 0;
-    animation: snowPileUp 12s forwards ease-out;
-    /* Filter for soft cloudy look */
-    filter: blur(0.5px);
+    pointer-events: none;
+    /* Soften the edges for "fluffy" snow look */
+    filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.05));
+    animation: snowAccumulateReal 15s forwards cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  /* Specific adjustments for buttons */
-  body.snow-accumulating .btn::before {
-    left: 2px;
-    right: 2px;
-    border-radius: 12px 12px 4px 4px;
-  }
-
-  /* Navbar specific - assuming sticky top */
-  body.snow-accumulating nav::before {
+  /* Add a second layer for depth/white fill below the mounds */
+  body.snow-accumulating .card::after,
+  body.snow-accumulating .btn::after,
+  body.snow-accumulating .input::after,
+  body.snow-accumulating nav::after {
+    content: '';
+    position: absolute;
+    top: 0px;
+    /* Start at top edge */
     left: 0;
     right: 0;
-    top: 0;
-    position: fixed;
-    /* Attach correctly if nav is fixed */
-    border-radius: 0 0 4px 4px;
-    /* Hangs down? No, pile UP usually. */
+    height: 0px;
+    /* Grows down slightly */
+    background: white;
+    z-index: 49;
+    opacity: 0;
+    pointer-events: none;
+    animation: snowFill 15s forwards;
   }
 
-  /* Snow Pile Animation */
-  @keyframes snowPileUp {
+  @keyframes snowAccumulateReal {
     0% {
-      height: 0px;
       opacity: 0;
-      transform: translateY(0);
+      transform: translateY(10px) scaleY(0);
     }
 
     10% {
-      height: 2px;
-      opacity: 0.6;
-      transform: translateY(-1px);
+      opacity: 0.8;
+      transform: translateY(5px) scaleY(0.5);
     }
 
     100% {
-      height: 6px;
-      /* Final pile height */
-      opacity: 0.95;
-      transform: translateY(-5px);
-      /* Moves up as it piles */
+      opacity: 1;
+      transform: translateY(0) scaleY(1);
+    }
+  }
+
+  @keyframes snowFill {
+    0% {
+      height: 0;
+      opacity: 0;
+    }
+
+    100% {
+      height: 4px;
+      opacity: 1;
     }
   }
 }
