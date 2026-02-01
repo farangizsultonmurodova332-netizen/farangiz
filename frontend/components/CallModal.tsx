@@ -1,30 +1,23 @@
-"use client";
-
-import { useEffect, useRef } from "react";
-import { useLanguage } from "../lib/i18n";
-import { useCall } from "../hooks/useCall";
-import { useAuth } from "../lib/auth";
+import { createPortal } from "react-dom";
+import { useEffect, useRef, useState } from "react";
+// ... imports
 
 export default function CallModal() {
   const { t } = useLanguage();
-  const { user } = useAuth();
+  const [mounted, setMounted] = useState(false);
+
+  // existing hooks...
   const {
-    call,
-    status,
-    isMuted,
-    isVideoEnabled,
-    duration,
-    formattedDuration,
-    localVideoTrack,
-    remoteUsers,
-    answerCall,
-    rejectCall,
-    endCall,
-    toggleMute,
-    toggleVideo,
-    isPermissionNeeded,
-    joinCall,
+    call, status, isMuted, isVideoEnabled, duration, formattedDuration,
+    localVideoTrack, remoteUsers, answerCall, rejectCall, endCall,
+    toggleMute, toggleVideo, isPermissionNeeded, joinCall
   } = useCall();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // ... [Keep existing refs and effects as they were] ...
 
   // Callback ref for local video
   const setLocalVideoRef = (node: HTMLDivElement | null) => {
@@ -81,7 +74,7 @@ export default function CallModal() {
     }
   }, [remoteUsers]);
 
-  console.log("[CallModal] Render Check. Status:", status, "Call:", !!call);
+  if (!mounted) return null;
   if (!call || status === "idle") return null;
 
   const currentUserId = user?.id || 0;
@@ -105,24 +98,26 @@ export default function CallModal() {
   };
 
   // Permission Interruption Overlay
-  if (isPermissionNeeded) {
-    return (
-      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 md:p-4">
-        <div className="bg-card border border-haze rounded-2xl p-8 max-w-sm w-full text-center">
-          <h2 className="text-xl font-semibold text-white mb-4">{t("call.resumeSession")}</h2>
-          <p className="text-white/70 mb-6">{t("call.permissionNeeded") || "Click below to resume your call session."}</p>
-          <button
-            onClick={() => joinCall()}
-            className="w-full py-3 bg-primary text-white rounded-xl font-medium hover:bg-primary/90 transition-colors"
-          >
-            {t("call.resume")}
-          </button>
-        </div>
+  const permissionContent = (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 md:p-4">
+      <div className="bg-card border border-haze rounded-2xl p-8 max-w-sm w-full text-center">
+        <h2 className="text-xl font-semibold text-white mb-4">{t("call.resumeSession")}</h2>
+        <p className="text-white/70 mb-6">{t("call.permissionNeeded") || "Click below to resume your call session."}</p>
+        <button
+          onClick={() => joinCall()}
+          className="w-full py-3 bg-primary text-white rounded-xl font-medium hover:bg-primary/90 transition-colors"
+        >
+          {t("call.resume")}
+        </button>
       </div>
-    );
+    </div>
+  );
+
+  if (isPermissionNeeded) {
+    return createPortal(permissionContent, document.body);
   }
 
-  return (
+  const modalContent = (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 md:p-4">
       {/* 
         Mobile: Full screen (100dvh), flex-col
@@ -317,4 +312,6 @@ export default function CallModal() {
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 }
