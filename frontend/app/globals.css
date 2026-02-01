@@ -148,4 +148,76 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
+  /* Snow Accumulation Logic */
+  body.snow-accumulating .card,
+  body.snow-accumulating .btn,
+  body.snow-accumulating .input,
+  body.snow-accumulating h1,
+  body.snow-accumulating nav {
+    position: relative;
+    /* Ensure z-index context for snow */
+  }
+
+  body.snow-accumulating .card::before,
+  body.snow-accumulating .btn::before,
+  body.snow-accumulating .input::before,
+  body.snow-accumulating nav::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 4px;
+    right: 4px;
+    height: 0px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.8));
+    border-radius: 8px 8px 2px 2px;
+    pointer-events: none;
+    box-shadow: 0 -2px 10px rgba(255, 255, 255, 0.6), 0 1px 4px rgba(255, 255, 255, 0.4);
+    z-index: 50;
+    opacity: 0;
+    animation: snowPileUp 12s forwards ease-out;
+    /* Filter for soft cloudy look */
+    filter: blur(0.5px);
+  }
+
+  /* Specific adjustments for buttons */
+  body.snow-accumulating .btn::before {
+    left: 2px;
+    right: 2px;
+    border-radius: 12px 12px 4px 4px;
+  }
+
+  /* Navbar specific - assuming sticky top */
+  body.snow-accumulating nav::before {
+    left: 0;
+    right: 0;
+    top: 0;
+    position: fixed;
+    /* Attach correctly if nav is fixed */
+    border-radius: 0 0 4px 4px;
+    /* Hangs down? No, pile UP usually. */
+  }
+
+  /* Snow Pile Animation */
+  @keyframes snowPileUp {
+    0% {
+      height: 0px;
+      opacity: 0;
+      transform: translateY(0);
+    }
+
+    10% {
+      height: 2px;
+      opacity: 0.6;
+      transform: translateY(-1px);
+    }
+
+    100% {
+      height: 6px;
+      /* Final pile height */
+      opacity: 0.95;
+      transform: translateY(-5px);
+      /* Moves up as it piles */
+    }
+  }
 }
