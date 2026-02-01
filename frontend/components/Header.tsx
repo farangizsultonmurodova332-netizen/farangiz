@@ -49,9 +49,9 @@ export default function Header() {
           <Link href="/ideas/new" className="btn-primary">
             <PlusCircle size={16} /> {t("nav.newIdea")}
           </Link>
-          <a href="/farangiz.apk" download className="btn-ghost text-primary hover:bg-primary/10">
+          <Link href="/download" className="btn-ghost text-primary hover:bg-primary/10">
             <Download size={16} /> Mobile App
-          </a>
+          </Link>
           {user ? (
             <>
               <Link href="/chat" className="btn-ghost relative">

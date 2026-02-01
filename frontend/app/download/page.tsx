@@ -1,49 +1,89 @@
 "use client";
 
 import React from "react";
-import { Download } from "lucide-react";
+import { Download, Smartphone, Apple } from "lucide-react";
+import Link from "next/link";
+import { useLanguage } from "../../lib/i18n";
 
 export default function DownloadPage() {
+    const { t } = useLanguage();
+
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 px-4">
-            <div className="max-w-md w-full bg-card rounded-2xl shadow-xl p-8 text-center space-y-6">
-                <div className="w-20 h-20 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto">
-                    <Download className="w-10 h-10 text-blue-600 dark:text-blue-400" />
-                </div>
+        <div className="min-h-screen bg-paper pt-24 pb-12 px-6 flex flex-col items-center justify-center">
+            <div className="max-w-4xl w-full text-center space-y-8">
 
-                <div className="space-y-2">
-                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                        Mobil Ilovani Yuklab Oling
+                {/* Header Section */}
+                <div className="space-y-4">
+                    <h1 className="text-4xl md:text-5xl font-black text-ink tracking-tight">
+                        Download <span className="text-primary">StartupSpace</span> App
                     </h1>
-                    <p className="text-gray-600 dark:text-gray-400">
-                        Android qurilmangiz uchun maxsus ilovani yuklab oling va barcha imkoniyatlardan foydalaning.
+                    <p className="text-lg md:text-xl text-ink-muted max-w-2xl mx-auto">
+                        Take your ideas with you. Connect, collaborate, and innovate on the go with our mobile application.
                     </p>
                 </div>
 
-                <div className="pt-4">
-                    <a
-                        href="/app-release.apk"
-                        download
-                        className="group relative inline-flex items-center justify-center w-full px-8 py-4 text-lg font-medium text-white transition-all duration-200 bg-blue-600 rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-lg hover:shadow-xl hover:-translate-y-1"
-                    >
-                        <Download className="w-6 h-6 mr-2 transition-transform group-hover:animate-bounce" />
-                        APK faylni yuklab olish
-                    </a>
-                    <p className="mt-4 text-xs text-gray-500 dark:text-gray-500">
-                        Hajmi: ~25 MB • Versiya: 1.0.0
-                    </p>
+                {/* Download Options */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12 max-w-2xl mx-auto">
+
+                    {/* Android Card */}
+                    <div className="relative group bg-card border border-haze rounded-2xl p-8 shadow-lg hover:shadow-xl hover:border-primary/50 transition-all duration-300 transform hover:-translate-y-1">
+                        <div className="absolute top-0 right-0 p-4">
+                            <span className="bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded-full uppercase tracking-wider">
+                                Available Now
+                            </span>
+                        </div>
+                        <div className="flex flex-col items-center space-y-6">
+                            <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center text-green-600">
+                                <Smartphone size={32} />
+                            </div>
+                            <div className="text-center space-y-2">
+                                <h3 className="text-2xl font-bold text-ink">Android</h3>
+                                <p className="text-ink-muted">Compatible with Android 8.0+</p>
+                            </div>
+                            <a
+                                href="/farangiz.apk"
+                                download
+                                className="w-full btn-primary flex items-center justify-center gap-2 py-3 text-lg shadow-lg shadow-primary/20"
+                            >
+                                <Download size={20} />
+                                Download APK
+                            </a>
+                            <p className="text-xs text-ink-muted">Version 1.0.0 • ~40MB</p>
+                        </div>
+                    </div>
+
+                    {/* iOS Card */}
+                    <div className="relative group bg-card/50 border border-haze rounded-2xl p-8 shadow-sm opacity-80 cursor-not-allowed">
+                        <div className="absolute top-0 right-0 p-4">
+                            <span className="bg-gray-100 text-gray-500 text-xs font-bold px-2 py-1 rounded-full uppercase tracking-wider">
+                                Coming Soon
+                            </span>
+                        </div>
+                        <div className="flex flex-col items-center space-y-6 grayscale">
+                            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center text-gray-400">
+                                <Apple size={32} />
+                            </div>
+                            <div className="text-center space-y-2">
+                                <h3 className="text-2xl font-bold text-ink">iOS</h3>
+                                <p className="text-ink-muted">Compatible with iOS 14+</p>
+                            </div>
+                            <button disabled className="w-full btn-ghost border border-haze flex items-center justify-center gap-2 py-3 text-lg cursor-not-allowed">
+                                <Download size={20} />
+                                Join Waitlist
+                            </button>
+                            <p className="text-xs text-ink-muted">In Development</p>
+                        </div>
+                    </div>
+
                 </div>
 
-                <div className="border-t border-gray-100 dark:border-gray-700 pt-6 mt-6">
-                    <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-200 mb-2">
-                        O'rnatish bo'yicha qo'llanma:
-                    </h3>
-                    <ol className="text-sm text-gray-600 dark:text-gray-400 text-left space-y-2 list-decimal pl-5">
-                        <li>APK faylni yuklab oling.</li>
-                        <li>Faylni oching va "O'rnatish" tugmasini bosing.</li>
-                        <li>Agar so'rasa, noma'lum manbalardan o'rnatishga ruxsat bering.</li>
-                    </ol>
+                {/* Back Link */}
+                <div className="pt-8">
+                    <Link href="/" className="text-primary hover:underline font-medium">
+                        &larr; Back to Home
+                    </Link>
                 </div>
+
             </div>
         </div>
     );
