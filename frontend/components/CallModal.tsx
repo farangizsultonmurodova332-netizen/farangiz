@@ -1,9 +1,14 @@
+"use client";
+
 import { createPortal } from "react-dom";
 import { useEffect, useRef, useState } from "react";
-// ... imports
+import { useLanguage } from "../lib/i18n";
+import { useCall } from "../hooks/useCall";
+import { useAuth } from "../lib/auth";
 
 export default function CallModal() {
   const { t } = useLanguage();
+  const { user } = useAuth();
   const [mounted, setMounted] = useState(false);
 
   // existing hooks...
