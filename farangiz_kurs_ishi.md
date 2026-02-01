@@ -1232,3 +1232,66 @@ Q.4. Kelajakda ilmiy izlanish imkoniyatlari
 
 Platforma g'oyalarni tahlil qilish va kategoriyalash bo'yicha ilmiy izlanishlar uchun ham asos bo'lishi mumkin. ML algoritmlar orqali g'oyalarni avtomatik guruhlash, sentiment analysis va tavsiya tizimlari yaratish istiqbolli yo'nalishdir.
 
+
+
+============================================================
+ILOVA R. QO'SHIMCHA NAZARIY VA AMALIY TAVSIFLAR
+
+R.1. Monorepo yondashuvi
+
+Monorepo - bir nechta komponentlarni (backend, frontend, mobile) bitta repositoryda saqlash usuli. Bu yondashuvning asosiy afzalligi - kod bazasining yagona versiyada boshqarilishi va birgalikda rivojlantirilishi. "Farangiz" loyihasida monorepo struktura tanlangan: backend/, frontend/ va mobile/ kataloglari bir joyda. Bu turli platformalar o'rtasida API mosligini saqlashni osonlashtiradi. Misol uchun, API endpointlar o'zgarsa, frontend va mobile bir vaqtning o'zida yangilanadi.
+
+Monorepo kamchiliklari ham mavjud: repository hajmi katta bo'lishi, CI/CD jarayoni murakkablashishi mumkin. Ammo loyiha hajmi o'rtacha bo'lgani uchun bu yondashuv eng maqbul hisoblanadi.
+
+R.2. Mikroservislar bilan taqqoslash
+
+Mikroservis arxitekturasi har bir modulni alohida servis sifatida ajratishni nazarda tutadi. Bu yondashuv katta tizimlarda foydali bo'lishi mumkin. Biroq "Farangiz" loyiha hajmi uchun monolit yoki modular monolit arxitektura yetarli. Monolit yondashuvda kod bazasi yagona, deployment soddaroq. Shu sababli loyiha boshida monolit yondashuv tanlangan, kelajakda esa kerak bo'lsa chat, notifications yoki analytics kabi komponentlarni mikroservisga ajratish mumkin.
+
+R.3. Ma'lumotlar modeli va normalizatsiya
+
+Normalizatsiya ma'lumotlarni to'g'ri tuzishda muhim rol o'ynaydi. "Farangiz" loyihasida user, idea, comment va chat modullari alohida saqlanadi. This reduces redundancy and ensures data consistency. Many-to-many bog'lanishlar (g'oya-tag) uchun alohida jadvallar ishlatiladi. Bu qidiruv va filtr uchun ham qulay.
+
+R.4. Search va ranking
+
+Qidiruv tizimi foydalanuvchiga kerakli g'oyalarni tez topish imkonini beradi. Full-text search yordamida title, short_description, full_description bo'yicha qidiruv amalga oshiriladi. Search natijalarini ranking qilish (SearchRank) foydalanuvchiga eng mos g'oyalarni ko'rsatadi. Bu algoritm postgreSQL search vectorlariga asoslangan.
+
+R.5. Paginatsiya va samaradorlik
+
+Paginatsiya yirik ro'yxatlar bilan ishlashda juda muhim. Agar barcha g'oyalar bir vaqtda qaytarilsa, server va klient yuklanadi. Shu sababli DRF paginatsiyasi orqali har bir so'rovda cheklangan miqdor qaytariladi. Bu tizim tezligini oshiradi va foydalanuvchi tajribasini yaxshilaydi.
+
+R.6. Kesh strategiyasi
+
+Kesh tizimi tezkor javob qaytarish uchun ishlatiladi. Chat xabarlarini tez ko'rsatish, unread countni hisoblash va tez-tez ishlatiladigan ma'lumotlarni saqlash uchun Redis kesh ishlatiladi. Keshdan foydalanish databasega tushadigan yukni kamaytiradi va tizimni barqaror qiladi.
+
+R.7. Real vaqt tizimlarda sinxronlash
+
+Real vaqt chatda xabarlar bir vaqtning o'zida ko'plab foydalanuvchilarga yuboriladi. Bu jarayonda sinxronlash muhim, chunki bir xabar bir necha clientda bir vaqtning o'zida ko'rinishi kerak. WebSocket orqali bu sinxronlash ta'minlanadi. Agar xabar o'qilgan bo'lsa, read signal boshqa foydalanuvchiga yuboriladi.
+
+R.8. Push notifications
+
+Mobil ilovada push notifications foydalanuvchiga yangi layk, izoh yoki chat xabarlarini tez yetkazadi. Expo push token orqali server mobil ilovaga signal yuboradi. Bu foydalanuvchini platformada faol bo'lishga undaydi.
+
+R.9. Fayl yuklash va media boshqaruvi
+
+Fayl yuklash tizimda muhim funksiya hisoblanadi. "Farangiz" platformasida g'oya rasm, chat fayllari va avatarlar yuklanadi. Fayl xavfsizligi uchun MIME type tekshiriladi, fayl hajmi cheklanadi. Media fayllar serverdagi media/ katalogda saqlanadi va Nginx orqali tarqatiladi.
+
+R.10. Qo'ng'iroqlar va Agora integratsiyasi
+
+Voice/video qo'ng'iroqlarni amalga oshirish uchun Agora SDK tanlangan. Agora real vaqt audio/video uzatishni soddalashtiradi. Backend call modelida agora_channel va agora_token maydonlari mavjud. Tokenlar vaqtinchalik bo'lib, xavfsizlik uchun har bir qo'ng'iroqda yangilanadi.
+
+R.11. Geolokatsiya funksiyasi
+
+User modelida latitude va longitude maydonlari mavjud. Mobil ilovada geolokatsiya funksiyasi foydalanuvchi joylashuvini profilga bog'lashga imkon beradi. Bu funksiya ijtimoiy aloqalar va yaqin foydalanuvchilarni topish kabi imkoniyatlarni yaratadi.
+
+R.12. Accessibility va ko'p til
+
+Loyihada UI matnlari uz, ru, en tillarida berilgan. Bu foydalanuvchi bazasini kengaytirishga yordam beradi. Ko'p til qo'llab-quvvatlash UI fayllari va backend i18n maydonlari orqali amalga oshiriladi. Accessibility esa UI elementlarining aniq va oson tushuniladigan bo'lishi orqali ta'minlanadi.
+
+R.13. Audit va log yuritish
+
+Loglar tizim xatolarini aniqlashda juda muhim. Django logging konfiguratsiyasi orqali konsolga log chiqariladi. Kelajakda bu loglar file yoki monitoring tizimiga yuborilishi mumkin.
+
+R.14. Yakuniy baholash
+
+"Farangiz" loyihasi funksional va texnik jihatdan to'liq platforma bo'lib shakllangan. Loyiha backend, web va mobile qismlarining integratsiyasi orqali real dunyo ehtiyojlarini qondiradi. Bu tizimni amaliyotda qo'llash imkoniyati mavjud.
+
