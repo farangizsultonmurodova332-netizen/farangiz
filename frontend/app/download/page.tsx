@@ -41,14 +41,14 @@ export default function DownloadPage() {
                                 <p className="text-ink-muted">Compatible with Android 8.0+</p>
                             </div>
                             <a
-                                href="/farangiz.apk"
+                                href="/StartupSpace.apk"
                                 download
                                 className="w-full btn-primary flex items-center justify-center gap-2 py-3 text-lg shadow-lg shadow-primary/20"
                             >
                                 <Download size={20} />
                                 Download APK
                             </a>
-                            <p className="text-xs text-ink-muted">Version 1.0.0 • ~40MB</p>
+                            <p className="text-xs text-ink-muted">Version 1.0.0 • ~360MB</p>
                         </div>
                     </div>
 
