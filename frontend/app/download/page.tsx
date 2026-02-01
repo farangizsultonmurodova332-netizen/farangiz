@@ -15,10 +15,10 @@ export default function DownloadPage() {
                 {/* Header Section */}
                 <div className="space-y-4">
                     <h1 className="text-4xl md:text-5xl font-black text-ink tracking-tight">
-                        Download <span className="text-primary">StartupSpace</span> App
+                        {t("download.title").replace("StartupSpace", "")} <span className="text-primary">StartupSpace</span>
                     </h1>
                     <p className="text-lg md:text-xl text-ink-muted max-w-2xl mx-auto">
-                        Take your ideas with you. Connect, collaborate, and innovate on the go with our mobile application.
+                        {t("download.subtitle")}
                     </p>
                 </div>
 
@@ -29,7 +29,7 @@ export default function DownloadPage() {
                     <div className="relative group bg-card border border-haze rounded-2xl p-8 shadow-lg hover:shadow-xl hover:border-primary/50 transition-all duration-300 transform hover:-translate-y-1">
                         <div className="absolute top-0 right-0 p-4">
                             <span className="bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded-full uppercase tracking-wider">
-                                Available Now
+                                {t("download.available")}
                             </span>
                         </div>
                         <div className="flex flex-col items-center space-y-6">
@@ -38,7 +38,7 @@ export default function DownloadPage() {
                             </div>
                             <div className="text-center space-y-2">
                                 <h3 className="text-2xl font-bold text-ink">Android</h3>
-                                <p className="text-ink-muted">Compatible with Android 8.0+</p>
+                                <p className="text-ink-muted">{t("download.androidCompat")}</p>
                             </div>
                             <a
                                 href="/StartupSpace.apk"
@@ -46,9 +46,9 @@ export default function DownloadPage() {
                                 className="w-full btn-primary flex items-center justify-center gap-2 py-3 text-lg shadow-lg shadow-primary/20"
                             >
                                 <Download size={20} />
-                                Download APK
+                                {t("download.downloadApk")}
                             </a>
-                            <p className="text-xs text-ink-muted">Version 1.0.0 • ~360MB</p>
+                            <p className="text-xs text-ink-muted">{t("download.androidInfo")}</p>
                         </div>
                     </div>
 
@@ -56,7 +56,7 @@ export default function DownloadPage() {
                     <div className="relative group bg-card/50 border border-haze rounded-2xl p-8 shadow-sm opacity-80 cursor-not-allowed">
                         <div className="absolute top-0 right-0 p-4">
                             <span className="bg-gray-100 text-gray-500 text-xs font-bold px-2 py-1 rounded-full uppercase tracking-wider">
-                                Coming Soon
+                                {t("download.comingSoon")}
                             </span>
                         </div>
                         <div className="flex flex-col items-center space-y-6 grayscale">
@@ -65,13 +65,13 @@ export default function DownloadPage() {
                             </div>
                             <div className="text-center space-y-2">
                                 <h3 className="text-2xl font-bold text-ink">iOS</h3>
-                                <p className="text-ink-muted">Compatible with iOS 14+</p>
+                                <p className="text-ink-muted">{t("download.iosCompat")}</p>
                             </div>
                             <button disabled className="w-full btn-ghost border border-haze flex items-center justify-center gap-2 py-3 text-lg cursor-not-allowed">
                                 <Download size={20} />
-                                Join Waitlist
+                                {t("download.joinWaitlist")}
                             </button>
-                            <p className="text-xs text-ink-muted">In Development</p>
+                            <p className="text-xs text-ink-muted">{t("download.dev")}</p>
                         </div>
                     </div>
 
@@ -80,7 +80,7 @@ export default function DownloadPage() {
                 {/* Back Link */}
                 <div className="pt-8">
                     <Link href="/" className="text-primary hover:underline font-medium">
-                        &larr; Back to Home
+                        &larr; {t("download.backHome")}
                     </Link>
                 </div>
 
