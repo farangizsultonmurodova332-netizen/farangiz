@@ -49,35 +49,7 @@ export default function CallModal() {
     }
   }, [localVideoTrack, isVideoEnabled, user?.id]);
 
-  // Play remote video when remoteUsers changes
-  useEffect(() => {
-    console.log("[CallModal] remoteUsers changed:", remoteUsers.length, remoteUsers);
 
-    if (remoteUsers.length > 0) {
-      const remoteUser = remoteUsers[0];
-      console.log("[CallModal] Remote user:", remoteUser.uid, "hasVideoTrack:", !!remoteUser.videoTrack);
-
-      // Use requestAnimationFrame to ensure DOM is ready
-      const playVideo = () => {
-        const node = document.getElementById(`remote-video-${remoteUser.uid}`);
-        console.log("[CallModal] Looking for DOM node:", `remote-video-${remoteUser.uid}`, "found:", !!node);
-
-        if (node && remoteUser.videoTrack) {
-          console.log("[CallModal] Playing remote video track");
-          remoteUser.videoTrack.play(node as HTMLDivElement);
-        } else if (node && !remoteUser.videoTrack) {
-          console.log("[CallModal] DOM node found but no videoTrack yet, retrying in 500ms");
-          // Retry after a short delay
-          setTimeout(playVideo, 500);
-        } else if (!node) {
-          console.log("[CallModal] DOM node not found, retrying in 100ms");
-          setTimeout(playVideo, 100);
-        }
-      };
-
-      requestAnimationFrame(playVideo);
-    }
-  }, [remoteUsers]);
 
   if (!mounted) return null;
   if (!call || status === "idle") return null;
@@ -101,6 +73,14 @@ export default function CallModal() {
         return "";
     }
   };
+
+  // Debug Toast
+  useEffect(() => {
+    if (status === "connected") {
+      console.log("[CallModal] Connected and rendering");
+      // Optional: toast.success("Video interface loaded");
+    }
+  }, [status]);
 
   console.log("[CallModal] RENDER. Status:", status, "Mounted:", mounted);
 
@@ -129,7 +109,7 @@ export default function CallModal() {
         Mobile: Full screen (100dvh), flex-col
         Desktop: Rounded box, fixed size
       */}
-      <div className="relative w-full h-full md:h-auto md:max-w-4xl bg-background md:rounded-2xl overflow-hidden flex flex-col h-[100dvh]">
+      <div className="relative w-full h-[100dvh] md:h-[80vh] md:max-w-5xl bg-background md:rounded-2xl overflow-hidden flex flex-col">
         {/* Status Indicator for Debugging */}
         <div className="absolute top-2 left-2 z-50 bg-black/50 text-white text-xs px-2 py-1 rounded">
           {status} ({call?.call_type})

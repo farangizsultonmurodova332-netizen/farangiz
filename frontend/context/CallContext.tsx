@@ -623,7 +623,11 @@ export function CallProvider({ children }: { children: React.ReactNode }) {
                 }
             }
 
-            setState((prev) => ({ ...prev, status: "connected" }));
+            setState((prev) => ({
+                ...prev,
+                status: "connected",
+                call: prev.call ? { ...prev.call, agora_token: response.agora_token } : prev.call
+            }));
             toast.success("Connected!");
 
         } catch (error: any) {
